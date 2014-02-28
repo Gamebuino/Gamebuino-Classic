@@ -12,6 +12,7 @@ boolean paused = false;
 #define BALL_X 20
 #define BALL_Y 21
 
+//we use char type instead of int because it's easier to send over I2C
 char player_h = 12;
 char player_w = 2;
 char player_y = (LCDHEIGHT-player_h)/2;
@@ -33,7 +34,6 @@ char* PROGMEM menu[MENULENGTH] = {
 ///////////////////////////////////// SETUP
 void setup() {
   gb.begin();
-  gb.display.setContrast(60);
   Wire.begin();
   Serial.begin(9600);
 }
