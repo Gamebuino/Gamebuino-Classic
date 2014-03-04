@@ -28,9 +28,10 @@ void updateSlave(){
   slave_updated = false;
 }
 
+///////////////////////////////////// SLAVE SEND
 // function that executes whenever data is requested by master
 // this function is registered as an event, see setup()
-char output[2];
+char output[SLAVE_DATA_BUFFER_LENGTH];
 void requestEvent()
 {
   //the slave can only answer with one "write" so you have to put all the variables in an string
@@ -39,6 +40,7 @@ void requestEvent()
   Wire.write(output);
 }
 
+///////////////////////////////////// SLAVE RECEIVE
 // function that executes whenever data is received from master
 // this function is registered as an event, see setup()
 void receiveEvent(int howMany)
@@ -52,10 +54,16 @@ void receiveEvent(int howMany)
       break;
     case BALL_X:
       ball_x = Wire.read();
+      ball_x = LCDWIDTH - ball_size - ball_x; //mirror the ball position;
       break;
     case BALL_Y:
       ball_y = Wire.read();
       break;
+    case PLAYER_SCORE:
+      oponent_score = Wire.read();
+      break;
+    case OPONENT_SCORE:
+      player_score = Wire.read();
     default:
       break;
     }
@@ -63,4 +71,5 @@ void receiveEvent(int howMany)
   slave_updated = true;
   paused = false;
 }
+
 

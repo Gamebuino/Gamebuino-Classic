@@ -5,53 +5,109 @@ Gamebuino gb = Gamebuino();
 #include <Wire.h>
 
 boolean isMaster;
+boolean singlePlayer;
 boolean paused = false;
 
 //I2C variables identifiers :
 #define PLAYER_Y 10
 #define BALL_X 20
 #define BALL_Y 21
+#define PLAYER_SCORE 30
+#define OPONENT_SCORE 31
+#define SLAVE_DATA_BUFFER_LENGTH 2
 
 //we use char type instead of int because it's easier to send over I2C
-char player_h = 12;
+//player variables
 char player_w = 2;
+char player_h = 12;
 char player_y = (LCDHEIGHT-player_h)/2;
-char oponent_h = 12;
+char player_x = 0;
+char player_vy = 2;
+byte player_score = 0;
+//oponent variables
 char oponent_w = 2;
+char oponent_h = 12;
+char oponent_x = LCDWIDTH - oponent_w;
 char oponent_y = (LCDHEIGHT-oponent_h)/2;
-char ball_size = 4;
+char oponent_vy = player_vy;
+byte oponent_score = 0;
+//ball variables
+char ball_size = 6;
 char ball_x = (LCDWIDTH-ball_size)/2;
 char ball_y = (LCDHEIGHT-ball_size)/2;
-char ball_vx = 1;
-char ball_vy = 1;
+char ball_vx = 3;
+char ball_vy = 3;
 
-#define MENULENGTH 2
+#define MENULENGTH 3
 char* PROGMEM menu[MENULENGTH] = {
-  "Master (host)",
-  "Slave (join)"
+  "Single player",
+  "Host (master)",
+  "Join (slave)"
 };
 
 ///////////////////////////////////// SETUP
 void setup() {
-  gb.begin();
-  Wire.begin();
-  Serial.begin(9600);
+  gb.begin(); //initialize the Gamebuino
+  gb.battery.display(false); //hide the battery indicator
 }
 
 ///////////////////////////////////// LOOP
 void loop() {
   switch(gb.menu(menu, MENULENGTH)){
-  case 0: //Host
+  case 0: //single player
+    singlePlayer = true;
+    break;
+  case 1: //Host
+    singlePlayer = false;
     setupMaster();
     break;
-  case 1: //Join
+  case 2: //Join
+    singlePlayer = false;
     setupSlave();
     break;
   default:
     break;
   }
-  play();
+
+  while(1){ //infinite loop, like the loop() function
+    if(gb.update()){ //update the Gamebuino
+      if(gb.buttons.pressed(BTN_C)){
+        break; //break the infinite loop to get back to the menu
+      }
+      if(!paused){
+        if(gb.buttons.repeat(BTN_UP, 1)){
+          player_y = max(0, player_y - player_vy);
+        }
+        if(gb.buttons.repeat(BTN_DOWN, 1)){
+          player_y = min(LCDHEIGHT-player_h, player_y + player_vy);
+        }
+      }
+      if(singlePlayer){
+        updateGame();
+      }
+      else {
+        gb.display.setTextSize(1);
+        if(isMaster){
+          gb.display.print(" master ");
+          updateMaster();
+        }
+        else {
+          gb.display.print(" slave ");
+          updateSlave();
+        }
+      }
+
+      updateSound();
+      updateDisplay();
+
+
+    }
+  }
 }
+
+
+
+
 
 
 

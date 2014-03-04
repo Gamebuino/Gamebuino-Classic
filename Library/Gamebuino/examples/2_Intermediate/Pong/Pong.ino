@@ -35,7 +35,7 @@ void loop() {
   if(gb.update()){
     //pause the game if C is pressed
     if(gb.buttons.pressed(BTN_C)){
-      paused = true;
+      paused = !paused; //toggle paused state
     }
     if(!paused){
       //move the player
@@ -45,14 +45,6 @@ void loop() {
       if(gb.buttons.repeat(BTN_DOWN, 1)){
         player_y = min(LCDHEIGHT - player_h, player_y + player_vy);
       }
-      //check that the ball is not going out of the screen
-      //if the ball is touching the left side of the screen
-      if(ball_x < 0){
-        //change the direction of the horizontal speed
-        ball_vx = -ball_vx;
-        //play a preset "tick" sound when the ball hits the border
-        gb.sound.playTick();
-      }
 
       //move the ball
       ball_x = ball_x + ball_vx;
@@ -61,11 +53,13 @@ void loop() {
       //check for ball collisions
       //collision with the top border
       if(ball_y < 0){
+        ball_y = 0;
         ball_vy = -ball_vy;
         gb.sound.playTick();
       }
       //collision with the bottom border
       if((ball_y + ball_size) > LCDHEIGHT){
+        ball_y = LCDHEIGHT - ball_size;
         ball_vy = -ball_vy;
         gb.sound.playTick();
       }
@@ -93,7 +87,7 @@ void loop() {
       if((ball_x + ball_size) > LCDWIDTH){
         player_score = player_score + 1;
         gb.sound.playCancel();
-        ball_x = LCDWIDTH - ball_size - oponent_w - 1;
+        ball_x = LCDWIDTH - ball_size - oponent_w - 1; //place the ball on the oponent side
         ball_vx = -abs(ball_vx);
         ball_y = random(0,LCDHEIGHT-ball_size);
       }
@@ -107,16 +101,13 @@ void loop() {
         oponent_y = oponent_y - oponent_vy; //move up
         oponent_y = max(0, oponent_y); //don't go out of the screen
       }
-
-
-
     }
 
     //draw the score
     gb.display.setTextSize(2);
-    gb.display.setCursor((84/4)-6,48/2-8);
+    gb.display.setCursor(15,16);
     gb.display.print(player_score);
-    gb.display.setCursor((3*84/4)-6,48/2-8);
+    gb.display.setCursor(57,16);
     gb.display.print(oponent_score);
     //draw the ball
     gb.display.fillRect(ball_x, ball_y, ball_size, ball_size, BLACK);

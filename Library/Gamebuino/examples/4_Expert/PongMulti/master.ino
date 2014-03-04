@@ -7,7 +7,15 @@ void setupMaster(){
 ///////////////////////////////////// UPDATE MASTER
 void updateMaster(){
   //read from slave
-  if(Wire.requestFrom(2, 2)){    // request 6 bytes from slave device #2
+  masterRead();
+  updateGame();
+  masterWrite();
+
+}
+
+///////////////////////////////////// MASTER READ
+void masterRead(){
+  if(Wire.requestFrom(2, SLAVE_DATA_BUFFER_LENGTH)){    // request 6 bytes from slave device #2
     paused = false;
     while(Wire.available()){    // slave may send less than requested
       char data_in = Wire.read(); // receive byte per byte
@@ -24,21 +32,10 @@ void updateMaster(){
     gb.popup("DISCONNECTED!",15);
     paused = true;
   }
+}
 
-  if(!paused){
-    ball_x += ball_vx;
-    ball_y += ball_vy;
-    if(ball_x<0)
-      ball_vx=1;
-    if((ball_x+ball_size)>LCDWIDTH)
-      ball_vx=-1;
-    if(ball_y<0)
-      ball_vy=1;
-    if((ball_y+ball_size)>LCDHEIGHT)
-      ball_vy=-1;
-  }
-
-  //write to slave
+///////////////////////////////////// MASTER WRITE
+void masterWrite(){
   Wire.beginTransmission(2); // transmit to device #2
   Wire.write(PLAYER_Y); //identifier
   Wire.write(player_y); //variable
@@ -46,10 +43,12 @@ void updateMaster(){
   Wire.write(ball_x);
   Wire.write(BALL_Y);
   Wire.write(ball_y);
+  Wire.write(PLAYER_SCORE);
+  Wire.write(player_score);
+  Wire.write(OPONENT_SCORE);
+  Wire.write(oponent_score);
   Wire.endTransmission();    // stop transmitting
-
 }
-
 
 
 
