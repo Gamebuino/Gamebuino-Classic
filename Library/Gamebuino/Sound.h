@@ -12,8 +12,8 @@
 #include <avr/pgmspace.h>
 #include "settings.c"
 
-#define BUZZER_PIN 3 //not used, direct acces to the register for perf
-#define NUM_CHANNELS 1
+#define BUZZER_PIN 3 //not used, direct access to the register for perf
+
 
 class Sound {
 public:

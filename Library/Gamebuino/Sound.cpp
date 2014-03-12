@@ -27,11 +27,10 @@ PROGMEM uint16_t sound_Tick[] = {0x601F, 0x0000};
 
 void Sound::begin() {
 
-    globalVolume = VOLUME_GLOBAL_DEFAULT;
-    chanVolumes[0] = 6;
-    chanVolumes[1] = 2;
-    chanVolumes[2] = 2;
-    chanVolumes[3] = 2;
+    globalVolume = VOLUME_GLOBAL_MAX;
+	for(byte i=0; i<NUM_CHANNELS; i++){
+		chanVolumes[i] = VOLUME_CHANNEL_MAX;
+	}
     
     analogWrite(3, 1); //just to get the right register settings for the PWM
     TCCR2B = (TCCR2B & B11111000) | 1; //set timer 2 prescaler to 1 -> 30kHz PWM on pin 3

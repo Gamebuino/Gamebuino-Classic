@@ -13,7 +13,7 @@ void Backlight::begin() {
 }
 
 void Backlight::set(uint8_t value) {
-    //analogWrite(BACKLIGHT_PIN, value);
+    analogWrite(BACKLIGHT_PIN, value);
 }
 
 void Backlight::setAuto(boolean val) {

@@ -168,23 +168,49 @@ void play(){
         playerX, playerY, playerW, playerH)){
           playerLife--;
           shake_magnitude = 2;
-          shake_timeLeft = 3;
+          shake_timeLeft = 4;
           if(mobs_size[thisMob] == boss_size){
             playerLife--;
             shake_magnitude = 3;
-            shake_timeLeft = 3;
+            shake_timeLeft = 4;
           }
           gb.sound.play(player_damage_sound, 0);
           //gb.buzz(500,100);
           spawnMob(thisMob);
           if(playerLife < 0){
             //gb.display.print("TRY AGAIN!");
+
             for(byte i=0; i<250; i++){
               gb.display.fillRect(8*random(0,1+LCDWIDTH/8),8*random(0,1+LCDHEIGHT/8),8,8,WHITE);
               gb.display.setCursor(12,16);
               gb.display.setTextColor(BLACK, WHITE);
               gb.display.print("GAME OVER!");
               gb.display.update();
+            }
+            while(1){
+              if(gb.update()){
+                gb.display.setTextColor(BLACK, BLACK);
+                if(score > highscore[RANKMAX-1]){ //if the score is better than the worse high score
+                  gb.display.setCursor(2+random(0,2),0+random(0,2));
+                  gb.display.print("NEW HIGHSCORE");
+                }
+                else{ 
+                  gb.display.setCursor(12,16);
+                  gb.display.print("GAME OVER!");
+                }
+                gb.display.setCursor(0,12);
+                gb.display.print("You made $");
+                gb.display.print(score);
+                gb.display.print("\nby killing\n");
+                gb.display.print(kills);
+                gb.display.print(" crabs.");
+                gb.display.setCursor(0,40);
+                gb.display.print("A:accept");
+                if(gb.buttons.pressed(BTN_A)){
+                  gb.sound.playOK();
+                  break;
+                }
+              }
             }
             initGame();
             break;
@@ -244,24 +270,6 @@ void loadHighscore(){
 
 ///////////////////////////////////// SAVE HIGHSCORE
 void saveHighscore(){
-  while(1)
-    if(gb.update()){
-      gb.display.setTextColor(BLACK, BLACK);
-      gb.display.setCursor(2+random(0,2),0+random(0,2));
-      gb.display.print("NEW HIGHSCORE");
-      gb.display.setCursor(0,12);
-      gb.display.print("You made $");
-      gb.display.print(score);
-      gb.display.print("\nby killing\n");
-      gb.display.print(kills);
-      gb.display.print(" crabs.");
-      gb.display.setCursor(0,40);
-      gb.display.print("A:accept");
-      if(gb.buttons.pressed(BTN_A)){
-        gb.sound.playOK();
-        break;
-      }
-    }
   gb.keyboard(name[RANKMAX-1], NAMELENGTH);
   highscore[RANKMAX-1] = score;
   for(byte i=RANKMAX-1; i>0; i--){ //bubble sorting FTW
@@ -289,11 +297,8 @@ void saveHighscore(){
   displayHighScores();
 }
 
-///////////////////////////////////// ASSIGN ARRAY
-void assignArray(char *array1, char *array2, byte length){
-  for(byte i=0; i<length; i++)
-    array1[i] = array2[i];
-}
+
+
 
 
 

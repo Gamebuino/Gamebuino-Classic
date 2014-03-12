@@ -68,6 +68,13 @@ void pause(){
 
             gb.display.print("Backlight:");
             gb.display.println(gb.backlight.backlightValue);
+            
+            gb.display.print("CPU load:");
+            gb.display.print(gb.getCpuLoad());
+            gb.display.println("%");
+            
+            gb.display.print("Volume:");
+            gb.display.print(gb.sound.getGlobalVolume());
           }
         }
         break;
@@ -85,6 +92,7 @@ void displayHighScores(){
       gb.display.setCursor(9+random(0,2),0+random(0,2));
       gb.display.setTextColor(BLACK,BLACK);
       gb.display.println("HIGH SCORES");
+      gb.display.setTextWrap(false);
       gb.display.setCursor(0,8);
       for(byte thisScore=0; thisScore<RANKMAX; thisScore++){
         if(highscore[thisScore]==0)

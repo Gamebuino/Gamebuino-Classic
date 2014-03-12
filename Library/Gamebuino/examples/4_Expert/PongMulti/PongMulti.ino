@@ -22,7 +22,7 @@ char player_w = 2;
 char player_h = 12;
 char player_y = (LCDHEIGHT-player_h)/2;
 char player_x = 0;
-char player_vy = 2;
+char player_vy = 1;
 byte player_score = 0;
 //oponent variables
 char oponent_w = 2;
@@ -35,8 +35,8 @@ byte oponent_score = 0;
 char ball_size = 6;
 char ball_x = (LCDWIDTH-ball_size)/2;
 char ball_y = (LCDHEIGHT-ball_size)/2;
-char ball_vx = 3;
-char ball_vy = 3;
+char ball_vx = 2;
+char ball_vy = 2;
 
 #define MENULENGTH 3
 char* PROGMEM menu[MENULENGTH] = {
@@ -49,20 +49,27 @@ char* PROGMEM menu[MENULENGTH] = {
 void setup() {
   gb.begin(); //initialize the Gamebuino
   gb.battery.display(false); //hide the battery indicator
+  while(1);
 }
 
 ///////////////////////////////////// LOOP
 void loop() {
   switch(gb.menu(menu, MENULENGTH)){
   case 0: //single player
+    paused = false;
     singlePlayer = true;
+    isMaster = false;
     break;
   case 1: //Host
+    paused = false;
     singlePlayer = false;
+    isMaster = true;
     setupMaster();
     break;
   case 2: //Join
+    paused = false;
     singlePlayer = false;
+    isMaster = false;
     setupSlave();
     break;
   default:
@@ -84,6 +91,7 @@ void loop() {
       }
       if(singlePlayer){
         updateGame();
+        gb.display.print(" solo");
       }
       else {
         gb.display.setTextSize(1);
@@ -104,6 +112,8 @@ void loop() {
     }
   }
 }
+
+
 
 
 

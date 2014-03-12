@@ -18,7 +18,7 @@ void Battery::begin() {
 }
 
 void Battery::update() {
-    if (!(nextUpdate % 16)) { //every 16 frames
+    if (!(nextUpdate % 20)) { //every 20 frames
         voltage = analogRead(BAT_PIN)*6.4453; //3.3V * 2 *1000 / 1024
         //set the battery 'level' according to thresholds
         level = NUM_LVL;

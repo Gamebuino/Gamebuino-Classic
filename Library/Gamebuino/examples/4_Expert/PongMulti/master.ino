@@ -1,6 +1,5 @@
 ///////////////////////////////////// SETUP MASTER
 void setupMaster(){
-  isMaster = true;
   Wire.begin();
 }
 

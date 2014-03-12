@@ -1,5 +1,5 @@
 ///////////////////////////////////// UPDATE SOUND
-void updateSound(){
+void updateSound(){/*
   //make a sound if the ball touches the top or bottom border
   if((ball_y == 0) || (ball_y == LCDHEIGHT - ball_size)){
     gb.sound.playTick();
@@ -11,5 +11,5 @@ void updateSound(){
   //if the ball touches the player's border
   if(ball_x < 0){
     gb.sound.playCancel();
-  }
+  }*/
 }

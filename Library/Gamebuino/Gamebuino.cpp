@@ -23,8 +23,13 @@ void Gamebuino::begin() {
     battery.begin();
     sound.begin();
     display.begin(SCR_CLK, SCR_DIN, SCR_DC, SCR_CS, SCR_RST);
+	
+	buttons.update();
+	if(buttons.pressed(BTN_A)){
+		sound.setGlobalVolume(0);
+	}
     
-    backlight.set(255);
+    backlight.set(BACKLIGHT_MAX);
     sound.play(startupSound, 0);
     while (sound.isPlaying(0)) {
         sound.update();

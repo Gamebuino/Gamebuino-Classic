@@ -13,17 +13,17 @@
 #define SCR_CS  A1
 #define SCR_RST A0
 
-//buzzer
-#define VOLUME_GLOBAL_DEFAULT 6
+//sound
+#define NUM_CHANNELS 1
 #define VOLUME_GLOBAL_MAX 3
-#define VOLUME_CHANNEL_MAX 3
+#define VOLUME_CHANNEL_MAX 255/NUM_CHANNELS/VOLUME_GLOBAL_MAX/7 //7 is the volume max of a note
 
 //battery voltage monitor
 #define BAT_PIN A6
 #define NUM_LVL 3
 #define BAT_LVL_LOW		3500
-#define BAT_LVL_MED		3700
-#define BAT_LVL_HIGH	3900
+#define BAT_LVL_MED		3600
+#define BAT_LVL_HIGH	3700
 
 //SD card
 #define SD_CS 10
@@ -32,7 +32,7 @@
 #define BACKLIGHT_PIN 5
 //auto back-light levels
 #define BACKLIGHT_MIN 0
-#define BACKLIGHT_MAX 128
+#define BACKLIGHT_MAX 255
 
 //ambient light sensor
 #define AMBIENTLIGHT_PIN A7

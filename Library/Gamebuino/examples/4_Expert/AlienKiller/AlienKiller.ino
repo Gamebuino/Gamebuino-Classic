@@ -310,6 +310,12 @@ byte distanceBetween(int pos1, int pos2, int worldSize){
   return dist;
 }
 
+///////////////////////////////////// ASSIGN ARRAY
+void assignArray(char *array1, char *array2, byte length){
+  for(byte i=0; i<length; i++)
+    array1[i] = array2[i];
+}
+
 
 
 

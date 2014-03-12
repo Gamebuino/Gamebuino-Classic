@@ -9,39 +9,39 @@ void updateGame(){
     //collision with the top border
     if(ball_y < 0){
       ball_vy = -ball_vy;
-      //gb.sound.playTick();
+      gb.sound.playTick();
     }
     //collision with the bottom border
     if((ball_y + ball_size) > LCDHEIGHT){
       ball_vy = -ball_vy;
-      //gb.sound.playTick();
+      gb.sound.playTick();
     }
     //collision with the player
     if(gb.collideRectRect(ball_x, ball_y, ball_size, ball_size, player_x, player_y, player_w, player_h)){
       ball_x = player_x + player_w;
       ball_vx = -ball_vx;
-      //gb.sound.playTick();
+      gb.sound.playTick();
     }
     //collision with the oponent
     if(gb.collideRectRect(ball_x, ball_y, ball_size, ball_size, oponent_x, oponent_y, oponent_w, oponent_h)){
       ball_x = oponent_x - ball_size;
       ball_vx = -ball_vx;
-      //gb.sound.playTick();
+      gb.sound.playTick();
     }
     //collision with the left side
     if(ball_x < 0){
       oponent_score = oponent_score + 1;
       gb.sound.playCancel();
       ball_x = (LCDWIDTH-ball_size)/2;
-      ball_vx = -abs(ball_vx);
+      ball_vx = 4*random(0,2)-2; //pick -2 or 2
       ball_y = random(0,LCDHEIGHT-ball_size);
     }
     //collision with the right side
     if((ball_x + ball_size) > LCDWIDTH){
       player_score = player_score + 1;
-      //gb.sound.playCancel();
+      gb.sound.playCancel();
       ball_x = (LCDWIDTH-ball_size)/2;
-      ball_vx = -abs(ball_vx);
+      ball_vx = 4*random(0,2)-2; //pick -2 or 2
       ball_y = random(0,LCDHEIGHT-ball_size);
     }
     
