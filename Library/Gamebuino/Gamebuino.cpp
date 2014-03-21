@@ -18,7 +18,7 @@ void Gamebuino::begin() {
     nextFrameMillis = 0;
     frameCount = 0;
 
-    backlight.begin();
+    backlight.begin(BACKLIGHT_PIN);
     buttons.begin();
     battery.begin();
     sound.begin();

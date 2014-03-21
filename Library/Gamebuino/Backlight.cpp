@@ -7,13 +7,14 @@
 
 #include "Backlight.h"
 
-void Backlight::begin() {
+void Backlight::begin(int8_t blacklight_pin) {
+    blacklight_pin = blacklight_pin;
     ambientLight = 0;
     automatic = true;
 }
 
 void Backlight::set(uint8_t value) {
-    analogWrite(BACKLIGHT_PIN, value);
+    analogWrite(blacklight_pin, value);
 }
 
 void Backlight::setAuto(boolean val) {

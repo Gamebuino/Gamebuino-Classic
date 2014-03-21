@@ -13,13 +13,14 @@
 
 class Backlight {
 public:
-    void begin();
+    void begin(int8_t blacklight_pin);
     void set(uint8_t value);
     void setAuto(boolean val);
     void update();
     uint16_t ambientLight;
     uint8_t backlightValue;
 private:
+    int8_t blacklight_pin;
     boolean automatic;
     uint8_t smoothing;
 };
