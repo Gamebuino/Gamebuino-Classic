@@ -8,7 +8,7 @@ void setup() {
   img = loadImage("input.bmp");
   image(img, 0, 0);
 
-  output.println("static usigned char PROGMEM bitmapName[] =");
+  output.println("static unsigned char PROGMEM bitmapName[] =");
   output.println("{");
   output.print("  ");
   output.print(img.width);
@@ -25,11 +25,11 @@ void setup() {
       for (int b = 0; b<8; b++) {
         color thisColor = img.get(x+b, y);
         if (brightness(thisColor) > 100) {
-          output.print("1");
+          output.print("0");
           img.set(x+b, y, color(255));
         }
         else {
-          output.print("0");
+          output.print("1");
           img.set(x+b, y, color(0));
         }
       }
