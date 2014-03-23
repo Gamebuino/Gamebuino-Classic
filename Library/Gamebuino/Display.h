@@ -86,8 +86,9 @@ public:
     void drawRoundRect(int8_t x0, int8_t y0, int8_t w, int8_t h, int8_t radius, uint8_t color);
     void fillRoundRect(int8_t x0, int8_t y0, int8_t w, int8_t h, int8_t radius, uint8_t color);
     
-    void drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap, int8_t w, int8_t h, uint8_t color);
-    void drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap, int8_t w, int8_t h, uint8_t rotation, uint8_t flip, uint8_t color);
+    void drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap);
+    void drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap, uint8_t rotation, uint8_t flip);
+	void setBitmapColor(uint8_t c);
     void drawChar(int8_t x, int8_t y, unsigned char c, uint8_t color, uint8_t bg, uint8_t size);
 
     virtual size_t write(uint8_t);
@@ -96,13 +97,17 @@ public:
     void setTextColor(uint8_t c, uint8_t bg);
     void setTextSize(uint8_t s);
     void setTextWrap(boolean w);
+	
+	boolean persistance; //disable automatic display clean() at each frame if true
 
 private:
     int8_t sclk, din, dc, cs, rst;
     volatile uint8_t *mosiport, *clkport, *csport, *dcport;
     uint8_t mosipinmask, clkpinmask, cspinmask, dcpinmask;
+	
 
     int8_t cursor_x, cursor_y;
+	uint8_t bitmapcolor;
     uint8_t textcolor, textbgcolor;
     uint8_t textsize;
     boolean wrap; // If set, 'wrap' text at right edge of display
