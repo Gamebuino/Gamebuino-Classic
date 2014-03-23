@@ -6,7 +6,6 @@
  */
 
 #include "Gamebuino.h"
-#include "batteryBitmap.c"
 char loader[] = "LOADER";
 PROGMEM uint16_t startupSound[] = {0x1E, 0x10, 0x301E, 0x10, 0x602E, 0x602C, 0x602A, 0x6028, 0x6026, 0x6024, 0x6022, 0x80, 0x0000};
 
@@ -33,8 +32,10 @@ void Gamebuino::begin(char*  name, const uint8_t *logo) {
 	display.setCursor(offset,12); 
 	display.print(name);
 	display.drawBitmap(0, 12, logo);
-    
-	sound.play(startupSound, 0);
+	
+	update();
+	
+    sound.play(startupSound, 0);
 	while(1){
 		if(update()){
 			if(buttons.pressed(BTN_A))
@@ -188,11 +189,11 @@ int8_t Gamebuino::menu(char** items, uint8_t length) {
 void Gamebuino::keyboard(char* text, uint8_t length) {
 #if (ENABLE_GUI > 0)
     memset(text, 0, length); //clear the text
-    //active character in th typing area
+    //active character in the typing area
     int8_t activeChar = 0;
     //selected char on the keyboard
-    int8_t activeX = 1;
-    int8_t activeY = 4;
+    int8_t activeX = 0;
+    int8_t activeY = 2;
     //position of the keyboard on the screen
     int8_t currentX = LCDWIDTH;
     int8_t currentY = LCDHEIGHT;
@@ -297,7 +298,7 @@ void Gamebuino::keyboard(char* text, uint8_t length) {
             }
             //blinking cursor
             if (((frameCount % 8) < 4) && (activeChar < length))
-                display.drawChar(6 * activeChar, 41, '_', BLACK, BLACK, 1);
+                display.drawChar(6 * activeChar, 40, '_', BLACK, BLACK, 1);
         }
     }
 #endif
@@ -358,10 +359,12 @@ void Gamebuino::adjustVolume(){
 
 void Gamebuino::displayBattery(){
 #if (ENABLE_BATTERY > 0)
+    display.setTextColor(BLACK, WHITE);
+	display.setCursor(79,0);
 	if(!battery.getLevel()){
 		if((frameCount % 16) < 8) { //blink
 			display.fillRect(79,0,5,8,WHITE);
-			display.drawBitmap(80,0, batterySprite[battery.getLevel()]);
+			display.print(char(7));
 			if(!(frameCount % 16)){
 				sound.playTick();
 			}
@@ -370,7 +373,7 @@ void Gamebuino::displayBattery(){
 	else
 		if(battery.show){
 			display.fillRect(79,0,5,8,WHITE);
-			display.drawBitmap(80,0, batterySprite[battery.getLevel()-1]);
+			display.print(char(7 + battery.getLevel() - 1));
 		}
 #endif
 }
