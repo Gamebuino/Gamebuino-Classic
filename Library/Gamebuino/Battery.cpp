@@ -8,17 +8,20 @@
 #include "Battery.h"
 
 void Battery::begin() {
-    voltage = 0;
-    level = 0;
-    nextUpdate = 0;
-	show = true;
+#if (ENABLE_BATTERY > 0)
+    voltage = BAT_LVL_HIGH;
+    level = NUM_LVL;
+    nextUpdate = 1;
+	show = false;
     thresolds[0] = BAT_LVL_LOW;
     thresolds[1] = BAT_LVL_MED;
     thresolds[2] = BAT_LVL_HIGH;
+#endif
 }
 
 void Battery::update() {
-    if (!(nextUpdate % 20)) { //every 20 frames
+#if (ENABLE_BATTERY > 0)
+    if (!(nextUpdate % 32)) { //every 32 frames
         voltage = analogRead(BAT_PIN)*6.4453; //3.3V * 2 *1000 / 1024
         //set the battery 'level' according to thresholds
         level = NUM_LVL;
@@ -35,17 +38,24 @@ void Battery::update() {
         }
     }
     nextUpdate++;
+#endif
 }
 
 uint16_t Battery::getVoltage(){
+#if (ENABLE_BATTERY > 0)
     return voltage;
+#endif
 }
 
 uint8_t Battery::getLevel(){
+#if (ENABLE_BATTERY > 0)
     return level;
+#endif
 }
 
 void Battery::display(boolean disp){
+#if (ENABLE_BATTERY > 0)
 	show = disp;
+#endif
 }
 

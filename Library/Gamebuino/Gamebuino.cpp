@@ -7,13 +7,13 @@
 
 #include "Gamebuino.h"
 #include "batteryBitmap.c"
-
+char loader[] = "LOADER";
 PROGMEM uint16_t startupSound[] = {0x1E, 0x10, 0x301E, 0x10, 0x602E, 0x602C, 0x602A, 0x6028, 0x6026, 0x6024, 0x6022, 0x80, 0x0000};
 
 Gamebuino::Gamebuino() {
 }
 
-void Gamebuino::begin() {
+void Gamebuino::begin(char*  name, const uint8_t *logo) {
     timePerFrame = 50;
     nextFrameMillis = 0;
     frameCount = 0;
@@ -24,22 +24,44 @@ void Gamebuino::begin() {
     sound.begin();
     display.begin(SCR_CLK, SCR_DIN, SCR_DC, SCR_CS, SCR_RST);
 	
-	buttons.update();
-	if(buttons.pressed(BTN_A)){
-		sound.setGlobalVolume(0);
-	}
-    
     backlight.set(BACKLIGHT_MAX);
-    sound.play(startupSound, 0);
-    while (sound.isPlaying(0)) {
-        sound.update();
-        delay(50);
-    }
+	display.persistance = true;
+	
+	uint8_t offset = 0;
+	if(logo)
+		offset = pgm_read_byte(logo)+2; //offset by the logo width
+	display.setCursor(offset,12); 
+	display.print(name);
+	display.drawBitmap(0, 12, logo);
+    
+	sound.play(startupSound, 0);
+	while(1){
+		if(update()){
+			if(buttons.pressed(BTN_A))
+				break;
+			if(buttons.repeat(BTN_B,1)){
+				sound.setGlobalVolume(0);
+				display.fillRect(56,31,28,8,WHITE); //hide "mute" when muted
+			}
+			if(buttons.pressed(BTN_C))
+				changeGame();
+			
+		}
+	}
+	display.persistance = false;
+	battery.show = true;
+}
 
+void Gamebuino::begin(char* name){
+	begin(name, 0);
+}
+
+void Gamebuino::begin(){
+	begin("");
 }
 
 boolean Gamebuino::update() {
-    if ((nextFrameMillis - millis()) > timePerFrame) { //if time to render a new frame is reached
+    if (((nextFrameMillis - millis()) > timePerFrame) && frameEndMicros) { //if time to render a new frame is reached and the frame end has ran once
         nextFrameMillis = millis() + timePerFrame;
         frameCount++;
 
@@ -58,8 +80,9 @@ boolean Gamebuino::update() {
             sound.update();
             updatePopup();
 			displayBattery();
-            display.update();
-            display.clear();
+            display.update(); //send the buffer to the screen
+			if(!display.persistance)
+				display.clear(); //clear the buffer
 
             frameEndMicros = micros(); //measure the frame's end time
             frameDurationMicros = frameEndMicros - frameStartMicros;
@@ -106,6 +129,7 @@ uint16_t Gamebuino::freeRam() {
 }
 
 int8_t Gamebuino::menu(char** items, uint8_t length) {
+#if (ENABLE_GUI > 0)
     int8_t activeItem = 0;
     int8_t currentY = LCDHEIGHT;
     int8_t targetY = 0;
@@ -158,9 +182,11 @@ int8_t Gamebuino::menu(char** items, uint8_t length) {
             display.drawRoundRect(0, currentY + 8 * activeItem - 2, LCDWIDTH, 11, 3, BLACK);
         }
     }
+#endif
 }
 
 void Gamebuino::keyboard(char* text, uint8_t length) {
+#if (ENABLE_GUI > 0)
     memset(text, 0, length); //clear the text
     //active character in th typing area
     int8_t activeChar = 0;
@@ -274,14 +300,18 @@ void Gamebuino::keyboard(char* text, uint8_t length) {
                 display.drawChar(6 * activeChar, 41, '_', BLACK, BLACK, 1);
         }
     }
+#endif
 }
 
 void Gamebuino::popup(char* text, uint8_t duration){
+#if (ENABLE_GUI > 0)
     popupText = text;
     popupTimeLeft = duration;
+#endif
 }
 
 void Gamebuino::updatePopup(){
+#if (ENABLE_GUI > 0)
     if (popupTimeLeft){
         uint8_t yOffset = 0;
         if(popupTimeLeft<12){
@@ -295,13 +325,43 @@ void Gamebuino::updatePopup(){
         display.print(popupText);
         popupTimeLeft--;
     }
+#endif
+}
+
+void Gamebuino::adjustVolume(){
+#if (ENABLE_GUI > 0) || (NUM_CHANNELS > 0)
+  while(1){
+    if(update()==true){
+      byte volume = sound.getGlobalVolume();
+      display.setTextSize(1);
+      display.setTextColor(BLACK, BLACK);
+      display.setCursor(24, 16);
+      display.println("VOLUME");
+      display.drawRoundRect(24,28,36,7,3,BLACK);
+      if(volume)
+        display.fillRoundRect(24,28,12*volume,7,3,BLACK);
+      if(buttons.pressed(BTN_RIGHT) || buttons.pressed(BTN_UP)){
+        sound.setGlobalVolume(volume + 1);
+        sound.playOK();
+      }
+      if(buttons.pressed(BTN_LEFT) || buttons.pressed(BTN_DOWN)){
+        sound.setGlobalVolume(volume - 1);
+        sound.playCancel();
+      }
+      if(buttons.pressed(BTN_C)){
+        break;
+      }
+    }
+  }
+#endif
 }
 
 void Gamebuino::displayBattery(){
+#if (ENABLE_BATTERY > 0)
 	if(!battery.getLevel()){
 		if((frameCount % 16) < 8) { //blink
 			display.fillRect(79,0,5,8,WHITE);
-			display.drawBitmap(80,0, batterySprite[battery.getLevel()], 8, 7, BLACK);
+			display.drawBitmap(80,0, batterySprite[battery.getLevel()]);
 			if(!(frameCount % 16)){
 				sound.playTick();
 			}
@@ -310,12 +370,24 @@ void Gamebuino::displayBattery(){
 	else
 		if(battery.show){
 			display.fillRect(79,0,5,8,WHITE);
-			display.drawBitmap(80,0, batterySprite[battery.getLevel()-1], 8, 7, BLACK);
+			display.drawBitmap(80,0, batterySprite[battery.getLevel()-1]);
 		}
-	//test battery sprite
-	/*display.drawBitmap(10,1, batterySprite[0], 8, 7, BLACK);
-	display.drawBitmap(20,1, batterySprite[1], 8, 7, BLACK);
-	display.drawBitmap(30,1, batterySprite[2], 8, 7, BLACK);*/
+#endif
+}
+
+void Gamebuino::changeGame(){
+	display.clear();
+	display.print("LOADING...");
+	display.update();
+	load_game(loader);
+	display.persistance = false;
+	while(1){
+		if(update()){
+			display.println("\nNo SD card or\nno LOADER.HEX\n\nA:Exit");
+			if(buttons.pressed(BTN_A))
+				break;
+		}
+	}
 }
 
 boolean Gamebuino::collidePointRect(int16_t x1, int16_t y1 ,int16_t x2 ,int16_t y2, int16_t w, int16_t h){

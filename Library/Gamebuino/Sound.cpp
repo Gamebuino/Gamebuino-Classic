@@ -6,7 +6,7 @@
  */
 
 #include "Sound.h"
-
+#if(NUM_CHANNELS > 0)
 //declare these variables globally for faster access
 uint8_t _rand = 1;
 uint8_t _chanCount[NUM_CHANNELS];
@@ -24,9 +24,10 @@ uint8_t _halfPeriods[NUM_FREQ] = {219, 207, 195, 184, 174, 164, 155, 147, 138, 1
 PROGMEM uint16_t sound_OK[] = {0x301E, 0x601E, 0x0000};
 PROGMEM uint16_t sound_Cancel[] = {0x601E, 0x301E, 0x0000};
 PROGMEM uint16_t sound_Tick[] = {0x601F, 0x0000};
+#endif
 
 void Sound::begin() {
-
+#if(NUM_CHANNELS > 0)
     globalVolume = VOLUME_GLOBAL_MAX;
 	for(byte i=0; i<NUM_CHANNELS; i++){
 		chanVolumes[i] = VOLUME_CHANNEL_MAX;
@@ -48,10 +49,11 @@ void Sound::begin() {
     TIMSK1 |= (1 << OCIE1A); // enable timer compare interrupt
     interrupts(); // enable all interrupts
 
-
+#endif
 }
 
 void Sound::play(uint16_t* soundData, uint8_t channel) {
+#if(NUM_CHANNELS > 0)
 	if(channel>=NUM_CHANNELS)
 		return;
     stop(channel);
@@ -60,18 +62,22 @@ void Sound::play(uint16_t* soundData, uint8_t channel) {
     nextChange[channel] = 0;
     cursorPosition[channel] = 0;
     _chanState[channel] = true;
+#endif
 }
 
 boolean Sound::isPlaying(uint8_t channel) {
+#if(NUM_CHANNELS > 0)
 	if(channel>=NUM_CHANNELS)
 		return false;
     if (playing[channel] == true)
         return true;
     else
         return false;
+#endif
 }
 
 void Sound::stop(uint8_t channel) {
+#if(NUM_CHANNELS > 0)
 	if(channel>=NUM_CHANNELS)
 		return;
     playing[channel] = false;
@@ -79,57 +85,77 @@ void Sound::stop(uint8_t channel) {
     _chanOutputVolume[channel] = 0;
     _chanState[channel] = false;
     updateOutput();
+#endif
 }
 
 void Sound::stop() {
+#if(NUM_CHANNELS > 0)
     for (uint8_t channel = 0; channel < NUM_CHANNELS; channel++) {
         stop(channel);
     }
+#endif
 }
 
 void Sound::setLooping(uint8_t channel, boolean loop) {
+#if(NUM_CHANNELS > 0)
 	if(channel>=NUM_CHANNELS)
 		return;
     looping[channel] = loop;
+#endif
 }
 
 void Sound::setGlobalVolume(int8_t volume) {
+#if NUM_CHANNELS > 0
     volume = (volume > VOLUME_GLOBAL_MAX) ? VOLUME_GLOBAL_MAX : volume;
     volume = (volume < 0) ? 0 : volume;
     globalVolume = volume;
+#endif
 }
 
 uint8_t Sound::getGlobalVolume() {
+#if NUM_CHANNELS > 0
     return globalVolume;
+#endif
 }
 
 void Sound::setChannelVolume(int8_t volume, uint8_t channel) {
+#if(NUM_CHANNELS > 0)
 	if(channel>=NUM_CHANNELS)
 		return;
     volume = (volume > VOLUME_CHANNEL_MAX) ? VOLUME_CHANNEL_MAX : volume;
     volume = (volume < 0) ? 0 : volume;
     chanVolumes[channel] = volume;
+#endif
 }
 
 uint8_t Sound::getChannelVolume(uint8_t channel) {
+#if(NUM_CHANNELS > 0)
 	if(channel>=NUM_CHANNELS)
 		return 255;
     return (chanVolumes[channel]);
+#endif
 }
 
 void Sound::playOK() {
+#if(NUM_CHANNELS > 0)
     play(sound_OK, 0);
+#endif
 }
 
 void Sound::playCancel() {
+#if(NUM_CHANNELS > 0)
     play(sound_Cancel, 0);
+#endif
 }
 
 void Sound::playTick() {
+#if(NUM_CHANNELS > 0)
     play(sound_Tick, 0);
+#endif
 }
 
 void Sound::update() {
+#if(NUM_CHANNELS > 0)
     noInterrupts();
     for (uint8_t i = 0; i < NUM_CHANNELS; i++) {
         if (playing[i]) {
@@ -179,21 +205,27 @@ void Sound::update() {
         }
     }
     interrupts();
+#endif
 }
 
 void Sound::setChannelHalfPeriod(uint8_t channel, uint8_t halfPeriod) {
+#if(NUM_CHANNELS > 0)
     _chanHalfPeriod[channel] = halfPeriod;
     _chanState[channel] = false;
     _chanCount[channel] = 0;
     updateOutput();
+#endif
 }
 
 ISR(TIMER1_COMPA_vect) // timer compare interrupt service routine
 {
+#if(NUM_CHANNELS > 0)
      Sound::generateOutput();
+#endif
 }
 
 void Sound::generateOutput() {
+#if(NUM_CHANNELS > 0)
     boolean outputChanged = false;
     //no for loop here, for the performance sake (this function runs 15 000 times per second...)
     //CHANNEL 0
@@ -262,9 +294,11 @@ void Sound::generateOutput() {
     if (outputChanged) {
         updateOutput();
     }
+#endif
 }
 
 void Sound::updateOutput() {
+#if(NUM_CHANNELS > 0)
     uint8_t output = 0;
 
     //CHANNEL 0
@@ -293,4 +327,5 @@ void Sound::updateOutput() {
     }
 	#endif
     OCR2B = output; //60x faster than analogOutput() !
+#endif
 }

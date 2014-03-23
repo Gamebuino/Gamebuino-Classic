@@ -8,6 +8,8 @@
 #ifndef GAMEBUINO_H
 #define	GAMEBUINO_H
 
+#define load_game (*((void(*)(char*))0x7ffc))
+
 #include <Arduino.h>
 #include <avr/pgmspace.h>
 #include "settings.c"
@@ -26,6 +28,8 @@ public:
     Sound sound;
     Display display;
 
+	void begin(char* name, const uint8_t *logo);
+	void begin(char* name);
     void begin();
     boolean update();
     uint32_t getFrameCount();
@@ -40,6 +44,8 @@ public:
     int8_t menu(char** items, uint8_t length);
     void keyboard(char* text, uint8_t length);
     void popup(char* text, uint8_t duration);
+	void adjustVolume();
+	void changeGame();
 	
 	boolean collidePointRect(int16_t x1, int16_t y1 ,int16_t x2 ,int16_t y2, int16_t w, int16_t h);
 	boolean collideRectRect(int16_t x1, int16_t y1, int16_t w1, int16_t h1 ,int16_t x2 ,int16_t y2, int16_t w2, int16_t h2);

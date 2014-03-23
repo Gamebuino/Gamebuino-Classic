@@ -8,8 +8,10 @@
 #include "Backlight.h"
 
 void Backlight::begin() {
+#if (ENABLE_BACKLIGHT > 0)
     ambientLight = 0;
     automatic = true;
+#endif
 }
 
 void Backlight::set(uint8_t value) {
@@ -17,13 +19,17 @@ void Backlight::set(uint8_t value) {
 }
 
 void Backlight::setAuto(boolean val) {
+#if (ENABLE_BACKLIGHT > 0)
     automatic = val;
+#endif
 }
 
 void Backlight::update() {
+#if (ENABLE_BACKLIGHT > 0)
     ambientLight = (ambientLight * (AMBIENTLIGHT_SMOOTHING - 1) + analogRead(AMBIENTLIGHT_PIN)) / AMBIENTLIGHT_SMOOTHING; //read value and smooth it
     if (automatic) {
         backlightValue = map(constrain(ambientLight, AMBIENTLIGHT_MIN, AMBIENTLIGHT_MAX), AMBIENTLIGHT_MIN, AMBIENTLIGHT_MAX, BACKLIGHT_MAX, BACKLIGHT_MIN);
         set(backlightValue);
     }
+#endif
 }

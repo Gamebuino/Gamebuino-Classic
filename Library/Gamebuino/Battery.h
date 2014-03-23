@@ -28,10 +28,12 @@ public:
 	void display(boolean disp);
 	boolean show;
 private:
+#if (ENABLE_BATTERY > 0)
     uint16_t voltage;
     uint8_t  level;
     uint8_t  nextUpdate;
     uint16_t thresolds[NUM_LVL];
+#endif
 };
 
 #endif	/* BATTERY_H */

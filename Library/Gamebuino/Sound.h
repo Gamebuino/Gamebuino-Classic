@@ -39,6 +39,7 @@ public:
 
     static void generateOutput(); //!\\ DO NOT USE
 private:
+#if (NUM_CHANNELS > 0)
     uint16_t* data[NUM_CHANNELS];
     uint8_t globalVolume;
     uint8_t chanVolumes[NUM_CHANNELS];
@@ -47,8 +48,8 @@ private:
     uint8_t nextChange[NUM_CHANNELS];
     boolean playing[NUM_CHANNELS];
     boolean looping[NUM_CHANNELS];
+#endif
     static void updateOutput();
-
 };
 
 #endif	/* SOUND_H */
