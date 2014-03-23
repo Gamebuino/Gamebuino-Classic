@@ -146,6 +146,30 @@ void drawBullets(){
   }
 }
 
+///////////////////////////////////// DRAW AMMO OVERLAY
+void drawAmmoOverlay(){
+  if(ammo){
+    gb.display.setCursor(0,40);
+    gb.display.setTextColor(BLACK,WHITE);
+    gb.display.print(weapon_name[currentWeapon]);
+    if(nextShot>2)
+      gb.display.fillRect(-2,LCDHEIGHT-2,nextShot,2,BLACK);
+    if(currentWeapon > 0){ //don't display the ammo of the cut
+      byte xOffset = 0;
+      if (ammo < 100)
+        xOffset += 6;
+      if (ammo < 10)
+        xOffset += 6;
+      gb.display.setCursor(66+xOffset,40);
+      gb.display.print(ammo);
+    } 
+    else {
+      gb.display.setCursor(66,40);
+      gb.display.print("inf");
+    }
+  }
+}
+
 ///////////////////////////////////// SET SPLASH
 void setSplash(int x, int y){
   for(byte thisSplash = 0; thisSplash < NUMSPLASH; thisSplash++){
@@ -166,7 +190,7 @@ void drawSplashes(){
       int x, y;
       if(screenCoord(splash_x[thisSplash], splash_y[thisSplash], x, y)){ //if the splash is in the screen
         //draw it
-        gb.display.drawBitmap(x-2, y-2, splashSprite, 8, 8, splash_dir[thisSplash], NOFLIP, BLACK);
+        gb.display.drawBitmap(x-2, y-2, splashSprite, splash_dir[thisSplash], NOFLIP);
       }
       else{ //erase it if it is out of the screen
         splash_active[thisSplash] = false;
@@ -174,6 +198,7 @@ void drawSplashes(){
     }
   }
 }
+
 
 
 

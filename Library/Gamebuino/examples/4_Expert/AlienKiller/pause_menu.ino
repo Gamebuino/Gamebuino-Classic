@@ -1,10 +1,11 @@
-#define PAUSEMENULENGTH 5
+#define PAUSEMENULENGTH 6
 char* PROGMEM pauseMenu[PAUSEMENULENGTH] = {
   "Resume",
   "Restart",
   "High scores",
-  "Sound on/off",
-  "System info"
+  "Volume",
+  "System info",
+  "Change Game"
 };
 
 ///////////////////////////////////// PAUSE
@@ -38,13 +39,8 @@ void pause(){
          gb.popup("Music is ON", 30);
          }
          break;*/
-      case 3: //sound ON/OFF
-        delay(100);
-        if (gb.sound.getGlobalVolume())
-          gb.sound.setGlobalVolume(0);
-        else
-          gb.sound.setGlobalVolume(3);
-        gb.sound.playOK();
+      case 3: //Volume
+        gb.adjustVolume();
         break;
       case 4: //System info
         while (1) {
@@ -68,16 +64,25 @@ void pause(){
 
             gb.display.print("Backlight:");
             gb.display.println(gb.backlight.backlightValue);
-            
-            gb.display.print("CPU load:");
-            gb.display.print(gb.getCpuLoad());
-            gb.display.println("%");
-            
+
             gb.display.print("Volume:");
             gb.display.print(gb.sound.getGlobalVolume());
+            gb.display.print("/");
+            gb.display.println(VOLUME_GLOBAL_MAX);
+
+            gb.display.print(NUM_CHANNELS);
+            gb.display.print("chan:");
+            for(byte i=0; i<NUM_CHANNELS; i++){
+              gb.display.print(gb.sound.getChannelVolume(i));
+              if(i==(NUM_CHANNELS-1))
+                break;
+              gb.display.print(",");
+            }
           }
         }
         break;
+      case 5: //change game
+        gb.changeGame();
       default:
         return;
       }
@@ -110,5 +115,6 @@ void displayHighScores(){
     }
   }
 }
+
 
 

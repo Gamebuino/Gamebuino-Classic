@@ -8,8 +8,9 @@ void initGame(){
   //scoreDisplayTimeLeft = 64;
   score = 0;
   kills = 0;
-  currentWeapon = 0; //CUT
+  currentWeapon = 0; //magnum
   ammo = 9999;
+  nextShot = 0;
   shake_timeLeft = 0;
   playerLife = playerLifeMax;
   boss_freq = BOSSFREQ;
@@ -93,13 +94,13 @@ void play(){
         if(collideWorld(playerX, playerY, playerW, playerH))
           moveXYDS(playerX, playerY, playerDir, -playerSpeed);
       }
-      cameraX = playerX - LCDWIDTH/2 + playerW/2;
-      cameraY = playerY - LCDHEIGHT/2 + playerH/2;
+      cameraX = playerX + playerW/2 - LCDWIDTH/2;
+      cameraY = playerY + playerH/2 - LCDHEIGHT/2;
       shakeScreen();
-      drawWorld(cameraX - playerW/2, cameraY - playerH/2);
+      drawWorld(cameraX, cameraY);
       int x, y;
       screenCoord(playerX, playerY, x, y);
-      gb.display.drawBitmap(x-1, y-1, playerSprite, 8, 8, playerDir, NOFLIP, BLACK);
+      gb.display.drawBitmap(x-1, y-1, playerSprite, playerDir, NOFLIP);
       //gb.fillRect(playerX_screen, playerY_screen, playerW, playerH, BLACK);
       byte thisSprite = 0;
       //if (playerMoved)
@@ -128,11 +129,11 @@ void play(){
       //life remaining
       for(byte i=0; i<=playerLifeMax; i++){
         if(i<=playerLife){
-          gb.display.drawBitmap(LCDWIDTH-i*9, 0, fullHeart, 8, 8, BLACK);
+          gb.display.drawBitmap(LCDWIDTH-i*9, 0, fullHeart);
         }
         else{
-          gb.display.drawBitmap(LCDWIDTH-i*9, 0, fullHeart, 8, 8, WHITE);
-          gb.display.drawBitmap(LCDWIDTH-i*9, 0, emptyHeart, 8, 8, BLACK);
+          gb.display.drawBitmap(LCDWIDTH-i*9, 0, fullHeart);
+          gb.display.drawBitmap(LCDWIDTH-i*9, 0, emptyHeart);
         }
       }
       if(!playerLife){
@@ -141,27 +142,7 @@ void play(){
           shake_timeLeft = 1;
         }
       }
-      //AMMO
-      if(ammo){
-        gb.display.setCursor(0,40);
-        gb.display.setTextColor(BLACK,WHITE);
-        gb.display.print(weapon_name[currentWeapon]);
-        if(nextShot>2)
-          gb.display.fillRect(-2,LCDHEIGHT-2,nextShot,2,BLACK);
-        if(currentWeapon > 0){ //don't display the ammo of the cut
-          byte xOffset = 0;
-          if (ammo < 100)
-            xOffset += 6;
-          if (ammo < 10)
-            xOffset += 6;
-          gb.display.setCursor(66+xOffset,40);
-          gb.display.print(ammo);
-        } 
-        else {
-          gb.display.setCursor(66,40);
-          gb.display.print("inf");
-        }
-      }
+      drawAmmoOverlay();
       displayScore();
       for(byte thisMob=0; thisMob<activeMobs; thisMob++){
         if(gb.collideRectRect(mobs_x[thisMob],mobs_y[thisMob], mobs_size[thisMob], mobs_size[thisMob],
@@ -177,15 +158,37 @@ void play(){
           gb.sound.play(player_damage_sound, 0);
           //gb.buzz(500,100);
           spawnMob(thisMob);
-          if(playerLife < 0){
+          if(playerLife < 0){ 
             //gb.display.print("TRY AGAIN!");
 
-            for(byte i=0; i<250; i++){
-              gb.display.fillRect(8*random(0,1+LCDWIDTH/8),8*random(0,1+LCDHEIGHT/8),8,8,WHITE);
-              gb.display.setCursor(12,16);
-              gb.display.setTextColor(BLACK, WHITE);
-              gb.display.print("GAME OVER!");
-              gb.display.update();
+            /*for(byte i=0; i<250; i++){
+             gb.display.fillRect(8*random(0,1+LCDWIDTH/8),8*random(0,1+LCDHEIGHT/8),8,8,WHITE);
+             gb.display.setCursor(12,16);
+             gb.display.setTextColor(BLACK, WHITE);
+             gb.display.print("GAME OVER!");
+             gb.display.update();
+             }*/
+
+            byte timer=0;
+            while(1){
+              if(gb.update()){
+                drawMobs();
+                drawBullets();
+                drawSplashes();
+                drawCrate();
+                drawAmmoOverlay();
+                displayScore();
+                drawWorld(cameraX, cameraY);
+                gb.display.drawBitmap(x-1, y-1, playerSprite, playerDir, NOFLIP);
+                gb.display.setTextColor(BLACK,WHITE);
+                gb.display.fillRect(0,0,timer*2,LCDHEIGHT,WHITE);
+                gb.display.fillRect(LCDWIDTH-timer*2,0,timer*2,LCDHEIGHT,WHITE);
+                gb.display.setCursor(12,1);
+                gb.display.print("GAME OVER!");
+                timer++;
+                if(timer==((LCDWIDTH/4)+10))
+                  break;
+              }
             }
             while(1){
               if(gb.update()){
@@ -195,7 +198,7 @@ void play(){
                   gb.display.print("NEW HIGHSCORE");
                 }
                 else{ 
-                  gb.display.setCursor(12,16);
+                  gb.display.setCursor(12,1);
                   gb.display.print("GAME OVER!");
                 }
                 gb.display.setCursor(0,12);
@@ -296,6 +299,14 @@ void saveHighscore(){
   }
   displayHighScores();
 }
+
+
+
+
+
+
+
+
 
 
 

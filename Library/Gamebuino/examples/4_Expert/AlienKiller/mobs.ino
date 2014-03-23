@@ -147,9 +147,9 @@ void drawMobs(){
     int x, y;
     if(screenCoord(mobs_x[thisMob], mobs_y[thisMob], x, y)){
       if(mobs_size[thisMob] != boss_size)
-        gb.display.drawBitmap(x-2, y-2, mobSprite, 8, 8, mobs_dir[thisMob], NOFLIP, BLACK);
+        gb.display.drawBitmap(x-2, y-2, mobSprite, mobs_dir[thisMob], NOFLIP);
       else
-        gb.display.drawBitmap(x-1, y-1, bossSprite, 8, 8, mobs_dir[thisMob], NOFLIP, BLACK);
+        gb.display.drawBitmap(x-1, y-1, bossSprite, mobs_dir[thisMob], NOFLIP);
       //gb.fillRect(x, y, mobs_size[thisMob], mobs_size[thisMob], BLACK);
     }
   }

@@ -1,7 +1,7 @@
 #include <SPI.h>
 #include <Gamebuino.h>
 Gamebuino gb;
-
+//22872
 #include <EEPROM.h>
 #include <avr/pgmspace.h>
 
@@ -31,6 +31,7 @@ static unsigned char PROGMEM world[]=
 };
 static unsigned char PROGMEM tiles[]=
 {
+  8,8,
   B01010100,
   B00100000,
   B00010100,
@@ -42,6 +43,7 @@ static unsigned char PROGMEM tiles[]=
 };
 static unsigned char PROGMEM mobSprite[]=
 {
+  8,8,
   B00000000,
   B00000000,
   B00011000,
@@ -53,6 +55,7 @@ static unsigned char PROGMEM mobSprite[]=
 };
 static unsigned char PROGMEM bossSprite[]=
 {
+  8,8,
   B00000000,
   B00100100,
   B00011000,
@@ -64,6 +67,7 @@ static unsigned char PROGMEM bossSprite[]=
 };
 static unsigned char PROGMEM playerSprite[]=
 {
+  8,8,
   B00000000,
   B00111100,
   B01011010,
@@ -75,6 +79,7 @@ static unsigned char PROGMEM playerSprite[]=
 };
 static unsigned char PROGMEM splashSprite[]=
 {
+  8,8,
   B00000000,
   B00001000,
   B00000000,
@@ -86,6 +91,7 @@ static unsigned char PROGMEM splashSprite[]=
 };
 static unsigned char PROGMEM crateSprite[]=
 {
+  8,8,
   B11111111,
   B10000001,
   B11111111,
@@ -97,6 +103,7 @@ static unsigned char PROGMEM crateSprite[]=
 };
 static unsigned char PROGMEM fullHeart[]=
 {
+  8,8,
   B01101100,
   B11111110,
   B11111110,
@@ -108,6 +115,7 @@ static unsigned char PROGMEM fullHeart[]=
 };
 static unsigned char PROGMEM emptyHeart[]=
 {
+  8,8,
   B01101100,
   B10010010,
   B10000010,
@@ -228,7 +236,7 @@ char name[RANKMAX][NAMELENGTH];
 ///////////////////////////////////// SETUP
 void setup() {
   //randomSeed(analogRead(A2));
-  gb.begin();
+  gb.begin("Alien Killer", bossSprite);
   randomSeed(analogRead(A7)*analogRead(A7)+analogRead(A7));
   //Serial.begin(9600);
   //Serial.println("Gamebuino FTW !");
@@ -244,7 +252,7 @@ void loop() {
 
 ///////////////////////////////////// DISPLAY TITLE
 void displayTitle(){
-  while(1){
+  /*while(1){
     if(gb.update()){
       gb.display.setTextSize(2);
       gb.display.setCursor(12,12);
@@ -261,15 +269,15 @@ void displayTitle(){
         break;
       }
     }
-  }
+  }*/
 }
 
 ///////////////////////////////////// SCREE COORD
 boolean screenCoord(int absoluteX, int absoluteY, int &x, int &y){
-  x = absoluteX - cameraX + playerW/2 + 8;
+  x = absoluteX - cameraX + 8;
   x = (x >= 0) ? x%(WORLD_W*8) : WORLD_W*8 + x%(WORLD_W*8);
   x -= 8;
-  y = absoluteY - cameraY + playerH/2 + 8;
+  y = absoluteY - cameraY + 8;
   y = (y >= 0) ? y%(WORLD_H*8) : WORLD_H*8 + y%(WORLD_H*8);
   y -= 8;
   if((x > LCDWIDTH) || (y > LCDHEIGHT))

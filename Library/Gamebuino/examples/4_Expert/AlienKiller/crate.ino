@@ -50,7 +50,7 @@ void collideCrate(){
 void drawCrate(){
   int x, y;
   if(screenCoord(crate_x, crate_y, x, y)){
-    gb.display.drawBitmap(x, y, crateSprite, 8, 8, BLACK);
+    gb.display.drawBitmap(x, y, crateSprite);
   }
 }
 

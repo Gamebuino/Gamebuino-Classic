@@ -1,12 +1,22 @@
 #ifndef SETTINGS_C
 #define	SETTINGS_C
 
+//SETTINGS YOU CAN EDIT (to save RAM and/or ROM)
+
+#define SCR_CONTRAST 60
+#define NUM_CHANNELS 1 //number of sound channels, between 0 and 4
+#define ENABLE_GUI 1 //enable menu, keyboard, pop-up, volume adjust functions
+#define ENABLE_BITMAPS 1 //will replace bitmaps with rectangles if disabled
+#define ENABLE_BATTERY 1 //disable battery monitoring
+#define ENABLE_BACKLIGHT 1 //disable automatic back-light
+
+//IT'S STRONGLY ADVISED TO LEAVE THE FOLLOWING SETTINGS ALONE
+
 //GUI
 #define KEYBOARD_W 16
 #define KEYBOARD_H 8
 
 //screen
-#define SCR_CONTRAST 60
 #define SCR_CLK 13
 #define SCR_DIN 11
 #define SCR_DC  A2
@@ -14,7 +24,6 @@
 #define SCR_RST A0
 
 //sound
-#define NUM_CHANNELS 1
 #define VOLUME_GLOBAL_MAX 3
 #define VOLUME_CHANNEL_MAX 255/NUM_CHANNELS/VOLUME_GLOBAL_MAX/7 //7 is the volume max of a note
 

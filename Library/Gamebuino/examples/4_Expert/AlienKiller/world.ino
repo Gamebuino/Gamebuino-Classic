@@ -29,7 +29,7 @@ void drawWorld(int16_t x, int16_t y){
   for(j=y/8; j < (LCDHEIGHT/8 + y/8 + 1); j++) {
     for(i=x/8; i < (LCDWIDTH/8 + x/8 + 1); i++ ) {
       if(getTile(i, j)) {
-        gb.display.drawBitmap(i*8 - x, j*8 - y, tiles, 8, 8, BLACK);
+        gb.display.drawBitmap(i*8 - x, j*8 - y, tiles);
       }
     }
   }
