@@ -115,6 +115,8 @@ void Sound::setGlobalVolume(int8_t volume) {
 uint8_t Sound::getGlobalVolume() {
 #if NUM_CHANNELS > 0
     return globalVolume;
+#else
+	return 0;
 #endif
 }
 
@@ -133,6 +135,8 @@ uint8_t Sound::getChannelVolume(uint8_t channel) {
 	if(channel>=NUM_CHANNELS)
 		return 255;
     return (chanVolumes[channel]);
+#else
+	return 0;
 #endif
 }
 

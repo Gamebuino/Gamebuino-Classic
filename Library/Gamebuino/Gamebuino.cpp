@@ -16,6 +16,7 @@ void Gamebuino::begin(char*  name, const uint8_t *logo) {
     timePerFrame = 50;
     nextFrameMillis = 0;
     frameCount = 0;
+	frameEndMicros = 1;
 
     backlight.begin();
     buttons.begin();
@@ -33,16 +34,16 @@ void Gamebuino::begin(char*  name, const uint8_t *logo) {
 	display.print(name);
 	display.drawBitmap(0, 12, logo);
 	
-	update();
-	
     sound.play(startupSound, 0);
 	while(1){
 		if(update()){
 			if(buttons.pressed(BTN_A))
 				break;
-			if(buttons.repeat(BTN_B,1)){
+			if(buttons.pressed(BTN_B)){
 				sound.setGlobalVolume(0);
-				display.fillRect(56,31,28,8,WHITE); //hide "mute" when muted
+			}
+			if(!sound.getGlobalVolume()){
+				display.drawChar(72,31,'x',BLACK, WHITE, 1);
 			}
 			if(buttons.pressed(BTN_C))
 				changeGame();
@@ -233,7 +234,10 @@ void Gamebuino::keyboard(char* text, uint8_t length) {
             //type character
             if (buttons.pressed(BTN_A)) {
                 if (activeChar < length) {
-                    text[activeChar] = activeX + KEYBOARD_W * activeY;
+					byte thisChar = activeX + KEYBOARD_W * activeY;
+					if((thisChar == 10)||(thisChar == 13)) //avoid line feed and carriage return
+						continue;
+                    text[activeChar] = thisChar;
                 }
                 activeChar++;
                 sound.playOK();
