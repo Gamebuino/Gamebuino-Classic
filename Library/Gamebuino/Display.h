@@ -98,7 +98,7 @@ public:
     void setTextSize(uint8_t s);
     void setTextWrap(boolean w);
 	
-	boolean persistance; //disable automatic display clean() at each frame if true
+	boolean persistence; //disable automatic display clean() at each frame if true
 
 private:
     int8_t sclk, din, dc, cs, rst;

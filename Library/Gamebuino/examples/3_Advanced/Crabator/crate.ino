@@ -22,13 +22,14 @@ void spawnCrate(){
 void collideCrate(){
   if(gb.collideRectRect(crate_x+2, crate_y+2, 4, 4, playerX, playerY, playerW, playerH)){
     if (score <5){
-      gb.popup("Earn $5 first", 30);
+      gb.popup(F("Earn $5 first"), 30);
       return;
     }
+    gb.sound.play(power_up,0);
     if(currentWeapon<(NUMWEAPONS-1))
-      gb.popup("Upgraded !", 30);
+      gb.popup(F("Upgraded !"), 30);
     else
-      gb.popup("Refilled !", 30);
+      gb.popup(F("Refilled !"), 30);
     score -= 5;
     spawnCrate();
     /*byte newWeapon;

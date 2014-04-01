@@ -12,7 +12,7 @@ PROGMEM uint16_t startupSound[] = {0x1E, 0x10, 0x301E, 0x10, 0x602E, 0x602C, 0x6
 Gamebuino::Gamebuino() {
 }
 
-void Gamebuino::begin(char*  name, const uint8_t *logo) {
+void Gamebuino::begin(const __FlashStringHelper*  name, const uint8_t *logo) {
     timePerFrame = 50;
     nextFrameMillis = 0;
     frameCount = 0;
@@ -25,14 +25,17 @@ void Gamebuino::begin(char*  name, const uint8_t *logo) {
     display.begin(SCR_CLK, SCR_DIN, SCR_DC, SCR_CS, SCR_RST);
 	
     backlight.set(BACKLIGHT_MAX);
-	display.persistance = true;
+	display.persistence = true;
 	
 	uint8_t offset = 0;
-	if(logo)
+	if(logo){
 		offset = pgm_read_byte(logo)+2; //offset by the logo width
+		display.drawBitmap(0, 12, logo);
+	}
 	display.setCursor(offset,12); 
 	display.print(name);
-	display.drawBitmap(0, 12, logo);
+	if(logo){
+	}
 	
     sound.play(startupSound, 0);
 	while(1){
@@ -50,16 +53,16 @@ void Gamebuino::begin(char*  name, const uint8_t *logo) {
 			
 		}
 	}
-	display.persistance = false;
+	display.persistence = false;
 	battery.show = true;
 }
 
-void Gamebuino::begin(char* name){
+void Gamebuino::begin(const __FlashStringHelper* name){
 	begin(name, 0);
 }
 
 void Gamebuino::begin(){
-	begin("");
+	begin(F(""));
 }
 
 boolean Gamebuino::update() {
@@ -83,7 +86,7 @@ boolean Gamebuino::update() {
             updatePopup();
 			displayBattery();
             display.update(); //send the buffer to the screen
-			if(!display.persistance)
+			if(!display.persistence)
 				display.clear(); //clear the buffer
 
             frameEndMicros = micros(); //measure the frame's end time
@@ -184,6 +187,8 @@ int8_t Gamebuino::menu(char** items, uint8_t length) {
             display.drawRoundRect(0, currentY + 8 * activeItem - 2, LCDWIDTH, 11, 3, BLACK);
         }
     }
+#else
+return 0;
 #endif
 }
 
@@ -233,9 +238,9 @@ void Gamebuino::keyboard(char* text, uint8_t length) {
             currentY = (targetY + currentY) / 2;
             //type character
             if (buttons.pressed(BTN_A)) {
-                if (activeChar < length) {
+                if (activeChar < (length-1)) {
 					byte thisChar = activeX + KEYBOARD_W * activeY;
-					if((thisChar == 10)||(thisChar == 13)) //avoid line feed and carriage return
+					if((thisChar == 0)||(thisChar == 10)||(thisChar == 13)) //avoid line feed and carriage return
 						continue;
                     text[activeChar] = thisChar;
                 }
@@ -249,7 +254,7 @@ void Gamebuino::keyboard(char* text, uint8_t length) {
                 activeChar--;
                 sound.playCancel();
                 if (activeChar >= 0)
-                    text[activeChar] = ' ';
+                    text[activeChar] = 0;
                 else
                     activeChar = 0;
             }
@@ -259,11 +264,9 @@ void Gamebuino::keyboard(char* text, uint8_t length) {
 			    while (1) {
 					if (update()) {
 						display.setCursor(0,0);
-						display.println("You entered\n");
-						for (uint8_t i = 0; i < length; i++) {
-							display.print(text[i]);
-						}
-						display.println("\n\n\nA:okay B:edit");
+						display.println(F("You entered\n"));
+							display.print(text);
+						display.println(F("\n\n\n\x15:okay \x16:edit"));
 						if(buttons.pressed(BTN_A)){
 							sound.playOK();
 							return;
@@ -283,6 +286,13 @@ void Gamebuino::keyboard(char* text, uint8_t length) {
                     //display.drawChar(currentX + x * 6, currentY + y * 8, x + y* KEYBOARD_W, WHITE, BLACK, 1);
                 }
             }
+			//draw instruction
+			display.setCursor(currentX-6*6-2, currentY+1*8);
+			display.print(F("\25type"));
+			display.setCursor(currentX-6*6-2, currentY+2*8);
+			display.print(F("\26back"));
+			display.setCursor(currentX-6*6-2, currentY+3*8);
+			display.print(F("\27save"));
             //erase some pixels around the selected character
             display.drawFastHLine(currentX + activeX * 6 - 1, currentY + activeY * 8 - 2, 7, WHITE);
             display.drawFastHLine(currentX + activeX * 6 - 1, currentY + activeY * 8 - 1, 7, WHITE);
@@ -297,18 +307,16 @@ void Gamebuino::keyboard(char* text, uint8_t length) {
             //typed text
             display.setCursor(0, 40);
             display.setTextColor(BLACK, BLACK);
-            for (uint8_t i = 0; i < length; i++) {
-                display.print(text[i]);
-            }
+            display.print(text);
             //blinking cursor
-            if (((frameCount % 8) < 4) && (activeChar < length))
+            if (((frameCount % 8) < 4) && (activeChar < (length-1)))
                 display.drawChar(6 * activeChar, 40, '_', BLACK, BLACK, 1);
         }
     }
 #endif
 }
 
-void Gamebuino::popup(char* text, uint8_t duration){
+void Gamebuino::popup(const __FlashStringHelper* text, uint8_t duration){
 #if (ENABLE_GUI > 0)
     popupText = text;
     popupTimeLeft = duration;
@@ -387,7 +395,7 @@ void Gamebuino::changeGame(){
 	display.print("LOADING...");
 	display.update();
 	load_game(loader);
-	display.persistance = false;
+	display.persistence = false;
 	while(1){
 		if(update()){
 			display.println("\nNo SD card or\nno LOADER.HEX\n\nA:Exit");

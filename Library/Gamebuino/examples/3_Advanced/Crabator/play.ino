@@ -38,21 +38,17 @@ void initGame(){
   }
   blast_lifespan = 0; //reset explosion
   gb.battery.display(false);
-  //gb.display.clear();
-  //gb.display.setTextColor(BLACK, BLACK);
-  //gb.display.setCursor(15,16);
-  //gb.display.print("LET'S GO!");
-  //displayScore();
-  //gb.print("GOOD LUCK!");
-  /*gb.setCursor(0,0);
-   gb.println("MAIN MISSION");
-   gb.println("1.Find a crate");
-   gb.println("2.Kill aliens");
-   gb.println("3.Go to 1.");
-   gb.println("OPTIONAL");
-   gb.println("(Stay alive)");*/
-  //gb.display.update();
-  //delay(500);
+  byte i = 0;
+  while(i < 10){
+    if(gb.update()){
+      gb.display.setCursor(20,10);
+      gb.display.setTextSize(3);
+      gb.display.print(F("GO!"));
+      i++;
+    }
+  }
+  gb.display.setTextSize(1);
+  gb.popup(F("\x15:shoot \x16:run"), 60);
 }
 
 ///////////////////////////////////// PLAY
@@ -132,7 +128,9 @@ void play(){
           gb.display.drawBitmap(LCDWIDTH-i*9, 0, fullHeart);
         }
         else{
+          gb.display.setBitmapColor(WHITE);
           gb.display.drawBitmap(LCDWIDTH-i*9, 0, fullHeart);
+          gb.display.setBitmapColor(BLACK);
           gb.display.drawBitmap(LCDWIDTH-i*9, 0, emptyHeart);
         }
       }
@@ -184,7 +182,7 @@ void play(){
                 gb.display.fillRect(0,0,timer*2,LCDHEIGHT,WHITE);
                 gb.display.fillRect(LCDWIDTH-timer*2,0,timer*2,LCDHEIGHT,WHITE);
                 gb.display.setCursor(12,1);
-                gb.display.print("GAME OVER!");
+                gb.display.print(F("GAME OVER!"));
                 timer++;
                 if(timer==((LCDWIDTH/4)+10))
                   break;
@@ -195,20 +193,20 @@ void play(){
                 gb.display.setTextColor(BLACK, BLACK);
                 if(score > highscore[RANKMAX-1]){ //if the score is better than the worse high score
                   gb.display.setCursor(2+random(0,2),0+random(0,2));
-                  gb.display.print("NEW HIGHSCORE");
+                  gb.display.print(F("NEW HIGHSCORE"));
                 }
                 else{ 
                   gb.display.setCursor(12,1);
-                  gb.display.print("GAME OVER!");
+                  gb.display.print(F("GAME OVER!"));
                 }
                 gb.display.setCursor(0,12);
-                gb.display.print("You made $");
+                gb.display.print(F("You made $"));
                 gb.display.print(score);
-                gb.display.print("\nby killing\n");
+                gb.display.print(F("\nby killing\n"));
                 gb.display.print(kills);
-                gb.display.print(" crabs.");
+                gb.display.print(F(" crabs."));
                 gb.display.setCursor(0,40);
-                gb.display.print("A:accept");
+                gb.display.print(F("\x15:accept"));
                 if(gb.buttons.pressed(BTN_A)){
                   gb.sound.playOK();
                   break;
@@ -299,6 +297,7 @@ void saveHighscore(){
   }
   displayHighScores();
 }
+
 
 
 

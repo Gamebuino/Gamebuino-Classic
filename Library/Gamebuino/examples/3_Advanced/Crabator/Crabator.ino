@@ -222,6 +222,7 @@ uint16_t* weapons_sounds[NUMWEAPONS] = {
 PROGMEM uint16_t blast_sound[] = {
   0x1C1F,0x181F,0x141D,0x101B,0xC19,0x817,0x415,0x13,0x0000};
 int crate_x, crate_y;
+PROGMEM uint16_t power_up[] = {0x3C1E,0x4C1E,0x581E,0x6C1E,0x7C1E,0x401E,0x501E,0x5C1E,0x701E,0x801E,0x481E,0x581E,0x641E,0x781E,0x881E,0x0000};
 
 ///////////////////////////////////// SCORE
 #define RANKMAX 5 //store 5 high scores
@@ -236,13 +237,12 @@ char name[RANKMAX][NAMELENGTH];
 ///////////////////////////////////// SETUP
 void setup() {
   //randomSeed(analogRead(A2));
-  gb.begin("Alien Killer", bossSprite);
+  gb.begin(F("Crabator"), bossSprite);
   randomSeed(analogRead(A7)*analogRead(A7)+analogRead(A7));
   //Serial.begin(9600);
   //Serial.println("Gamebuino FTW !");
   loadHighscore();
   displayTitle();
-  gb.popup("A:shoot B:run", 120);
 }
 
 ///////////////////////////////////// LOOP

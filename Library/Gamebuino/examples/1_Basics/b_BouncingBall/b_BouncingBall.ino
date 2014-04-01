@@ -8,14 +8,14 @@ Gamebuino gb;
 //declare all the variables needed for the game :
 int ball_x = LCDWIDTH/2; //set the horizontal position to the middle of the screen
 int ball_y = LCDHEIGHT/2; //vertical position
-int ball_vx = 2; //horizontal velocity
-int ball_vy = 2; //vertical velocity
+int ball_vx = 1; //horizontal velocity
+int ball_vy = 1; //vertical velocity
 int ball_size = 6; //the size of the ball in number of pixels
 
 // the setup routine runs once when Gamebuino starts up
 void setup(){
   // initialize the Gamebuino object
-  gb.begin();
+  gb.begin(F("Bouncing Ball"));
 }
 
 // the loop routine runs over and over again forever
@@ -24,48 +24,32 @@ void loop(){
   //returns true when it's time to render a new frame (20 times/second)
   if(gb.update()){
     
-    //move the ball using the buttons
-    if(gb.buttons.pressed(BTN_RIGHT)){ //when the right button is pressed
-      ball_x = ball_x + ball_vx; //increase the horizontal position by the ball's velocity
-      gb.sound.playTick(); //play a preset "tick" sound every time the button is pressed
-    }
-    if(gb.buttons.pressed(BTN_LEFT)){
-      ball_x = ball_x - ball_vx;
-      gb.sound.playTick();
-    }
-    if(gb.buttons.pressed(BTN_DOWN)){
-      ball_y = ball_y + ball_vy;
-      gb.sound.playTick();
-    }
-    if(gb.buttons.pressed(BTN_UP)){
-      ball_y = ball_y - ball_vy;
-      gb.sound.playTick();
-    }
-    //bonus : play a preset sound when A and B are pressed
-    if(gb.buttons.pressed(BTN_A)){
-      gb.sound.playOK();
-    }
-    if(gb.buttons.pressed(BTN_B)){
-      gb.sound.playCancel();
-    }
+    //add the speed of the ball to its position
+    ball_x = ball_x + ball_vx;
+    ball_y = ball_y + ball_vy;
     
     //check that the ball is not going out of the screen
     //if the ball is touching the left side of the screen
     if(ball_x < 0){
-      //bring it back in the screen
-      ball_x = 0;
+      //change the direction of the horizontal speed
+      ball_vx = -ball_vx;
+      //play a preset "tick" sound when the ball hits the border
+      gb.sound.playTick();
     }
     //if the ball is touching the right side
     if((ball_x + ball_size) > LCDWIDTH){
-      ball_x = LCDWIDTH - ball_size;
+      ball_vx = -ball_vx;
+      gb.sound.playTick();
     }
     //if the ball is touching the top side
     if(ball_y < 0){
-      ball_y = 0;
+      ball_vy = -ball_vy;
+      gb.sound.playTick();
     }
     //if the ball is touching the down side
     if((ball_y + ball_size) > LCDHEIGHT){
-      ball_y = LCDHEIGHT - ball_size;
+      ball_vy = -ball_vy;
+      gb.sound.playTick();
     }
     
     //draw the ball on the screen

@@ -8,7 +8,7 @@ Gamebuino gb;
 // the setup routine runs once when Gamebuino starts up
 void setup(){
 // initialize the Gamebuino object
-  gb.begin();
+  gb.begin(F("My first game"));
 }
 
 // the loop routine runs over and over again forever
@@ -17,7 +17,7 @@ void loop(){
   //returns true when it's time to render a new frame (20 times/second)
   if(gb.update()){
     //prints Hello World! on the screen
-    gb.display.println("Hello World!");
+    gb.display.println(F("Hello World!"));
     //declare a variable named count of type integer :
     int count;
     //get the number of frames rendered and assign it to the "count" variable

@@ -28,8 +28,8 @@ public:
     Sound sound;
     Display display;
 
-	void begin(char* name, const uint8_t *logo);
-	void begin(char* name);
+	void begin(const __FlashStringHelper* name, const uint8_t *logo);
+	void begin(const __FlashStringHelper* name);
     void begin();
     boolean update();
     uint32_t getFrameCount();
@@ -43,7 +43,7 @@ public:
     
     int8_t menu(char** items, uint8_t length);
     void keyboard(char* text, uint8_t length);
-    void popup(char* text, uint8_t duration);
+    void popup(const __FlashStringHelper* text, uint8_t duration);
 	void adjustVolume();
 	void changeGame();
 	
@@ -55,7 +55,7 @@ private:
     uint32_t frameCount;
     uint32_t nextFrameMillis;
     void updatePopup();
-    char* popupText;
+    const __FlashStringHelper* popupText;
     uint8_t popupTimeLeft;
     void displayBattery();
 };

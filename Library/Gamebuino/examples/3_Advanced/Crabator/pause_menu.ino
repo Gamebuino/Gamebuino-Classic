@@ -11,7 +11,7 @@ char* PROGMEM pauseMenu[PAUSEMENULENGTH] = {
 ///////////////////////////////////// PAUSE
 void pause(){
   //gb.enableDisplayBattery = true;
-  gb.popup("",0);
+  gb.popup(F(""),0);
   while(true){
     if(gb.update()){
       switch(gb.menu(pauseMenu, PAUSEMENULENGTH)){
@@ -51,32 +51,32 @@ void pause(){
             }
             gb.display.setCursor(0, 0);
             gb.display.setTextColor(BLACK);
-            gb.display.print("Bat:");
+            gb.display.print(F("Bat:"));
             gb.display.print(gb.battery.getVoltage());
-            gb.display.println("mV");
+            gb.display.println(F("mV"));
 
-            gb.display.print("Bat lvl:");
+            gb.display.print(F("Bat lvl:"));
             gb.display.print(gb.battery.getLevel());
-            gb.display.println("/3");
+            gb.display.println(F("/3"));
 
-            gb.display.print("Light:");
+            gb.display.print(F("Light:"));
             gb.display.println(gb.backlight.ambientLight);
 
-            gb.display.print("Backlight:");
+            gb.display.print(F("Backlight:"));
             gb.display.println(gb.backlight.backlightValue);
 
-            gb.display.print("Volume:");
+            gb.display.print(F("Volume:"));
             gb.display.print(gb.sound.getGlobalVolume());
-            gb.display.print("/");
+            gb.display.print(F("/"));
             gb.display.println(VOLUME_GLOBAL_MAX);
 
             gb.display.print(NUM_CHANNELS);
-            gb.display.print("chan:");
+            gb.display.print(F("chan:"));
             for(byte i=0; i<NUM_CHANNELS; i++){
               gb.display.print(gb.sound.getChannelVolume(i));
               if(i==(NUM_CHANNELS-1))
                 break;
-              gb.display.print(",");
+              gb.display.print(F(","));
             }
           }
         }
@@ -96,16 +96,14 @@ void displayHighScores(){
     if(gb.update()){
       gb.display.setCursor(9+random(0,2),0+random(0,2));
       gb.display.setTextColor(BLACK,BLACK);
-      gb.display.println("HIGH SCORES");
+      gb.display.println(F("HIGH SCORES"));
       gb.display.setTextWrap(false);
       gb.display.setCursor(0,8);
       for(byte thisScore=0; thisScore<RANKMAX; thisScore++){
         if(highscore[thisScore]==0)
           break;
-        for(byte i=0; i<NAMELENGTH; i++){
-          gb.display.print(name[thisScore][i]);
-        }
-        gb.display.print(" ");
+        gb.display.print(name[thisScore]);
+        gb.display.setCursor(66,8+8*thisScore);
         gb.display.println(highscore[thisScore]);
       }            
       if(gb.buttons.pressed(BTN_C)){
@@ -115,6 +113,7 @@ void displayHighScores(){
     }
   }
 }
+
 
 
 

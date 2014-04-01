@@ -26,7 +26,7 @@ int ball_vy = 3;
 
 ///////////////////////////////////// SETUP
 void setup() {
-  gb.begin();
+  gb.begin(F("Pong Solo"));
   gb.battery.display(false); //hide the battery indicator
 }
 
@@ -87,7 +87,7 @@ void loop() {
       if((ball_x + ball_size) > LCDWIDTH){
         player_score = player_score + 1;
         gb.sound.playCancel();
-        ball_x = LCDWIDTH - ball_size - oponent_w - 1; //place the ball on the oponent side
+        ball_x = LCDWIDTH - ball_size - oponent_w - 16; //place the ball on the oponent side
         ball_vx = -abs(ball_vx);
         ball_y = random(0,LCDHEIGHT-ball_size);
       }

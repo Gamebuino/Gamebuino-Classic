@@ -56,7 +56,7 @@ void shoot(){
     ammo = weapon_ammo[currentWeapon];
     //ammo = 9999;
     nextShot = 20;
-    gb.popup("Out of ammo!", 30);
+    gb.popup(F("Out of ammo!"), 30);
   }
 }
 
@@ -165,7 +165,7 @@ void drawAmmoOverlay(){
     } 
     else {
       gb.display.setCursor(66,40);
-      gb.display.print("inf");
+      gb.display.print(F("inf"));
     }
   }
 }

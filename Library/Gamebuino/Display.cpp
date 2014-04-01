@@ -24,7 +24,7 @@ void Display::begin(int8_t SCLK, int8_t DIN, int8_t DC, int8_t CS, int8_t RST) {
     textsize = 1;
     textcolor = textbgcolor = bitmapcolor = BLACK;
     wrap = true;
-	persistance = false;
+	persistence = false;
 
     SPI.begin();
     SPI.setBitOrder(MSBFIRST);
@@ -494,9 +494,9 @@ void Display::fillTriangle(int8_t x0, int8_t y0,
 }
 
 void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap) {
-#if (ENABLE_BITMAPS > 0)
 	int8_t w = pgm_read_byte(bitmap);
 	int8_t h = pgm_read_byte(bitmap + 1);
+#if (ENABLE_BITMAPS > 0)
     int8_t i, j, byteWidth = (w + 7) / 8;
     for (j = 0; j < h; j++) {
         for (i = 0; i < w; i++) {
@@ -512,9 +512,9 @@ void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap) {
 
 void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap,
         uint8_t rotation, uint8_t flip) {
-#if (ENABLE_BITMAPS > 0)
 	int8_t w = pgm_read_byte(bitmap);
 	int8_t h = pgm_read_byte(bitmap + 1);
+#if (ENABLE_BITMAPS > 0)
     int8_t i, j, //coordinates in the raw bitmap
             k, l, //coordinates in the rotated/flipped bitmap
             byteWidth = (w + 7) / 8;
