@@ -1,187 +1,219 @@
-#include <SD.h>
+#include <tinyFAT.h>
+#include <EEPROM.h>
+#include <avr/pgmspace.h>
 #include <SPI.h>
 #include <Gamebuino.h>
 Gamebuino gb;
-File root;
-char* factorChar[] = {
-  "", "K", "M", "G"};
-char loadName[13];
+
+char fileName[9];
+byte initres;
+byte res;
+int numberOfFiles = 1;
+int numberOfPages;
+int selectedFile;
+int selectedPage;
+int prevSelectedPage;
+int thisFile;
+#define PAGELENGTH 6
+
+char fileNameEeprom[13];
+#define BUFFER_SIZE 128
+char buffer_eeprom[BUFFER_SIZE+4];
 
 void setup(){
-  //Serial.begin(9600);
-  gb.begin();
-  pinMode(10, OUTPUT);
+  Serial.begin(115200);
+  gb.begin(F("Game loader"));
+  gb.battery.display(false);
 
-  if (!SD.begin(10)) {
+  initres=file.initFAT();
+  if (initres!=NO_ERROR)
+  {
     gb.display.clear();
-    gb.display.print("Insert SD card");
-    gb.display.println("and restart.");
+    gb.display.print(F("Insert SD card"));
+    gb.display.println(F("and restart."));
     gb.display.update();
     while(1);
   }
 
-  root = SD.open("/");
+  file.findFirstFile(&file.DE);
+  while(file.findNextFile(&file.DE) == NO_ERROR){
+    numberOfFiles++;
+  }
+  numberOfPages = 1+numberOfFiles/PAGELENGTH;
   gb.display.setTextWrap(false);
+  gb.display.persistence=true;
+  updateList();
 }
 
-void loop(){
-  root.rewindDirectory();
-  printDirectory(root);
-}
-
-void printDirectory(File &dir) {
-  //int currentDirectorySize = getDirectorySize(dir);
-  int selectedFile = 0; //number of the selected file 0 for the 1st file, 1 for the 2nd, etc.
-  int thisFile = 0; //number of the file currently itering through
-  byte factor = 0; //0 for Byte, 1 for KiloByte, etc.
-  unsigned long fileSize = 0; //size of the selected file
+void loop(){  //int currentDirectorySize = getDirectorySize(dir);
+  selectedFile = 0; //number of the selected file 0 for the 1st file, 1 for the 2nd, etc.
+  thisFile = 0; //number of the file currently itering through
   while(1)
     if(gb.update()){
-      if(gb.buttons.pressed(BTN_B)){
-        break;
+
+      if(gb.buttons.pressed(BTN_A)){
+        byte thisFile = 0;
+        res = file.findFirstFile(&file.DE);
+        while(res == NO_ERROR){
+          if(selectedFile == thisFile){
+            strcpy(fileName, file.DE.filename);
+            file.closeFile();
+            gb.display.clear();
+            gb.display.println(F("EEPROM \x1A SD"));
+            gb.display.update();
+            saveeeprom();
+            gb.display.println(F("SD \x1A EEPROM"));
+            gb.display.update();
+            //loadeeprom();
+            gb.display.print(F("Loading game"));
+            gb.display.update();
+            load_game(fileName);
+          }
+          thisFile++;
+          res = file.findNextFile(&file.DE);
+        }
       }
+
       if(gb.buttons.repeat(BTN_DOWN,3)){
         selectedFile++;
-        /*if(selectedFile >= currentDirectorySize){
-         selectedFile = 0;
-         }*/
-      }
-      if(gb.buttons.repeat(BTN_UP,3)){
-        selectedFile--;
-        if(selectedFile < 0){
-          //selectedFile = currentDirectorySize-1;
+        if(gb.buttons.repeat(BTN_B,1)){
+          selectedFile += PAGELENGTH-1;
+        }
+        if(selectedFile >= numberOfFiles){
           selectedFile = 0;
         }
+        selectedPage = selectedFile/PAGELENGTH;
+        updateCursor();
       }
-      gb.display.setCursor(0,0);
-      gb.display.print(dir.name());
-      if(fileSize){
-        gb.display.setCursor(54,0);
-        if(fileSize<100) //print spaces for right align
-          gb.display.print(" ");
-        if(fileSize<10)
-          gb.display.print(" ");
-        if(!factor)
-          gb.display.print(" ");
 
-        gb.display.print(fileSize);
-        gb.display.print(factorChar[factor]);
-        gb.display.print("B");
-      }
-      gb.display.drawFastHLine(0,8,LCDWIDTH,BLACK);
-      gb.display.setCursor(0,10);
-      //start from the first file
-      dir.rewindDirectory();
-      thisFile=0;
-      File entry;
-
-      while(1){ //iterate through all the files of the folder
-
-        //don't display files which are out of the screen (below)
-        if(thisFile > selectedFile+5)
-          break;
-
-        entry = dir.openNextFile();
-
-        //don't display files which are out of the screen (above)
-        if(thisFile >= selectedFile-1){
-          if (!entry) { //no more files
-            if(thisFile == selectedFile){ //the selected file is out of the list
-              selectedFile = 0;
-            }
-            break;
-          }
-
-          //display the selector character
-          if(thisFile == selectedFile){
-            gb.display.print(">");
-          }
-          else{
-            gb.display.print(" ");
-          }
-
-          //get selected file size
-          if(thisFile == selectedFile){
-            if(entry.isDirectory()){
-              fileSize = 0;
-            }
-            else{
-              fileSize = entry.size();
-              factor = 0;
-              while(fileSize>999){
-                fileSize /= 1024;
-                factor++;
-              }
-            }
-          }
-
-          if(entry.isDirectory())
-            gb.display.print("/");
-
-          //open the item selected when A is pressed
-          if(thisFile == selectedFile){
-            if(gb.buttons.pressed(BTN_A)){
-              //open the directory
-              if (entry.isDirectory()) {
-                printDirectory(entry);
-                entry.close();
-                break;
-              }
-              //open the file
-              else {
-                strcpy(loadName, entry.name());
-                gb.display.setCursor(66,40);
-                if(isHex(loadName)){
-                  gb.display.println("OK!");
-                  strcpy(strstr(strupr(loadName), ".HEX"), "");
-                  gb.display.clear();
-                  gb.display.print("LOADING...");
-                  gb.display.update();
-                  load_game(loadName);
-                }
-                else{
-                  gb.display.println("NO!");
-                }
-              }
-            }
-          }
-
-          gb.display.println(entry.name());
+      if(gb.buttons.repeat(BTN_UP,3)){
+        selectedFile--;
+        if(gb.buttons.repeat(BTN_B,1)){
+          selectedFile -= PAGELENGTH-1;
         }
-        entry.close();
-        thisFile++;
+        if(selectedFile < 0){
+          selectedFile = numberOfFiles-1;
+          thisFile = 0;
+        }
+        selectedPage = selectedFile/PAGELENGTH;
+        updateCursor();
+      }
+
+      if(selectedPage != prevSelectedPage){
+        prevSelectedPage = selectedPage;
+        updateList();
       }
     }
 }
-/*
-int getDirectorySize(File &dir){
- int i=0;
- File entry;
- dir.rewindDirectory();
- while(true){ //go through the directory
- entry =  dir.openNextFile();
- if (!entry) { //no more files
- return i;
- }
- entry.close();
- i++;
- }
- }*/
 
-bool isHex(char* filename) {
-  int8_t len = strlen(filename);
-  bool result;
-  if (strstr(strupr(filename + (len - 4)), ".HEX")
-    // and anything else you want
-  ) {
-    result = true;
-  } 
-  else {
-    result = false;
-  }
-  return result;
+void updateCursor(){
+  gb.display.fillRect(0,0,6,LCDHEIGHT, WHITE);
+  gb.display.setCursor(0,8*(selectedFile%PAGELENGTH));
+  gb.display.print("\x10");
+  /*gb.display.setCursor(0,40);
+   gb.display.print(selectedFile+1);
+   gb.display.print("/");
+   gb.display.print(numberOfFiles);
+   gb.display.print(" ");
+   gb.display.print(selectedPage+1);
+   gb.display.print("/");
+   gb.display.print(numberOfPages);
+   gb.display.print(" ");*/
 }
 
+void updateList(){
+  gb.display.clear();
+  if((selectedFile < thisFile) || (thisFile == 0)){ //when going to the previous page
+    thisFile = 0;
+    res = file.findFirstFile(&file.DE);
+    //iterate through previous pages
+    for(byte thisPage = 0; thisPage < selectedFile/PAGELENGTH; thisPage++){
+      //iterate through files of previous pages
+      for(byte i = 0; i<PAGELENGTH; i++){
+        file.findNextFile(&file.DE);
+        thisFile++;
+      }
+    }
+  }
 
+  if(numberOfFiles > PAGELENGTH){ //if there is several pages
+    gb.display.drawFastVLine(LCDWIDTH-2,0,LCDHEIGHT,BLACK);
+    gb.display.fillRect(LCDWIDTH-3, selectedPage*LCDHEIGHT/numberOfPages, 3, 1+LCDHEIGHT/numberOfPages, BLACK);
+  }
 
+  while (1)
+  {
+    gb.display.print(" ");
+    gb.display.print(file.DE.filename);
+    gb.display.print(".");
+    gb.display.println(file.DE.fileext);
+    thisFile++;
+    //open next file
+    res = file.findNextFile(&file.DE);
+    if(res != NO_ERROR){
+      //selectedFile = thisFile-1;
+      break;
+    }
+    //don't display next page
+    if(thisFile > ((selectedFile/PAGELENGTH)*PAGELENGTH+PAGELENGTH-1))
+      break;
+  }
+  updateCursor();
+}
 
+void saveeeprom(){
+  strcpy(fileNameEeprom, fileName);
+  for(byte i=0; i<8; i++){
+    if(fileNameEeprom[i] == ' ')
+      fileNameEeprom[i] = '\0';
+  }
+  strcat(fileNameEeprom, ".MEM");
+  if(file.exists(fileNameEeprom))
+    file.delFile(fileNameEeprom);
+  file.create(fileNameEeprom);
+  res=file.openFile(fileNameEeprom, FILEMODE_TEXT_WRITE);
+  if (res==NO_ERROR)
+  {
+    for(byte i=0; i< 1024/BUFFER_SIZE; i++){
+      buffer_eeprom[BUFFER_SIZE+1] = '\0';
+      for(byte j = 0; j<BUFFER_SIZE; j+=2){
+        buffer_eeprom[j] = 0x0F | EEPROM.read((i*BUFFER_SIZE+j)/2);
+        buffer_eeprom[j+1] = 0xF0 |  EEPROM.read((i*BUFFER_SIZE+j)/2);
+      }
+      file.writeLn(buffer_eeprom);
+    }
+    file.closeFile();
+  }
+  else{
+    gb.display.println(F("Error"));
+    gb.display.update();
+  }
+}
+
+void loadeeprom(){
+  res=file.openFile("BACKUP.MEM", FILEMODE_TEXT_READ);
+  if (res==NO_ERROR)
+  {
+    word result=0;
+    byte i = 0;
+    while ((result!=EOF) and (result!=FILE_IS_EMPTY))
+    {
+      result=file.readLn(buffer_eeprom, BUFFER_SIZE+2);
+      if (result!=FILE_IS_EMPTY)
+      {
+        for(byte j=0; j<BUFFER_SIZE; j+=2){
+          EEPROM.write((i*BUFFER_SIZE+j)/2,(buffer_eeprom[j] & 0xF0) | (buffer_eeprom[j+1] & 0x0F));
+        }
+        i++;
+      }
+      else
+        gb.display.println(F("File empty"));
+      Serial.println();
+    }
+    file.closeFile();
+  }
+  else{
+    gb.display.println(F("Error"));
+    gb.display.update();
+  }
+}
