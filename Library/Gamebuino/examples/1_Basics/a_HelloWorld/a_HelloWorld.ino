@@ -4,11 +4,11 @@
 #include <Gamebuino.h>
 //creates a Gamebuino object named gb
 Gamebuino gb;
-
 // the setup routine runs once when Gamebuino starts up
 void setup(){
-// initialize the Gamebuino object
+  // initialize the Gamebuino object
   gb.begin(F("My first game"));
+  gb.popup(F("Let's go!"), 30);
 }
 
 // the loop routine runs over and over again forever
@@ -24,6 +24,8 @@ void loop(){
     count = gb.getFrameCount();
     //prints the variable "count"
     gb.display.println(count);
+
   }
 }
+
 
