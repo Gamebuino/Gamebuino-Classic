@@ -8,7 +8,7 @@
 #ifndef GAMEBUINO_H
 #define	GAMEBUINO_H
 
-#define load_game (*((void(*)(char*))0x7ffc))
+#define load_game (*((void(*)(const char* filename))(0x7ffc/2)))
 
 #include <Arduino.h>
 #include <avr/pgmspace.h>

@@ -9,6 +9,7 @@
 #define ENABLE_BITMAPS 1 //will replace bitmaps with rectangles if disabled
 #define ENABLE_BATTERY 1 //disable battery monitoring
 #define ENABLE_BACKLIGHT 1 //disable automatic back-light
+#define TINY_FONT 0 //0 = 5x7 font ; 1 = 3x5 font
 
 //IT'S STRONGLY ADVISED TO LEAVE THE FOLLOWING SETTINGS ALONE
 

@@ -13,7 +13,7 @@
 #include <avr/pgmspace.h>
 #include <SPI.h>
 
-#include "font5x7.c"
+
 #include "settings.c"
 
 #define BLACK 1
@@ -21,6 +21,16 @@
 
 #define LCDWIDTH 84
 #define LCDHEIGHT 48
+
+#if TINY_FONT == 0
+	#include "font5x7.c"
+	#define FONTWIDTH 5
+	#define FONTHEIGHT 7
+#else
+	#include "font3x5.c"
+	#define FONTWIDTH 3
+	#define FONTHEIGHT 5
+#endif
 
 //for extended bitmap function :
 #define NOROT 0

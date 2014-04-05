@@ -574,15 +574,15 @@ size_t Display::write(uint8_t c) {
 void Display::write(uint8_t c) {
 #endif
     if (c == '\n') {
-        cursor_y += textsize * 8;
+        cursor_y += textsize * (FONTHEIGHT+1);
         cursor_x = 0;
     } else if (c == '\r') {
         // skip em
     } else {
         drawChar(cursor_x, cursor_y, c, textcolor, textbgcolor, textsize);
-        cursor_x += textsize * 6;
-        if (wrap && (cursor_x > (LCDWIDTH - textsize * 6))) {
-            cursor_y += textsize * 8;
+        cursor_x += textsize * (FONTWIDTH+1);
+        if (wrap && (cursor_x > (LCDWIDTH - textsize * (FONTWIDTH+1)))) {
+            cursor_y += textsize * (FONTHEIGHT+1);
             cursor_x = 0;
         }
     }
@@ -596,17 +596,17 @@ void Display::drawChar(int8_t x, int8_t y, unsigned char c,
 
     if ((x >= LCDWIDTH) || // Clip right
             (y >= LCDHEIGHT) || // Clip bottom
-            ((x + 5 * size - 1) < 0) || // Clip left
-            ((y + 8 * size - 1) < 0)) // Clip top
+            ((x + FONTWIDTH * size - 1) < 0) || // Clip left
+            ((y + (FONTHEIGHT+1) * size - 1) < 0)) // Clip top
         return;
 
-    for (int8_t i = 0; i < 6; i++) {
+    for (int8_t i = 0; i < (FONTWIDTH+1); i++) {
         uint8_t line;
-        if (i == 5)
+        if (i == FONTWIDTH)
             line = 0x0;
         else
-            line = pgm_read_byte(font + (c * 5) + i);
-        for (int8_t j = 0; j < 8; j++) {
+            line = pgm_read_byte(font + (c * FONTWIDTH) + i);
+        for (int8_t j = 0; j < (FONTHEIGHT+1); j++) {
             if (line & 0x1) {
                 if (size == 1) // default size
                     drawPixel(x + i, y + j, color);
