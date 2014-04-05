@@ -40,8 +40,10 @@ void Gamebuino::begin(const __FlashStringHelper*  name, const uint8_t *logo) {
     sound.play(startupSound, 0);
 	while(1){
 		if(update()){
-			if(buttons.pressed(BTN_A))
+			if(buttons.pressed(BTN_A)){
+				sound.stop(0);
 				break;
+			}
 			if(buttons.pressed(BTN_B)){
 				sound.setGlobalVolume(0);
 			}

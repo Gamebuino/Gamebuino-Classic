@@ -158,7 +158,8 @@ asm("  .section .version\n"
 asm(	".section .jumps,\"ax\",@progbits\n"
 		".global _jumptable\n"
 		"_jumptable:\n"
-		"jmp load_and_reboot\n"
+		"rjmp write_flash_page\n"
+		"rjmp load_game\n"
 		".section .text\n");
 
 #include <inttypes.h>
@@ -168,6 +169,8 @@ asm(	".section .jumps,\"ax\",@progbits\n"
 // <avr/boot.h> uses sts instructions, but this version uses out instructions
 // This saves cycles and program memory.
 #include "boot.h"
+#include <string.h>
+#include "prog_flash.h"
 
 
 // We don't use <avr/wdt.h> as those routines have interrupt overhead we don't need.
@@ -233,8 +236,9 @@ static inline void flash_led(uint8_t);
 uint8_t getLen();
 static inline void watchdogReset();
 void watchdogConfig(uint8_t x);
+static inline void reboot();
 void load_loader();
-void load_and_reboot(const char * filename);
+void load_game(const char * filename);
 
 #ifdef SOFT_UART
 void uartDelay() __attribute__ ((naked));
@@ -395,72 +399,26 @@ int main(void) {
     else if(ch == STK_PROG_PAGE) {
       // PROGRAM PAGE - we support flash programming only, not EEPROM
       uint8_t *bufPtr;
-      uint16_t addrPtr;
+      //uint16_t addrPtr;
 
       getch();			/* getlen() */
       length = getch();
       getch();
 
-      // If we are in RWW section, immediately start page erase
-      if (address < NRWWSTART) __boot_page_erase_short((uint16_t)(void*)address);
+	  // the original optiboot code erases memory before reading in the contents. this is faster but takes up more memory so I've taken it out.
 
-      // While that is going on, read in page contents
-      bufPtr = buff;
+      // read in page contents
+      bufPtr = pagebuffer;
       do *bufPtr++ = getch();
       while (--length);
-
-      // If we are in NRWW section, page erase has to be delayed until now.
-      // Todo: Take RAMPZ into account
-      if (address >= NRWWSTART) __boot_page_erase_short((uint16_t)(void*)address);
 
       // Read command terminator, start reply
       verifySpace();
 
-      // If only a partial page is to be programmed, the erase might not be complete.
-      // So check that here
-      boot_spm_busy_wait();
-
-#ifdef VIRTUAL_BOOT_PARTITION
-      if ((uint16_t)(void*)address == 0) {
-        // This is the reset vector page. We need to live-patch the code so the
-        // bootloader runs.
-        //
-        // Move RESET vector to WDT vector
-        uint16_t vect = buff[0] | (buff[1]<<8);
-        rstVect = vect;
-        wdtVect = buff[8] | (buff[9]<<8);
-        vect -= 4; // Instruction is a relative jump (rjmp), so recalculate.
-        buff[8] = vect & 0xff;
-        buff[9] = vect >> 8;
-
-        // Add jump to bootloader at RESET vector
-        buff[0] = 0x7f;
-        buff[1] = 0xce; // rjmp 0x1d00 instruction
-      }
-#endif
-
-      // Copy buffer into programming buffer
-      bufPtr = buff;
-      addrPtr = (uint16_t)(void*)address;
-      ch = SPM_PAGESIZE / 2;
-      do {
-        uint16_t a;
-        a = *bufPtr++;
-        a |= (*bufPtr++) << 8;
-        __boot_page_fill_short((uint16_t)(void*)addrPtr,a);
-        addrPtr += 2;
-      } while (--ch);
-
-      // Write from programming buffer
-      __boot_page_write_short((uint16_t)(void*)address);
-      boot_spm_busy_wait();
-
-#if defined(RWWSRE)
-      // Reenable read access to flash
-      boot_rww_enable();
-#endif
-
+	  // flash the chip
+	  write_pagebuffer((uint16_t)(void*)address);
     }
+
     /* Read memory block mode, length is big endian.  */
     else if(ch == STK_READ_PAGE) {
       // READ PAGE - we only read flash
@@ -645,9 +603,7 @@ void getNch(uint8_t count) {
 
 void verifySpace() {
   if (getch() != CRC_EOP) {
-    watchdogConfig(WATCHDOG_16MS);    // shorten WD timeout
-    while (1)			      // and busy-loop so that WD causes
-      ;				      //  a reset and app start.
+    reboot();
   }
   putch(STK_INSYNC);
 }
@@ -697,9 +653,20 @@ void appStart() {
   );
 }
 
+void reboot()
+{
+	watchdogConfig(WATCHDOG_16MS);
+	asm("sei");
+	while (1);
+}
+
+#include <avr/pgmspace.h>
+
 void load_loader()
 {
-	// silly, but it works for now	
+	watchdogConfig(WATCHDOG_OFF);
+
+	// silly, but it works
 	static char filename[7];
 	filename[0] = 'L';
 	filename[1] = 'O';
@@ -708,16 +675,28 @@ void load_loader()
 	filename[4] = 'E';
 	filename[5] = 'R';
 	filename[6] = 0;
-	load_and_reboot(filename);
+	load_game(filename);
 }
 
-void load_and_reboot(const char * filename)
+#define STACK_TOP ((char *)(1024 - 9))
+
+// loads a game and reboots
+void load_game(const char * filename)
 {
-	watchdogConfig(WATCHDOG_OFF);
-	if (load_file(filename) == 0)
-	{
-		// reboot
-		watchdogConfig(WATCHDOG_16MS);
-		while (1);
-	}
+	// don't want any interrupts corrupting our memory
+	asm("cli");
+
+	// if we're being called by the application then the filename could be anywhere in SRAM.
+	// push it to the stack so that we don't accidentally overwrite it
+	memcpy(FILENAME_LOCATION, filename, 9);
+
+	// reset the stack back to the top of ram. the top of ram is normally
+	// 0x8ff but we've reserved 9 bytes for the filename
+	asm("ldi r28, 0xf6");
+	asm("ldi r29, 0x08");
+	asm("out 62, r29");	// SPH
+	asm("out 61, r28");	// SPL
+
+	load_file();
+	reboot();
 }

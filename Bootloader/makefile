@@ -13,11 +13,14 @@ CFLAGS = -c -g -Os -Wall -fno-inline-small-functions -fno-split-wide-types -msho
 #			'-DMMC_CS=PORTD4' '-DMMC_PORT=PORTD' '-DMMC_DDR=DDRD'
 
 
+
+
 # linker flags
 LINK_FLAGS =	-g -Wall -Os -fno-inline-small-functions -fno-split-wide-types -mshort-calls -mmcu=atmega328p -Wl,--relax -Wl,--gc-sections -nostartfiles -nostdlib \
-				-Wl,--section-start=.text=0x7000			\
-				-Wl,--section-start=.jumps=0x7ffc			\
+				-Wl,--section-start=.text=0x7800			\
+				-Wl,--section-start=.jumps=0x7ffa			\
 				-Wl,--section-start=.version=0x7ffe			\
+				-Wl,--undefined=optiboot_version			\
 				-Wl,--undefined=_jumptable
 
 
@@ -48,8 +51,9 @@ all: $(OUTPUT_DIR)/$(TARGET).hex $(OUTPUT_DIR)/$(TARGET).lst
 $(OUTPUT_DIR)/$(TARGET).hex: $(OUTPUT_DIR)/$(TARGET).elf
 	@mkdir -p $(dir $@)
 	@echo "Copying $@"
-	@$(COPY) -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 $(OUTPUT_DIR)/$(TARGET).elf $(OUTPUT_DIR)/$(TARGET).eep 
-	@$(COPY) -O ihex -R .eeprom $(OUTPUT_DIR)/$(TARGET).elf $(OUTPUT_DIR)/$(TARGET).hex 
+	@$(COPY) -j .text -j .jumps -j .version --set-section-flags .version=alloc,load -O ihex $< $@
+
+	#.version=alloc,load
 
 # rule to build the elf file
 $(OUTPUT_DIR)/$(TARGET).elf: $(PROJECT_OBJS)

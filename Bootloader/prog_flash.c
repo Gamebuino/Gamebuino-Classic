@@ -27,7 +27,9 @@
 /**********************************************************/
 
 #include "prog_flash.h"
-#include <avr/boot.h>
+//#include <avr/boot.h>
+
+#include "boot.h"
 
 /* page buffer ---------------------------------------------------- */
 uint8_t pagebuffer[SPM_PAGESIZE];
@@ -38,24 +40,31 @@ uint16_t address;
 
 /* access to flash memory------------------------------------------ */
 
-void write_flash_page()
+void write_flash_page(uint16_t addr, uint8_t * data)
 {
 	uint16_t i = 0;
 
-	eeprom_busy_wait ();
+	eeprom_busy_wait();
 
-	boot_page_erase (address);
+	__boot_page_erase_short(addr);
 	boot_spm_busy_wait ();      // Wait until the memory is erased.
 
 	for (i=0; i<SPM_PAGESIZE; i+=2)
 	{
 		// Set up little-endian word.
-		uint16_t w = *((uint16_t*)(pagebuffer + i));
-		boot_page_fill (address + i, w);
+		uint16_t w = *((uint16_t*)(data + i));
+		__boot_page_fill_short(addr + i, w);
 	}
 
-	boot_page_write(address);     // Store buffer in flash page.
+	__boot_page_write_short(addr);     // Store buffer in flash page.
 	boot_spm_busy_wait();            // Wait until the memory is written.
 
 	boot_rww_enable ();
+}
+
+void write_pagebuffer(uint16_t addr)
+{
+	// don't overwrite the last page, it's reserved for user settings
+	if (addr <= 0x7800-2*SPM_PAGESIZE)
+		write_flash_page(addr, pagebuffer);
 }

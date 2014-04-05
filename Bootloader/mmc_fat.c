@@ -275,7 +275,7 @@ static struct _file_s {
  	uint8_t* next;
 } file;
 
-static inline uint8_t fat16_readRootDirEntry(uint16_t entry_num, const char * filename) {
+static inline uint8_t fat16_readRootDirEntry(uint16_t entry_num) {
 	uint8_t direntry_in_sector;
  	direntry_t *dir;
 		
@@ -308,8 +308,8 @@ static inline uint8_t fat16_readRootDirEntry(uint16_t entry_num, const char * fi
 	/* compare name */
 	uint8_t i = 0;
 	uint8_t match = 1;
-	for (i = 0; filename[i]; i++) { 
-	  match &= (filename[i] == dir->name[i]);
+	for (i = 0; FILENAME_LOCATION[i]; i++) { 
+	  match &= (FILENAME_LOCATION[i] == dir->name[i]);
 	}
 	if (!(match && i)) return 0;
 	
@@ -412,7 +412,7 @@ static inline void read_hex_file(void) {
 			// if pagebuffer is full
 			if (out - pagebuffer == SPM_PAGESIZE) {
 			    // write page
-			    write_flash_page();
+				write_pagebuffer(address);
 			    address += SPM_PAGESIZE;
 				out = pagebuffer;
 			}
@@ -427,12 +427,14 @@ static inline void read_hex_file(void) {
 			}
 		}
 	}
-	if (out != pagebuffer) write_flash_page();
+	if (out != pagebuffer) write_pagebuffer(address);
 }
 
-int load_file(const char * filename) {
+int load_file() {
+
 	uint16_t entrycounter = 0;
 	uint8_t i = 0;
+
 
 	/* first, init mmc / fat */
 	if (fat16_init() != 0)
@@ -442,7 +444,7 @@ int load_file(const char * filename) {
 	for (entrycounter=0; entrycounter<512; entrycounter++)
 	{
 		/* skip all unimportant files */
-		i = fat16_readRootDirEntry(entrycounter, filename);
+		i = fat16_readRootDirEntry(entrycounter);
 		if (i == 1)
 		{					
 			read_hex_file();

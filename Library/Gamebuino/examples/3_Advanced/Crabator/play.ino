@@ -140,10 +140,15 @@ void play(){
           shake_timeLeft = 1;
         }
       } 
-      else {
-        if(playerLife%2){ //odd number
-          gb.display.drawBitmap(LCDWIDTH-(playerLife/2+1)*9+2, 0, halfHeart);
+      else{
+        if(playerLife == 1){
+          shake_magnitude = 1;
+          shake_timeLeft = 1;
         }
+      }
+
+      if(playerLife%2){ //odd number
+        gb.display.drawBitmap(LCDWIDTH-(playerLife/2+1)*9+2, 0, halfHeart);
       }
       drawAmmoOverlay();
       displayScore();
@@ -278,6 +283,7 @@ void saveHighscore(){
   }
   displayHighScores();
 }
+
 
 
 

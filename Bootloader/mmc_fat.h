@@ -178,8 +178,7 @@ typedef struct
 } fatsector_t;
 
 
-extern int load_file(const char *);
-
-
+extern int load_file();
+#define FILENAME_LOCATION ((char *)(RAMEND-8))		// RAMEND points to the last char so this reserves space for 8 characters + a null char
 
 #endif /* _mmc_fat_h_ */

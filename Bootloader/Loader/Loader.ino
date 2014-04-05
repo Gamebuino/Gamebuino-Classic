@@ -5,7 +5,13 @@
 #include <Gamebuino.h>
 Gamebuino gb;
 
+#define write_flash_page (*((void(*)(prog_char * page, unsigned char * buffer))(0x7ffa/2)))
+// use the second-to-last page in Flash, in Gamebuino the last one contains user settings
+#define TARGET_PAGE ((prog_char *)(0x7000-128))
+
 char fileName[9];
+char nextGameName[9];
+char prevGameName[9];
 byte initres;
 byte res;
 int numberOfFiles = 1;
@@ -16,9 +22,9 @@ int prevSelectedPage;
 int thisFile;
 #define PAGELENGTH 6
 
-char fileNameEeprom[13];
+char completeName[13];
 #define BUFFER_SIZE 128
-char buffer_eeprom[BUFFER_SIZE+4];
+char buffer[BUFFER_SIZE+4];
 
 void setup(){
   Serial.begin(115200);
@@ -34,6 +40,11 @@ void setup(){
     gb.display.update();
     while(1);
   }
+
+  /*gb.display.clear();
+  gb.display.println(F("Saving prev game"));
+  gb.display.update();
+  saveeeprom();*/
 
   file.findFirstFile(&file.DE);
   while(file.findNextFile(&file.DE) == NO_ERROR){
@@ -59,12 +70,9 @@ void loop(){  //int currentDirectorySize = getDirectorySize(dir);
             strcpy(fileName, file.DE.filename);
             file.closeFile();
             gb.display.clear();
-            gb.display.println(F("EEPROM \x1A SD"));
+            /*gb.display.println(F("SD \x1A EEPROM"));
             gb.display.update();
-            saveeeprom();
-            gb.display.println(F("SD \x1A EEPROM"));
-            gb.display.update();
-            //loadeeprom();
+            loadeeprom();*/
             gb.display.print(F("Loading game"));
             gb.display.update();
             load_game(fileName);
@@ -107,8 +115,8 @@ void loop(){  //int currentDirectorySize = getDirectorySize(dir);
 }
 
 void updateCursor(){
-  gb.display.fillRect(0,0,6,LCDHEIGHT, WHITE);
-  gb.display.setCursor(0,8*(selectedFile%PAGELENGTH));
+  gb.display.fillRect(0,0,FONTWIDTH,LCDHEIGHT, WHITE);
+  gb.display.setCursor(0,FONTHEIGHT*(selectedFile%PAGELENGTH));
   gb.display.print("\x10");
   /*gb.display.setCursor(0,40);
    gb.display.print(selectedFile+1);
@@ -162,32 +170,38 @@ void updateList(){
 }
 
 void saveeeprom(){
-  strcpy(fileNameEeprom, fileName);
+  strcpy(completeName, prevGameName);
   for(byte i=0; i<8; i++){
-    if(fileNameEeprom[i] == ' ')
-      fileNameEeprom[i] = '\0';
+    if(completeName[i] == ' ')
+      completeName[i] = '\0';
   }
-  strcat(fileNameEeprom, ".MEM");
-  if(file.exists(fileNameEeprom))
-    file.delFile(fileNameEeprom);
-  file.create(fileNameEeprom);
-  res=file.openFile(fileNameEeprom, FILEMODE_TEXT_WRITE);
+  strcat(completeName, ".SAV");
+  if(file.exists(completeName)){
+    file.delFile(completeName);
+    gb.display.println("Existing overwritten");
+  }
+  file.create(completeName);
+  res=file.openFile(completeName, FILEMODE_TEXT_WRITE);
   if (res==NO_ERROR)
   {
     for(byte i=0; i< 1024/BUFFER_SIZE; i++){
-      buffer_eeprom[BUFFER_SIZE+1] = '\0';
+      buffer[BUFFER_SIZE+1] = '\0';
       for(byte j = 0; j<BUFFER_SIZE; j+=2){
-        buffer_eeprom[j] = 0x0F | EEPROM.read((i*BUFFER_SIZE+j)/2);
-        buffer_eeprom[j+1] = 0xF0 |  EEPROM.read((i*BUFFER_SIZE+j)/2);
+        buffer[j] = 0x0F | EEPROM.read((i*BUFFER_SIZE+j)/2);
+        buffer[j+1] = 0xF0 |  EEPROM.read((i*BUFFER_SIZE+j)/2);
       }
-      file.writeLn(buffer_eeprom);
+      file.writeLn(buffer);
     }
     file.closeFile();
+    gb.display.print(F("Saved to "));
+    gb.display.println(completeName);
+    gb.display.update();
   }
   else{
     gb.display.println(F("Error"));
     gb.display.update();
   }
+  delay(500);
 }
 
 void loadeeprom(){
@@ -198,11 +212,11 @@ void loadeeprom(){
     byte i = 0;
     while ((result!=EOF) and (result!=FILE_IS_EMPTY))
     {
-      result=file.readLn(buffer_eeprom, BUFFER_SIZE+2);
+      result=file.readLn(buffer, BUFFER_SIZE+2);
       if (result!=FILE_IS_EMPTY)
       {
         for(byte j=0; j<BUFFER_SIZE; j+=2){
-          EEPROM.write((i*BUFFER_SIZE+j)/2,(buffer_eeprom[j] & 0xF0) | (buffer_eeprom[j+1] & 0x0F));
+          EEPROM.write((i*BUFFER_SIZE+j)/2,(buffer[j] & 0xF0) | (buffer[j+1] & 0x0F));
         }
         i++;
       }
@@ -217,3 +231,4 @@ void loadeeprom(){
     gb.display.update();
   }
 }
+

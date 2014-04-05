@@ -3,7 +3,7 @@
 
 //SETTINGS YOU CAN EDIT (to save RAM and/or ROM)
 
-#define SCR_CONTRAST 60
+#define SCR_CONTRAST 58
 #define NUM_CHANNELS 1 //number of sound channels, between 0 and 4
 #define ENABLE_GUI 1 //enable menu, keyboard, pop-up, volume adjust functions
 #define ENABLE_BITMAPS 1 //will replace bitmaps with rectangles if disabled
@@ -49,7 +49,7 @@
 #define AMBIENTLIGHT_PIN A7
 //auto back-light levels
 #define AMBIENTLIGHT_MIN 800 //800
-#define AMBIENTLIGHT_MAX 1000 //1000
+#define AMBIENTLIGHT_MAX 995 //1000
 #define AMBIENTLIGHT_SMOOTHING 16
 
 //number of buttons
