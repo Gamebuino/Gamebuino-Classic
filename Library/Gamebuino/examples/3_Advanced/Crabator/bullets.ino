@@ -149,7 +149,7 @@ void drawBullets(){
 ///////////////////////////////////// DRAW AMMO OVERLAY
 void drawAmmoOverlay(){
   if(ammo){
-    gb.display.setCursor(0,40);
+    gb.display.setCursor(0,LCDHEIGHT-FONTHEIGHT);
     gb.display.setTextColor(BLACK,WHITE);
     gb.display.print(weapon_name[currentWeapon]);
     if(nextShot>2)
@@ -157,14 +157,14 @@ void drawAmmoOverlay(){
     if(currentWeapon > 0){ //don't display the ammo of the cut
       byte xOffset = 0;
       if (ammo < 100)
-        xOffset += 6;
+        xOffset += FONTWIDTH;
       if (ammo < 10)
-        xOffset += 6;
-      gb.display.setCursor(66+xOffset,40);
+        xOffset += FONTWIDTH;
+      gb.display.setCursor(LCDWIDTH-3*FONTWIDTH+xOffset,LCDHEIGHT-FONTHEIGHT);
       gb.display.print(ammo);
     } 
     else {
-      gb.display.setCursor(66,40);
+      gb.display.setCursor(LCDWIDTH-3*FONTWIDTH,LCDHEIGHT-FONTHEIGHT);
       gb.display.print(F("inf"));
     }
   }

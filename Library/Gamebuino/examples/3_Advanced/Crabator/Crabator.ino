@@ -1,7 +1,6 @@
 #include <SPI.h>
 #include <Gamebuino.h>
 Gamebuino gb;
-//22872
 #include <EEPROM.h>
 #include <avr/pgmspace.h>
 
@@ -113,6 +112,18 @@ static unsigned char PROGMEM fullHeart[]=
   B00000000,
   B00000000,
 };
+static unsigned char PROGMEM halfHeart[]=
+{
+  8,8,
+  B00000000,
+  B00001100,
+  B00011100,
+  B00011000,
+  B00010000,
+  B00000000,
+  B00000000,
+  B00000000,
+};
 static unsigned char PROGMEM emptyHeart[]=
 {
   8,8,
@@ -132,7 +143,7 @@ byte playerSpeed;
 int playerX;
 int playerY;
 char playerLife;
-#define playerLifeMax 5
+#define playerLifeMax 6
 byte playerDir;
 int cameraX;
 int cameraY;
@@ -142,11 +153,11 @@ PROGMEM uint16_t player_damage_sound[] = {
   0x5C5F, 0x0000};
 
 ///////////////////////////////////// MOBS
-#define NUMMOBS 8 //16
-#define INITNUMMOBS 3 //4
+#define NUMMOBS 16 //16
+#define INITNUMMOBS 4 //4
 #define MOBSRATE 6 //how often is the mob number increased (every X kills)
 #define BOSSFREQ 16//one boss every X kills (initially)
-#define BOSSRATE 2 //every boss killed, the next one will spawn X kills earlier
+#define BOSSRATE 1 //every boss killed, the next one will spawn X kills earlier
 byte boss_nextSpawn;
 byte boss_freq;
 byte activeMobs;
@@ -203,7 +214,7 @@ byte weapon_ennemyRecoil[NUMWEAPONS] = {
 byte weapon_playerRecoil[NUMWEAPONS] = {
   0, 0, 1, 3, 3};
 unsigned int weapon_ammo[NUMWEAPONS] = {
-  9999, 300, 200, 20, 100};
+  9999, 500, 300, 20, 150};
 unsigned int ammo;
 PROGMEM uint16_t magnum_sound[] = {
   0x741F,0x2417,0x2015,0x1C13,0x0000};

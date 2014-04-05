@@ -69,15 +69,6 @@ void pause(){
             gb.display.print(gb.sound.getGlobalVolume());
             gb.display.print(F("/"));
             gb.display.println(VOLUME_GLOBAL_MAX);
-
-            gb.display.print(NUM_CHANNELS);
-            gb.display.print(F("chan:"));
-            for(byte i=0; i<NUM_CHANNELS; i++){
-              gb.display.print(gb.sound.getChannelVolume(i));
-              if(i==(NUM_CHANNELS-1))
-                break;
-              gb.display.print(F(","));
-            }
           }
         }
         break;
@@ -98,12 +89,12 @@ void displayHighScores(){
       gb.display.setTextColor(BLACK,BLACK);
       gb.display.println(F("HIGH SCORES"));
       gb.display.setTextWrap(false);
-      gb.display.setCursor(0,8);
+      gb.display.setCursor(0,FONTHEIGHT);
       for(byte thisScore=0; thisScore<RANKMAX; thisScore++){
         if(highscore[thisScore]==0)
           break;
         gb.display.print(name[thisScore]);
-        gb.display.setCursor(66,8+8*thisScore);
+        gb.display.setCursor(LCDWIDTH-3*FONTWIDTH,FONTHEIGHT+FONTHEIGHT*thisScore);
         gb.display.println(highscore[thisScore]);
       }            
       if(gb.buttons.pressed(BTN_C)){

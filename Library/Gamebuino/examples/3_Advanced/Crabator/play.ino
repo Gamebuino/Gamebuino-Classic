@@ -123,21 +123,26 @@ void play(){
       drawCrate();
       gb.display.setTextColor(BLACK, BLACK);
       //life remaining
-      for(byte i=0; i<=playerLifeMax; i++){
-        if(i<=playerLife){
-          gb.display.drawBitmap(LCDWIDTH-i*9, 0, fullHeart);
+      for(byte i=0; i<=playerLifeMax/2; i+=1){
+        if((i*2)<=playerLife){
+          gb.display.drawBitmap(LCDWIDTH-i*9+2, 0, fullHeart);
         }
         else{
           gb.display.setBitmapColor(WHITE);
-          gb.display.drawBitmap(LCDWIDTH-i*9, 0, fullHeart);
+          gb.display.drawBitmap(LCDWIDTH-i*9+2, 0, fullHeart);
           gb.display.setBitmapColor(BLACK);
-          gb.display.drawBitmap(LCDWIDTH-i*9, 0, emptyHeart);
+          gb.display.drawBitmap(LCDWIDTH-i*9+2, 0, emptyHeart);
         }
       }
       if(!playerLife){
         if((gb.getFrameCount()%2)==0){
           shake_magnitude = 2;
           shake_timeLeft = 1;
+        }
+      } 
+      else {
+        if(playerLife%2){ //odd number
+          gb.display.drawBitmap(LCDWIDTH-(playerLife/2+1)*9+2, 0, halfHeart);
         }
       }
       drawAmmoOverlay();
@@ -157,16 +162,6 @@ void play(){
           //gb.buzz(500,100);
           spawnMob(thisMob);
           if(playerLife < 0){ 
-            //gb.display.print("TRY AGAIN!");
-
-            /*for(byte i=0; i<250; i++){
-             gb.display.fillRect(8*random(0,1+LCDWIDTH/8),8*random(0,1+LCDHEIGHT/8),8,8,WHITE);
-             gb.display.setCursor(12,16);
-             gb.display.setTextColor(BLACK, WHITE);
-             gb.display.print("GAME OVER!");
-             gb.display.update();
-             }*/
-
             byte timer=0;
             while(1){
               if(gb.update()){
@@ -232,20 +227,6 @@ void displayScore(){
   gb.display.print('$');
   gb.display.println(score);
   //gb.display.println(gb.getCpuLoad());
-  /*gb.display.print(kills);
-   gb.display.print("/");
-   gb.display.print(activeMobs);*/
-
-  /*if(scoreDisplayTimeLeft){
-   scoreDisplayTimeLeft--;
-   gb.display.setTextColor(BLACK, WHITE);
-   if(lastScore){
-   gb.display.setCursor(0,40);
-   gb.display.print("You made $");
-   gb.display.print(lastScore);
-   gb.display.print("    ");
-   }
-   }*/
 }
 
 ///////////////////////////////////// SHAKE SCREEN
@@ -253,7 +234,7 @@ void shakeScreen(){
   if(shake_timeLeft){
     shake_timeLeft--;
     cameraX += random(-shake_magnitude,shake_magnitude+1);
-    cameraY += random(-shake_magnitude,shake_magnitude+1);
+    cameraY += random(-shake_magnitude,shake_magnitude+1); 
   }
 }
 
@@ -297,6 +278,7 @@ void saveHighscore(){
   }
   displayHighScores();
 }
+
 
 
 
