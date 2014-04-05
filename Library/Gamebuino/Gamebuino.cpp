@@ -144,7 +144,7 @@ int8_t Gamebuino::menu(char** items, uint8_t length) {
         if (update()) {
             if (buttons.pressed(BTN_A) || buttons.pressed(BTN_B) || buttons.pressed(BTN_C)) {
                 exit = true; //time to exit menu !
-                targetY = -(FONTHEIGHT+1) * length - 2; //send the menu out of the screen
+                targetY = -FONTHEIGHT * length - 2; //send the menu out of the screen
                 if (buttons.pressed(BTN_A)) {
                     answer = activeItem;
                     sound.playOK();
@@ -165,7 +165,7 @@ int8_t Gamebuino::menu(char** items, uint8_t length) {
                 if (activeItem == length) activeItem = 0;
                 if (activeItem < 0) activeItem = length - 1;
 
-                targetY = -(FONTHEIGHT+1) * activeItem + (FONTHEIGHT+4); //center the menu on the active item
+                targetY = -FONTHEIGHT * activeItem + (FONTHEIGHT+4); //center the menu on the active item
             } else { //exit :
                 if ((currentY - targetY) <= 1)
                     return (answer);
@@ -178,13 +178,13 @@ int8_t Gamebuino::menu(char** items, uint8_t length) {
             display.setTextWrap(false);
             for (byte i = 0; i < length; i++) {
                 if (i == activeItem)
-                    display.setCursor(3, currentY + (FONTHEIGHT+1) * activeItem);
+                    display.setCursor(3, currentY + FONTHEIGHT * activeItem);
                 display.println(items[i]);
             }
 
             //display.fillRect(0, currentY + 3 + 8 * activeItem, 2, 2, BLACK);
-            display.drawFastHLine(0, currentY + (FONTHEIGHT+1) * activeItem - 1, LCDWIDTH, WHITE);
-            display.drawRoundRect(0, currentY + (FONTHEIGHT+1) * activeItem - 2, LCDWIDTH, (FONTHEIGHT+4), 3, BLACK);
+            display.drawFastHLine(0, currentY + FONTHEIGHT * activeItem - 1, LCDWIDTH, WHITE);
+            display.drawRoundRect(0, currentY + FONTHEIGHT * activeItem - 2, LCDWIDTH, (FONTHEIGHT+3), 3, BLACK);
         }
     }
 #else
@@ -195,6 +195,7 @@ return 0;
 void Gamebuino::keyboard(char* text, uint8_t length) {
 #if (ENABLE_GUI > 0)
     //memset(text, 0, length); //clear the text
+	text[length-1] = '\0';
     //active character in the typing area
     int8_t activeChar = 0;
     //selected char on the keyboard
@@ -232,7 +233,7 @@ void Gamebuino::keyboard(char* text, uint8_t length) {
             if (activeY < 0) activeY = KEYBOARD_H - 1;
             //set the keyboard position on screen
             targetX = -(FONTWIDTH+1) * activeX + LCDWIDTH / 2 - 3;
-            targetY = -(FONTHEIGHT+1) * activeY + LCDHEIGHT / 2 - 4 - (FONTHEIGHT+1);
+            targetY = -(FONTHEIGHT+1) * activeY + LCDHEIGHT / 2 - 4 - FONTHEIGHT;
             //smooth the keyboard displacement
             currentX = (targetX + currentX) / 2;
             currentY = (targetY + currentY) / 2;
@@ -285,30 +286,30 @@ void Gamebuino::keyboard(char* text, uint8_t length) {
                 }
             }
 			//draw instruction
-			display.setCursor(currentX-6*6-2, currentY+1*8);
+			display.setCursor(currentX-FONTWIDTH*6-2, currentY+1*(FONTHEIGHT+1));
 			display.print(F("\25type"));
-			display.setCursor(currentX-6*6-2, currentY+2*8);
+			display.setCursor(currentX-FONTWIDTH*6-2, currentY+2*(FONTHEIGHT+1));
 			display.print(F("\26back"));
-			display.setCursor(currentX-6*6-2, currentY+3*8);
+			display.setCursor(currentX-FONTWIDTH*6-2, currentY+3*(FONTHEIGHT+1));
 			display.print(F("\27save"));
             //erase some pixels around the selected character
             display.drawFastHLine(currentX + activeX * (FONTWIDTH+1) - 1, currentY + activeY * (FONTHEIGHT+1) - 2, 7, WHITE);
-            display.drawFastHLine(currentX + activeX * (FONTWIDTH+1) - 1, currentY + activeY * (FONTHEIGHT+1) - 1, 7, WHITE);
-            display.drawFastHLine(currentX + activeX * (FONTWIDTH+1) - 1, currentY + activeY * (FONTHEIGHT+1) + (FONTHEIGHT+1), 7, WHITE);
+            /*display.drawFastHLine(currentX + activeX * FONTWIDTH - 1, currentY + activeY * FONTHEIGHT - 1, 7, WHITE);
+            display.drawFastHLine(currentX + activeX * FONTWIDTH - 1, currentY + activeY * FONTHEIGHT + (FONTHEIGHT+1), 7, WHITE);*/
             //draw the selection rectangle
-            display.drawRoundRect(currentX + activeX * (FONTWIDTH+1) - 2, currentY + activeY * (FONTHEIGHT+1) - 3, (FONTWIDTH+3)+FONTWIDTH%2, (FONTHEIGHT+6), 3, BLACK);
+            display.drawRoundRect(currentX + activeX * (FONTWIDTH+1) - 2, currentY + activeY * (FONTHEIGHT+1) - 3, (FONTWIDTH+2)+(FONTWIDTH-1)%2, (FONTHEIGHT+5), 3, BLACK);
             //draw keyboard outline
-            display.drawRoundRect(currentX - 6, currentY - 6, KEYBOARD_W * (FONTWIDTH+1) + 12, KEYBOARD_H * (FONTHEIGHT+1) + 12, 8, BLACK);
+            //display.drawRoundRect(currentX - 6, currentY - 6, KEYBOARD_W * (FONTWIDTH+1) + 12, KEYBOARD_H * (FONTHEIGHT+1) + 12, 8, BLACK);
             //text field
-            display.drawFastHLine(0, LCDHEIGHT-FONTHEIGHT-3, LCDWIDTH, BLACK);
-            display.fillRect(0, LCDHEIGHT-FONTHEIGHT-2, LCDWIDTH, FONTHEIGHT+2, WHITE);
+            display.drawFastHLine(0, LCDHEIGHT-FONTHEIGHT-2, LCDWIDTH, BLACK);
+            display.fillRect(0, LCDHEIGHT-FONTHEIGHT-1, LCDWIDTH, FONTHEIGHT+1, WHITE);
             //typed text
-            display.setCursor(0, LCDHEIGHT-FONTHEIGHT-1);
+            display.setCursor(0, LCDHEIGHT-FONTHEIGHT);
             display.setTextColor(BLACK, BLACK);
             display.print(text);
             //blinking cursor
             if (((frameCount % 8) < 4) && (activeChar < (length-1)))
-                display.drawChar((FONTWIDTH+1) * activeChar, LCDHEIGHT-FONTHEIGHT-1, '_', BLACK, BLACK, 1);
+                display.drawChar(FONTWIDTH * activeChar, LCDHEIGHT-FONTHEIGHT, '_', BLACK, BLACK, 1);
         }
     }
 #endif
@@ -330,9 +331,9 @@ void Gamebuino::updatePopup(){
         }
         display.setTextSize(1);
         display.setTextColor(BLACK, WHITE);
-        display.fillRoundRect(0,LCDHEIGHT-FONTHEIGHT+yOffset-4,84,FONTHEIGHT+4,3,WHITE);
-        display.drawRoundRect(0,LCDHEIGHT-FONTHEIGHT+yOffset-4,84,FONTHEIGHT+4,3,BLACK);
-        display.setCursor(4, LCDHEIGHT-FONTHEIGHT+yOffset-2);
+        display.fillRoundRect(0,LCDHEIGHT-FONTHEIGHT+yOffset-3,84,FONTHEIGHT+3,3,WHITE);
+        display.drawRoundRect(0,LCDHEIGHT-FONTHEIGHT+yOffset-3,84,FONTHEIGHT+3,3,BLACK);
+        display.setCursor(4, LCDHEIGHT-FONTHEIGHT+yOffset-1);
         display.print(popupText);
         popupTimeLeft--;
     }
@@ -370,7 +371,7 @@ void Gamebuino::adjustVolume(){
 void Gamebuino::displayBattery(){
 #if (ENABLE_BATTERY > 0)
     display.setTextColor(BLACK, WHITE);
-	display.setCursor(LCDWIDTH-FONTWIDTH,0);
+	display.setCursor(LCDWIDTH-FONTWIDTH+1,0);
 	if(!battery.getLevel()){
 		if((frameCount % 16) < 8) { //blink
 			display.print(char(7));
@@ -391,7 +392,7 @@ void Gamebuino::displayBattery(){
 
 void Gamebuino::changeGame(){
 	display.clear();
-	display.print("LOADING...");
+	display.print("Loading...");
 	display.update();
 	load_game(loader);
 	display.persistence = false;

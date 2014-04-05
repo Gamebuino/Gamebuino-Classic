@@ -16,21 +16,9 @@
 
 #include "settings.c"
 
+//colors
 #define BLACK 1
 #define WHITE 0
-
-#define LCDWIDTH 84
-#define LCDHEIGHT 48
-
-#if TINY_FONT == 0
-	#include "font5x7.c"
-	#define FONTWIDTH 5
-	#define FONTHEIGHT 7
-#else
-	#include "font3x5.c"
-	#define FONTWIDTH 3
-	#define FONTHEIGHT 5
-#endif
 
 //for extended bitmap function :
 #define NOROT 0
@@ -41,6 +29,26 @@
 #define FLIPH 1
 #define FLIPV 2
 #define FLIPVH 3
+
+#if (DISPLAY_ROT == NO_ROT)||(DISPLAY_ROT == ROT180) //landscape mode
+	#define LCDWIDTH 84
+	#define LCDHEIGHT 48
+#else //portrait mode
+	#define LCDWIDTH 48
+	#define LCDHEIGHT 84
+#endif
+#define LCDHEIGHT_NOROT 48
+#define LCDWIDTH_NOROT 84
+	
+#if TINY_FONT == 0
+	#include "font5x7.c"
+	#define FONTWIDTH 6
+	#define FONTHEIGHT 8
+#else
+	#include "font3x5.c"
+	#define FONTWIDTH 4
+	#define FONTHEIGHT 6
+#endif
 
 #define swap(a, b) { int8_t t = a; a = b; b = t; }
 

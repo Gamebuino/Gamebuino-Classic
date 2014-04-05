@@ -133,7 +133,7 @@ void Display::update(void) {
 
         // start at the beginning of the row
         col = 0;
-        maxcol = LCDWIDTH - 1;
+        maxcol = LCDWIDTH_NOROT - 1;
 
         command(PCD8544_SETXADDR | col);
 
@@ -141,7 +141,7 @@ void Display::update(void) {
         if (cs > 0)
             digitalWrite(cs, LOW);
         for (; col <= maxcol; col++) {
-            SPI.transfer(_displayBuffer[(LCDWIDTH * p) + col]);
+            SPI.transfer(_displayBuffer[(LCDWIDTH_NOROT * p) + col]);
         }
 
         if (cs > 0)
@@ -156,11 +156,27 @@ void Display::drawPixel(int8_t x, int8_t y, uint8_t color) {
     if ((x < 0) || (x >= LCDWIDTH) || (y < 0) || (y >= LCDHEIGHT))
         return;
 
-    // x is which column
+#if DISPLAY_ROT == NOROT
     if (color)
-        _displayBuffer[x + (y / 8) * LCDWIDTH] |= _BV(y % 8);
+        _displayBuffer[x + (y / 8) * LCDWIDTH_NOROT] |= _BV(y % 8);
     else
-        _displayBuffer[x + (y / 8) * LCDWIDTH] &= ~_BV(y % 8);
+        _displayBuffer[x + (y / 8) * LCDWIDTH_NOROT] &= ~_BV(y % 8);
+#elif DISPLAY_ROT == ROTCCW
+	if (color)
+        _displayBuffer[LCDHEIGHT - y - 1 + (x / 8) * LCDWIDTH_NOROT] |= _BV(x % 8);
+    else
+        _displayBuffer[LCDHEIGHT - y - 1 + (x / 8) * LCDWIDTH_NOROT] &= ~_BV(x % 8);
+#elif DISPLAY_ROT == ROT180
+	if (color)
+        _displayBuffer[LCDWIDTH - x - 1 + ((LCDHEIGHT - y - 1) / 8) * LCDWIDTH_NOROT] |= _BV((LCDHEIGHT - y - 1) % 8);
+    else
+        _displayBuffer[LCDWIDTH - x - 1 + ((LCDHEIGHT - y - 1) / 8) * LCDWIDTH_NOROT] &= ~_BV((LCDHEIGHT - y - 1) % 8);
+#elif DISPLAY_ROT == ROTCW
+	if (color)
+        _displayBuffer[y + ((LCDWIDTH - x - 1) / 8) * LCDWIDTH_NOROT] |= _BV((LCDWIDTH - x -1) % 8);
+    else
+        _displayBuffer[y + ((LCDWIDTH - x - 1) / 8) * LCDWIDTH_NOROT] &= ~_BV((LCDWIDTH - x - 1) % 8);
+#endif
 }
 
 uint8_t Display::getPixel(int8_t x, int8_t y) {
@@ -173,8 +189,8 @@ uint8_t Display::getPixel(int8_t x, int8_t y) {
 void Display::drawFastVLine(int8_t x, int8_t y,
         int8_t h, uint8_t color) {
     // stupidest/slowest version :
-    //drawLine(x, y, x, y + h - 1, color);
-    if ((x < 0) || (x >= LCDWIDTH) || ((y + h) < 0) || (y >= LCDHEIGHT))
+    drawLine(x, y, x, y + h - 1, color);
+    /*if ((x < 0) || (x >= LCDWIDTH) || ((y + h) < 0) || (y >= LCDHEIGHT))
         return;
     if(y < 0){
         h += y;
@@ -187,14 +203,14 @@ void Display::drawFastVLine(int8_t x, int8_t y,
             _displayBuffer[x + (y2 / 8) * LCDWIDTH] |= _BV(y2 % 8);
         else
             _displayBuffer[x + (y2 / 8) * LCDWIDTH] &= ~_BV(y2 % 8);
-    }
+    }*/
 }
 
 void Display::drawFastHLine(int8_t x, int8_t y,
         int8_t w, uint8_t color) {
     // stupidest/slowest version :
-    //drawLine(x, y, x + w - 1, y, color);
-    if (((x+w) < 0) || (x >= LCDWIDTH) || (y < 0) || (y >= LCDHEIGHT))
+    drawLine(x, y, x + w - 1, y, color);
+    /*if (((x+w) < 0) || (x >= LCDWIDTH) || (y < 0) || (y >= LCDHEIGHT))
         return;
     if(x < 0){
         w += x;
@@ -207,8 +223,8 @@ void Display::drawFastHLine(int8_t x, int8_t y,
             _displayBuffer[x2 + (y / 8) * LCDWIDTH] |= _BV(y % 8);
         else
             _displayBuffer[x2 + (y / 8) * LCDWIDTH] &= ~_BV(y % 8);
-    }
-    //should be faster but creates strange behaviors
+    }*/
+    //should be faster but behaves weirdly
     //memset(&_displayBuffer[x + (y / 8) * LCDWIDTH], color, w);
 }
 
@@ -525,19 +541,19 @@ void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap,
         for (i = 0; i < w; i++) {
             if (pgm_read_byte(2 + bitmap + j * byteWidth + i / 8) & (B10000000 >> (i % 8))) {
                 switch (rotation) {
-                    case 0: //no rotation
+                    case NOROT: //no rotation
                         k = i;
                         l = j;
                         break;
-                    case 1: //90° counter-clockwise
+                    case ROTCCW: //90° counter-clockwise
                         k = j;
                         l = w - i - 1;
                         break;
-                    case 2: //180°
+                    case ROT180: //180°
                         k = w - i - 1;
                         l = h - j - 1;
                         break;
-                    case 3: //90° clockwise
+                    case ROTCW: //90° clockwise
                         k = h - j - 1;
                         l = i;
                         break;
@@ -574,15 +590,15 @@ size_t Display::write(uint8_t c) {
 void Display::write(uint8_t c) {
 #endif
     if (c == '\n') {
-        cursor_y += textsize * (FONTHEIGHT+1);
+        cursor_y += textsize * FONTHEIGHT;
         cursor_x = 0;
     } else if (c == '\r') {
         // skip em
     } else {
         drawChar(cursor_x, cursor_y, c, textcolor, textbgcolor, textsize);
-        cursor_x += textsize * (FONTWIDTH+1);
-        if (wrap && (cursor_x > (LCDWIDTH - textsize * (FONTWIDTH+1)))) {
-            cursor_y += textsize * (FONTHEIGHT+1);
+        cursor_x += textsize * FONTWIDTH;
+        if (wrap && (cursor_x > (LCDWIDTH - textsize * FONTWIDTH))) {
+            cursor_y += textsize * FONTHEIGHT;
             cursor_x = 0;
         }
     }
@@ -596,17 +612,17 @@ void Display::drawChar(int8_t x, int8_t y, unsigned char c,
 
     if ((x >= LCDWIDTH) || // Clip right
             (y >= LCDHEIGHT) || // Clip bottom
-            ((x + FONTWIDTH * size - 1) < 0) || // Clip left
-            ((y + (FONTHEIGHT+1) * size - 1) < 0)) // Clip top
+            ((x + (FONTWIDTH-1) * size - 1) < 0) || // Clip left
+            ((y + FONTHEIGHT * size - 1) < 0)) // Clip top
         return;
 
-    for (int8_t i = 0; i < (FONTWIDTH+1); i++) {
+    for (int8_t i = 0; i < FONTWIDTH; i++) {
         uint8_t line;
-        if (i == FONTWIDTH)
+        if (i == (FONTWIDTH-1))
             line = 0x0;
         else
-            line = pgm_read_byte(font + (c * FONTWIDTH) + i);
-        for (int8_t j = 0; j < (FONTHEIGHT+1); j++) {
+            line = pgm_read_byte(font + (c * (FONTWIDTH-1)) + i);
+        for (int8_t j = 0; j < FONTHEIGHT; j++) {
             if (line & 0x1) {
                 if (size == 1) // default size
                     drawPixel(x + i, y + j, color);

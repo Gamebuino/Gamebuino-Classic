@@ -10,14 +10,19 @@
 
 #define load_game (*((void(*)(const char* filename))(0x7ffc/2)))
 
+#define NOROT 0
+#define ROTCCW 1
+#define ROT180 2
+#define ROTCW 3
+
 #include <Arduino.h>
 #include <avr/pgmspace.h>
 #include "settings.c"
 #include "Backlight.h"
+#include "Display.h"
 #include "Buttons.h"
 #include "Battery.h"
 #include "Sound.h"
-#include "Display.h"
 
 class Gamebuino {
 public:

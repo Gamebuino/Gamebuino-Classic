@@ -9,7 +9,8 @@
 #define ENABLE_BITMAPS 1 //will replace bitmaps with rectangles if disabled
 #define ENABLE_BATTERY 1 //disable battery monitoring
 #define ENABLE_BACKLIGHT 1 //disable automatic back-light
-#define TINY_FONT 0 //0 = 5x7 font ; 1 = 3x5 font
+#define TINY_FONT 1 //0 = 5x7 font ; 1 = 3x5 font7
+#define DISPLAY_ROT NOROT //set to NOROT, ROTCCW, ROT180 or ROTCW
 
 //IT'S STRONGLY ADVISED TO LEAVE THE FOLLOWING SETTINGS ALONE
 
@@ -54,10 +55,27 @@
 //number of buttons
 #define NUM_BTN         7
 //buttons ID
-#define BTN_UP          1
-#define BTN_RIGHT       2
-#define BTN_DOWN        3
-#define BTN_LEFT        0
+#if DISPLAY_ROT == 0
+	#define BTN_UP      1
+	#define BTN_RIGHT   2
+	#define BTN_DOWN    3
+	#define BTN_LEFT    0
+#elif DISPLAY_ROT == ROTCCW
+	#define BTN_UP      2
+	#define BTN_RIGHT   3
+	#define BTN_DOWN    0
+	#define BTN_LEFT    1
+#elif DISPLAY_ROT == ROT180
+	#define BTN_UP      3
+	#define BTN_RIGHT   0
+	#define BTN_DOWN    1
+	#define BTN_LEFT    2
+#elif DISPLAY_ROT == ROTCW
+	#define BTN_UP      0
+	#define BTN_RIGHT   1
+	#define BTN_DOWN    2
+	#define BTN_LEFT    3
+#endif
 #define BTN_A           4
 #define BTN_B           5
 #define BTN_C           6
