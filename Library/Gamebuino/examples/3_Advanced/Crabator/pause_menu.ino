@@ -50,7 +50,6 @@ void pause(){
               break;
             }
             gb.display.setCursor(0, 0);
-            gb.display.setTextColor(BLACK);
             gb.display.print(F("Bat:"));
             gb.display.print(gb.battery.getVoltage());
             gb.display.println(F("mV"));
@@ -86,7 +85,6 @@ void displayHighScores(){
   while(true){
     if(gb.update()){
       gb.display.setCursor(9+random(0,2),0+random(0,2));
-      gb.display.setTextColor(BLACK,BLACK);
       gb.display.println(F("HIGH SCORES"));
       gb.display.setTextWrap(false);
       gb.display.setCursor(0,FONTHEIGHT);

@@ -179,7 +179,7 @@ void damageMob(byte thisMob, byte thisBullet){
     setSplash(mobs_x[thisMob], mobs_y[thisMob]);
     int x, y;
     if(screenCoord(mobs_x[thisMob], mobs_y[thisMob], x, y)){
-      gb.display.fillRect(x-1, y-1, mobs_size[thisMob]+1, mobs_size[thisMob]+1, BLACK);
+      gb.display.fillRect(x-1, y-1, mobs_size[thisMob]+1, mobs_size[thisMob]+1);
     }
     //gb.buzz(1400,20);
     spawnMob(thisMob);

@@ -121,16 +121,15 @@ void play(){
       drawSplashes();
       collideCrate();
       drawCrate();
-      gb.display.setTextColor(BLACK, BLACK);
       //life remaining
       for(byte i=0; i<=playerLifeMax/2; i+=1){
         if((i*2)<=playerLife){
           gb.display.drawBitmap(LCDWIDTH-i*9+2, 0, fullHeart);
         }
         else{
-          gb.display.setBitmapColor(WHITE);
+          gb.display.setColor(WHITE);
           gb.display.drawBitmap(LCDWIDTH-i*9+2, 0, fullHeart);
-          gb.display.setBitmapColor(BLACK);
+          gb.display.setColor(BLACK,WHITE);
           gb.display.drawBitmap(LCDWIDTH-i*9+2, 0, emptyHeart);
         }
       }
@@ -178,9 +177,10 @@ void play(){
                 displayScore();
                 drawWorld(cameraX, cameraY);
                 gb.display.drawBitmap(x-1, y-1, playerSprite, playerDir, NOFLIP);
-                gb.display.setTextColor(BLACK,WHITE);
-                gb.display.fillRect(0,0,timer*2,LCDHEIGHT,WHITE);
-                gb.display.fillRect(LCDWIDTH-timer*2,0,timer*2,LCDHEIGHT,WHITE);
+                gb.display.setColor(WHITE);
+                gb.display.fillRect(0,0,timer*2,LCDHEIGHT);
+                gb.display.fillRect(LCDWIDTH-timer*2,0,timer*2,LCDHEIGHT);
+                gb.display.setColor(BLACK, WHITE);
                 gb.display.setCursor(12,1);
                 gb.display.print(F("GAME OVER!"));
                 timer++;
@@ -190,7 +190,6 @@ void play(){
             }
             while(1){
               if(gb.update()){
-                gb.display.setTextColor(BLACK, BLACK);
                 if(score > highscore[RANKMAX-1]){ //if the score is better than the worse high score
                   gb.display.setCursor(2+random(0,2),0+random(0,2));
                   gb.display.print(F("NEW HIGHSCORE"));
@@ -225,7 +224,6 @@ void play(){
 
 ///////////////////////////////////// DISPLAY SCORE
 void displayScore(){
-  gb.display.setTextColor(BLACK, WHITE);
   gb.display.setCursor(0,0);
   //gb.display.print(gb.frameDurationMicros);
   //gb.display.print(gb.freeRam());

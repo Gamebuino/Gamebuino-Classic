@@ -126,7 +126,7 @@ void explode(){
     //display
     int x_screen, y_screen;
     if(screenCoord(x, y, x_screen, y_screen))
-      gb.display.fillRect(x_screen, y_screen, s, s, BLACK);
+      gb.display.fillRect(x_screen, y_screen, s, s);
   }
 }
 
@@ -138,9 +138,9 @@ void drawBullets(){
       if(screenCoord(bullets_x[thisBullet], bullets_y[thisBullet], x, y)){
         byte s = weapon_size[bullets_weapon[thisBullet]];
         if(s==1)
-          gb.display.drawPixel(x, y, BLACK);
+          gb.display.drawPixel(x, y);
         else
-          gb.display.fillRect(x, y, s, s, BLACK);
+          gb.display.fillRect(x, y, s, s);
       }
     }
   }
@@ -150,10 +150,9 @@ void drawBullets(){
 void drawAmmoOverlay(){
   if(ammo){
     gb.display.setCursor(0,LCDHEIGHT-FONTHEIGHT);
-    gb.display.setTextColor(BLACK,WHITE);
     gb.display.print(weapon_name[currentWeapon]);
     if(nextShot>2)
-      gb.display.fillRect(-2,LCDHEIGHT-2,nextShot,2,BLACK);
+      gb.display.fillRect(-2,LCDHEIGHT-2,nextShot,2);
     if(currentWeapon > 0){ //don't display the ammo of the cut
       byte xOffset = 0;
       if (ammo < 100)

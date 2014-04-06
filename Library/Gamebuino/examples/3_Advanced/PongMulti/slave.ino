@@ -19,7 +19,7 @@ void updateSlave(){
       //gb.display.setCursor(4,20);
       //gb.display.print("DISCONNECTED!");
       //gb.display.update();
-      gb.popup("DISCONNECTED!",15);
+      gb.popup(F("DISCONNECTED!"),15);
       paused = true;
       slave_updated = false;
       break;

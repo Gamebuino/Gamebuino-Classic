@@ -47,9 +47,8 @@ char* PROGMEM menu[MENULENGTH] = {
 
 ///////////////////////////////////// SETUP
 void setup() {
-  gb.begin(); //initialize the Gamebuino
+  gb.begin(F("Pong Multiplayer")); //initialize the Gamebuino
   gb.battery.display(false); //hide the battery indicator
-  while(1);
 }
 
 ///////////////////////////////////// LOOP
@@ -91,16 +90,16 @@ void loop() {
       }
       if(singlePlayer){
         updateGame();
-        gb.display.print(" solo");
+        gb.display.print(F(" solo"));
       }
       else {
         gb.display.setTextSize(1);
         if(isMaster){
-          gb.display.print(" master ");
+          gb.display.print(F(" master "));
           updateMaster();
         }
         else {
-          gb.display.print(" slave ");
+          gb.display.print(F(" slave "));
           updateSlave();
         }
       }

@@ -84,39 +84,38 @@ public:
     void clear(void);
     void update();
 
-    void drawPixel(int8_t x, int8_t y, uint8_t color);
+	void setColor(int8_t c);
+	void setColor(int8_t c, int8_t bg);
+    void drawPixel(int8_t x, int8_t y);
     uint8_t getPixel(int8_t x, int8_t y);
 
-    void drawLine(int8_t x0, int8_t y0, int8_t x1, int8_t y1, uint8_t color);
-    void drawFastVLine(int8_t x, int8_t y, int8_t h, uint8_t color);
-    void drawFastHLine(int8_t x, int8_t y, int8_t w, uint8_t color);
-    void drawRect(int8_t x, int8_t y, int8_t w, int8_t h, uint8_t color);
-    void fillRect(int8_t x, int8_t y, int8_t w, int8_t h, uint8_t color);
+    void drawLine(int8_t x0, int8_t y0, int8_t x1, int8_t y1);
+    void drawFastVLine(int8_t x, int8_t y, int8_t h);
+    void drawFastHLine(int8_t x, int8_t y, int8_t w);
+    void drawRect(int8_t x, int8_t y, int8_t w, int8_t h);
+    void fillRect(int8_t x, int8_t y, int8_t w, int8_t h);
     void fillScreen(uint8_t color);
 
-    void drawCircle(int8_t x0, int8_t y0, int8_t r, uint8_t color);
-    void drawCircleHelper(int8_t x0, int8_t y0, int8_t r, uint8_t cornername, uint8_t color);
-    void fillCircle(int8_t x0, int8_t y0, int8_t r, uint8_t color);
-    void fillCircleHelper(int8_t x0, int8_t y0, int8_t r, uint8_t cornername, int8_t delta, uint8_t color);
+    void drawCircle(int8_t x0, int8_t y0, int8_t r);
+    void drawCircleHelper(int8_t x0, int8_t y0, int8_t r, uint8_t cornername);
+    void fillCircle(int8_t x0, int8_t y0, int8_t r);
+    void fillCircleHelper(int8_t x0, int8_t y0, int8_t r, uint8_t cornername, int8_t delta);
 
-    void drawTriangle(int8_t x0, int8_t y0, int8_t x1, int8_t y1, int8_t x2, int8_t y2, uint8_t color);
-    void fillTriangle(int8_t x0, int8_t y0, int8_t x1, int8_t y1, int8_t x2, int8_t y2, uint8_t color);
-    void drawRoundRect(int8_t x0, int8_t y0, int8_t w, int8_t h, int8_t radius, uint8_t color);
-    void fillRoundRect(int8_t x0, int8_t y0, int8_t w, int8_t h, int8_t radius, uint8_t color);
+    void drawTriangle(int8_t x0, int8_t y0, int8_t x1, int8_t y1, int8_t x2, int8_t y2);
+    void fillTriangle(int8_t x0, int8_t y0, int8_t x1, int8_t y1, int8_t x2, int8_t y2);
+    void drawRoundRect(int8_t x0, int8_t y0, int8_t w, int8_t h, int8_t radius);
+    void fillRoundRect(int8_t x0, int8_t y0, int8_t w, int8_t h, int8_t radius);
     
     void drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap);
     void drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap, uint8_t rotation, uint8_t flip);
-	void setBitmapColor(uint8_t c);
-    void drawChar(int8_t x, int8_t y, unsigned char c, uint8_t color, uint8_t bg, uint8_t size);
+    void drawChar(int8_t x, int8_t y, unsigned char c, uint8_t size);
 
     virtual size_t write(uint8_t);
     void setCursor(int8_t x, int8_t y);
-    void setTextColor(uint8_t c);
-    void setTextColor(uint8_t c, uint8_t bg);
     void setTextSize(uint8_t s);
     void setTextWrap(boolean w);
 	
-	boolean persistence; //disable automatic display clean() at each frame if true
+	boolean persistence; //disable clean() at each frame if true
 
 private:
     int8_t sclk, din, dc, cs, rst;
@@ -125,8 +124,7 @@ private:
 	
 
     int8_t cursor_x, cursor_y;
-	uint8_t bitmapcolor;
-    uint8_t textcolor, textbgcolor;
+	uint8_t color, bgcolor;
     uint8_t textsize;
     boolean wrap; // If set, 'wrap' text at right edge of display
 };

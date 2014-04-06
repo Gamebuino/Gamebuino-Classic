@@ -28,7 +28,7 @@ void masterRead(){
     }
   }
   else{
-    gb.popup("DISCONNECTED!",15);
+    gb.popup(F("DISCONNECTED!"),15);
     paused = true;
   }
 }

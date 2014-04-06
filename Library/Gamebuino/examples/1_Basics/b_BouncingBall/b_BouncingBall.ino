@@ -53,7 +53,7 @@ void loop(){
     }
     
     //draw the ball on the screen
-    gb.display.fillRect(ball_x, ball_y, ball_size, ball_size, BLACK);
+    gb.display.fillRect(ball_x, ball_y, ball_size, ball_size);
     
   }
 }

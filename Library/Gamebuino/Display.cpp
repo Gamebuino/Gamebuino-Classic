@@ -22,7 +22,8 @@ void Display::begin(int8_t SCLK, int8_t DIN, int8_t DC, int8_t CS, int8_t RST) {
 
     cursor_y = cursor_x = 0;
     textsize = 1;
-    textcolor = textbgcolor = bitmapcolor = BLACK;
+    color = BLACK;
+	bgcolor = WHITE;
     wrap = true;
 	persistence = false;
 
@@ -152,7 +153,17 @@ void Display::update(void) {
     command(PCD8544_SETYADDR); // no idea why this is necessary but it is to finish the last byte?
 }
 
-void Display::drawPixel(int8_t x, int8_t y, uint8_t color) {
+void Display::setColor(int8_t c){
+	color = c;
+	bgcolor = c;
+}
+
+void Display::setColor(int8_t c, int8_t bg){
+	color = c;
+	bgcolor = bg;
+}
+
+void Display::drawPixel(int8_t x, int8_t y) {
     if ((x < 0) || (x >= LCDWIDTH) || (y < 0) || (y >= LCDHEIGHT))
         return;
 
@@ -186,10 +197,9 @@ uint8_t Display::getPixel(int8_t x, int8_t y) {
     return (_displayBuffer[x + (y / 8) * LCDWIDTH] >> (y % 8)) & 0x1;
 }
 
-void Display::drawFastVLine(int8_t x, int8_t y,
-        int8_t h, uint8_t color) {
+void Display::drawFastVLine(int8_t x, int8_t y, int8_t h) {
     // stupidest/slowest version :
-    drawLine(x, y, x, y + h - 1, color);
+    drawLine(x, y, x, y + h - 1);
     /*if ((x < 0) || (x >= LCDWIDTH) || ((y + h) < 0) || (y >= LCDHEIGHT))
         return;
     if(y < 0){
@@ -206,10 +216,9 @@ void Display::drawFastVLine(int8_t x, int8_t y,
     }*/
 }
 
-void Display::drawFastHLine(int8_t x, int8_t y,
-        int8_t w, uint8_t color) {
+void Display::drawFastHLine(int8_t x, int8_t y, int8_t w) {
     // stupidest/slowest version :
-    drawLine(x, y, x + w - 1, y, color);
+    drawLine(x, y, x + w - 1, y);
     /*if (((x+w) < 0) || (x >= LCDWIDTH) || (y < 0) || (y >= LCDHEIGHT))
         return;
     if(x < 0){
@@ -228,25 +237,22 @@ void Display::drawFastHLine(int8_t x, int8_t y,
     //memset(&_displayBuffer[x + (y / 8) * LCDWIDTH], color, w);
 }
 
-void Display::drawRect(int8_t x, int8_t y, int8_t w, int8_t h, uint8_t color) {
+void Display::drawRect(int8_t x, int8_t y, int8_t w, int8_t h) {
 
-    drawFastHLine(x, y, w, color);
-    drawFastHLine(x, y + h - 1, w, color);
-    drawFastVLine(x, y, h, color);
-    drawFastVLine(x + w - 1, y, h, color);
+    drawFastHLine(x, y, w);
+    drawFastHLine(x, y + h - 1, w);
+    drawFastVLine(x, y, h);
+    drawFastVLine(x + w - 1, y, h);
 }
 
-void Display::fillRect(int8_t x, int8_t y, int8_t w, int8_t h, uint8_t color) {
+void Display::fillRect(int8_t x, int8_t y, int8_t w, int8_t h) {
     // stupidest version - update in subclasses if desired!
     for (int8_t i = x; i < x + w; i++) {
-
-        drawFastVLine(i, y, h, color);
+        drawFastVLine(i, y, h);
     }
 }
 
-void Display::drawLine(int8_t x0, int8_t y0,
-        int8_t x1, int8_t y1,
-        uint8_t color) {
+void Display::drawLine(int8_t x0, int8_t y0, int8_t x1, int8_t y1) {
     int8_t steep = abs(y1 - y0) > abs(x1 - x0);
     if (steep) {
         swap(x0, y0);
@@ -273,9 +279,9 @@ void Display::drawLine(int8_t x0, int8_t y0,
 
     for (; x0 <= x1; x0++) {
         if (steep) {
-            drawPixel(y0, x0, color);
+            drawPixel(y0, x0);
         } else {
-            drawPixel(x0, y0, color);
+            drawPixel(x0, y0);
         }
         err -= dy;
         if (err < 0) {
@@ -286,18 +292,17 @@ void Display::drawLine(int8_t x0, int8_t y0,
     }
 }
 
-void Display::drawCircle(int8_t x0, int8_t y0, int8_t r,
-        uint8_t color) {
+void Display::drawCircle(int8_t x0, int8_t y0, int8_t r) {
     int8_t f = 1 - r;
     int8_t ddF_x = 1;
     int8_t ddF_y = -2 * r;
     int8_t x = 0;
     int8_t y = r;
 
-    drawPixel(x0, y0 + r, color);
-    drawPixel(x0, y0 - r, color);
-    drawPixel(x0 + r, y0, color);
-    drawPixel(x0 - r, y0, color);
+    drawPixel(x0, y0 + r);
+    drawPixel(x0, y0 - r);
+    drawPixel(x0 + r, y0);
+    drawPixel(x0 - r, y0);
 
     while (x < y) {
         if (f >= 0) {
@@ -310,20 +315,19 @@ void Display::drawCircle(int8_t x0, int8_t y0, int8_t r,
         ddF_x += 2;
         f += ddF_x;
 
-        drawPixel(x0 + x, y0 + y, color);
-        drawPixel(x0 - x, y0 + y, color);
-        drawPixel(x0 + x, y0 - y, color);
-        drawPixel(x0 - x, y0 - y, color);
-        drawPixel(x0 + y, y0 + x, color);
-        drawPixel(x0 - y, y0 + x, color);
-        drawPixel(x0 + y, y0 - x, color);
-        drawPixel(x0 - y, y0 - x, color);
+        drawPixel(x0 + x, y0 + y);
+        drawPixel(x0 - x, y0 + y);
+        drawPixel(x0 + x, y0 - y);
+        drawPixel(x0 - x, y0 - y);
+        drawPixel(x0 + y, y0 + x);
+        drawPixel(x0 - y, y0 + x);
+        drawPixel(x0 + y, y0 - x);
+        drawPixel(x0 - y, y0 - x);
 
     }
 }
 
-void Display::drawCircleHelper(int8_t x0, int8_t y0,
-        int8_t r, uint8_t cornername, uint8_t color) {
+void Display::drawCircleHelper(int8_t x0, int8_t y0, int8_t r, uint8_t cornername) {
     int8_t f = 1 - r;
     int8_t ddF_x = 1;
     int8_t ddF_y = -2 * r;
@@ -340,37 +344,32 @@ void Display::drawCircleHelper(int8_t x0, int8_t y0,
         ddF_x += 2;
         f += ddF_x;
         if (cornername & 0x4) {
-            drawPixel(x0 + x, y0 + y, color);
-            drawPixel(x0 + y, y0 + x, color);
+            drawPixel(x0 + x, y0 + y);
+            drawPixel(x0 + y, y0 + x);
         }
         if (cornername & 0x2) {
-            drawPixel(x0 + x, y0 - y, color);
-            drawPixel(x0 + y, y0 - x, color);
+            drawPixel(x0 + x, y0 - y);
+            drawPixel(x0 + y, y0 - x);
         }
         if (cornername & 0x8) {
-            drawPixel(x0 - y, y0 + x, color);
-            drawPixel(x0 - x, y0 + y, color);
+            drawPixel(x0 - y, y0 + x);
+            drawPixel(x0 - x, y0 + y);
         }
         if (cornername & 0x1) {
 
-            drawPixel(x0 - y, y0 - x, color);
-            drawPixel(x0 - x, y0 - y, color);
+            drawPixel(x0 - y, y0 - x);
+            drawPixel(x0 - x, y0 - y);
         }
     }
 }
 
-void Display::fillCircle(int8_t x0, int8_t y0, int8_t r,
-        uint8_t color) {
-
-    drawFastVLine(x0, y0 - r, 2 * r + 1, color);
-    fillCircleHelper(x0, y0, r, 3, 0, color);
+void Display::fillCircle(int8_t x0, int8_t y0, int8_t r) {
+    drawFastVLine(x0, y0 - r, 2 * r + 1);
+    fillCircleHelper(x0, y0, r, 3, 0);
 }
 
 // used to do circles and roundrects!
-
-void Display::fillCircleHelper(int8_t x0, int8_t y0, int8_t r,
-        uint8_t cornername, int8_t delta, uint8_t color) {
-
+void Display::fillCircleHelper(int8_t x0, int8_t y0, int8_t r, uint8_t cornername, int8_t delta) {
     int8_t f = 1 - r;
     int8_t ddF_x = 1;
     int8_t ddF_y = -2 * r;
@@ -388,50 +387,48 @@ void Display::fillCircleHelper(int8_t x0, int8_t y0, int8_t r,
         f += ddF_x;
 
         if (cornername & 0x1) {
-            drawFastVLine(x0 + x, y0 - y, 2 * y + 1 + delta, color);
-            drawFastVLine(x0 + y, y0 - x, 2 * x + 1 + delta, color);
+            drawFastVLine(x0 + x, y0 - y, 2 * y + 1 + delta);
+            drawFastVLine(x0 + y, y0 - x, 2 * x + 1 + delta);
         }
         if (cornername & 0x2) {
 
-            drawFastVLine(x0 - x, y0 - y, 2 * y + 1 + delta, color);
-            drawFastVLine(x0 - y, y0 - x, 2 * x + 1 + delta, color);
+            drawFastVLine(x0 - x, y0 - y, 2 * y + 1 + delta);
+            drawFastVLine(x0 - y, y0 - x, 2 * x + 1 + delta);
         }
     }
 }
 
-void Display::drawRoundRect(int8_t x, int8_t y, int8_t w,
-        int8_t h, int8_t r, uint8_t color) {
+void Display::drawRoundRect(int8_t x, int8_t y, int8_t w,int8_t h, int8_t r) {
     // smarter version
-    drawFastHLine(x + r, y, w - 2 * r, color); // Top
-    drawFastHLine(x + r, y + h - 1, w - 2 * r, color); // Bottom
-    drawFastVLine(x, y + r, h - 2 * r, color); // Left
-    drawFastVLine(x + w - 1, y + r, h - 2 * r, color); // Right
+    drawFastHLine(x + r, y, w - 2 * r); // Top
+    drawFastHLine(x + r, y + h - 1, w - 2 * r); // Bottom
+    drawFastVLine(x, y + r, h - 2 * r); // Left
+    drawFastVLine(x + w - 1, y + r, h - 2 * r); // Right
     // draw four corners
-    drawCircleHelper(x + r, y + r, r, 1, color);
-    drawCircleHelper(x + w - r - 1, y + r, r, 2, color);
-    drawCircleHelper(x + w - r - 1, y + h - r - 1, r, 4, color);
-    drawCircleHelper(x + r, y + h - r - 1, r, 8, color);
+    drawCircleHelper(x + r, y + r, r, 1);
+    drawCircleHelper(x + w - r - 1, y + r, r, 2);
+    drawCircleHelper(x + w - r - 1, y + h - r - 1, r, 4);
+    drawCircleHelper(x + r, y + h - r - 1, r, 8);
 }
 
-void Display::fillRoundRect(int8_t x, int8_t y, int8_t w,
-        int8_t h, int8_t r, uint8_t color) {
-    fillRect(x + r, y, w - 2 * r, h, color);
+void Display::fillRoundRect(int8_t x, int8_t y, int8_t w,int8_t h, int8_t r) {
+    fillRect(x + r, y, w - 2 * r, h);
     // draw four corners
-    fillCircleHelper(x + w - r - 1, y + r, r, 1, h - 2 * r - 1, color);
-    fillCircleHelper(x + r, y + r, r, 2, h - 2 * r - 1, color);
+    fillCircleHelper(x + w - r - 1, y + r, r, 1, h - 2 * r - 1);
+    fillCircleHelper(x + r, y + r, r, 2, h - 2 * r - 1);
 }
 
 void Display::drawTriangle(int8_t x0, int8_t y0,
         int8_t x1, int8_t y1,
-        int8_t x2, int8_t y2, uint8_t color) {
-    drawLine(x0, y0, x1, y1, color);
-    drawLine(x1, y1, x2, y2, color);
-    drawLine(x2, y2, x0, y0, color);
+        int8_t x2, int8_t y2) {
+    drawLine(x0, y0, x1, y1);
+    drawLine(x1, y1, x2, y2);
+    drawLine(x2, y2, x0, y0);
 }
 
 void Display::fillTriangle(int8_t x0, int8_t y0,
         int8_t x1, int8_t y1,
-        int8_t x2, int8_t y2, uint8_t color) {
+        int8_t x2, int8_t y2) {
     int8_t a, b, y, last;
 
     // Sort coordinates by Y order (y2 >= y1 >= y0)
@@ -454,7 +451,7 @@ void Display::fillTriangle(int8_t x0, int8_t y0,
         else if (x1 > b) b = x1;
         if (x2 < a) a = x2;
         else if (x2 > b) b = x2;
-        drawFastHLine(a, y0, b - a + 1, color);
+        drawFastHLine(a, y0, b - a + 1);
         return;
     }
 
@@ -487,7 +484,7 @@ void Display::fillTriangle(int8_t x0, int8_t y0,
         b = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
          */
         if (a > b) swap(a, b);
-        drawFastHLine(a, y, b - a + 1, color);
+        drawFastHLine(a, y, b - a + 1);
     }
 
     // For lower part of triangle, find scanline crossings for segments
@@ -505,7 +502,7 @@ void Display::fillTriangle(int8_t x0, int8_t y0,
                 b = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
          */
         if (a > b) swap(a, b);
-        drawFastHLine(a, y, b - a + 1, color);
+        drawFastHLine(a, y, b - a + 1);
     }
 }
 
@@ -517,12 +514,12 @@ void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap) {
     for (j = 0; j < h; j++) {
         for (i = 0; i < w; i++) {
             if (pgm_read_byte(2 + bitmap + j * byteWidth + i / 8) & (B10000000 >> (i % 8))) {
-                drawPixel(x + i, y + j, bitmapcolor);
+                drawPixel(x + i, y + j);
             }
         }
     }
 #else
-	drawRect(x, y, w, h, bitmapcolor);
+	drawRect(x, y, w, h);
 #endif
 }
 
@@ -569,17 +566,13 @@ void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap,
                 }
                 k += x; //place the bitmap on the screen
                 l += y;
-                drawPixel(k, l, bitmapcolor);
+                drawPixel(k, l);
             }
         }
     }
 #else
-	drawRect(x, y, w, h, bitmapcolor);
+	drawRect(x, y, w, h);
 #endif
-}
-
-void Display::setBitmapColor(uint8_t c){
-	bitmapcolor = c;
 }
 
 #if ARDUINO >= 100
@@ -595,7 +588,7 @@ void Display::write(uint8_t c) {
     } else if (c == '\r') {
         // skip em
     } else {
-        drawChar(cursor_x, cursor_y, c, textcolor, textbgcolor, textsize);
+        drawChar(cursor_x, cursor_y, c, textsize);
         cursor_x += textsize * FONTWIDTH;
         if (wrap && (cursor_x > (LCDWIDTH - textsize * FONTWIDTH))) {
             cursor_y += textsize * FONTHEIGHT;
@@ -607,8 +600,8 @@ void Display::write(uint8_t c) {
 #endif
 }
 
-void Display::drawChar(int8_t x, int8_t y, unsigned char c,
-        uint8_t color, uint8_t bg, uint8_t size) {
+void Display::drawChar(int8_t x, int8_t y, unsigned char c, uint8_t size) {
+	int8_t tempcolor = color;
 
     if ((x >= LCDWIDTH) || // Clip right
             (y >= LCDHEIGHT) || // Clip bottom
@@ -625,20 +618,24 @@ void Display::drawChar(int8_t x, int8_t y, unsigned char c,
         for (int8_t j = 0; j < FONTHEIGHT; j++) {
             if (line & 0x1) {
                 if (size == 1) // default size
-                    drawPixel(x + i, y + j, color);
+                    drawPixel(x + i, y + j);
                 else { // big size
-                    fillRect(x + (i * size), y + (j * size), size, size, color);
+                    fillRect(x + (i * size), y + (j * size), size, size);
                 }
-            } else if (bg != color) {
+            } else if (bgcolor != color) {
+				color = bgcolor;
                 if (size == 1) // default size
-                    drawPixel(x + i, y + j, bg);
+                    drawPixel(x + i, y + j);
                 else { // big size
-                    fillRect(x + i*size, y + j*size, size, size, bg);
+                    fillRect(x + i*size, y + j*size, size, size);
                 }
+			    color = tempcolor; //restore color to its initial value
             }
             line >>= 1;
         }
     }
+	//restore color to what it was previously
+	color = tempcolor;
 }
 
 void Display::setCursor(int8_t x, int8_t y) {
@@ -648,18 +645,6 @@ void Display::setCursor(int8_t x, int8_t y) {
 
 void Display::setTextSize(uint8_t s) {
     textsize = (s > 0) ? s : 1;
-}
-
-void Display::setTextColor(uint8_t c) {
-    textcolor = c;
-    textbgcolor = c;
-    // for 'transparent' background, we'll set the bg 
-    // to the same as fg instead of using a flag
-}
-
-void Display::setTextColor(uint8_t c, uint8_t b) {
-    textcolor = c;
-    textbgcolor = b;
 }
 
 void Display::setTextWrap(boolean w) {

@@ -45,13 +45,15 @@ void loop(){
 
         if ( cell ) { //if there is a cell
           if ( (count < 2) || (count > 3) ) { //and more than 3 neighbors or less than 2
-            gb.display.drawPixel(x+(LCDWIDTH-SX)/2,y+1,WHITE);
+            gb.display.setColor(WHITE);
+            gb.display.drawPixel(x+(LCDWIDTH-SX)/2,y+1);
+            gb.display.setColor(BLACK,WHITE);
             pop--;
           }
         } 
         else { //if there is no cell
           if (count == 3) { //and 3 neighbors
-            gb.display.drawPixel(x+(LCDWIDTH-SX)/2,y+1,BLACK);
+            gb.display.drawPixel(x+(LCDWIDTH-SX)/2,y+1);
             pop++;
           }
         }
@@ -68,9 +70,10 @@ void loop(){
         resetCounter++;
         if (resetCounter == 16){
           gb.sound.playCancel();
-          gb.display.fillRect(32,LCDHEIGHT-14, LCDWIDTH-32, 14, WHITE);
+          gb.display.setColor(WHITE);
+          gb.display.fillRect(32,LCDHEIGHT-14, LCDWIDTH-32, 14);
+          gb.display.setColor(BLACK,WHITE);
           gb.display.setCursor(38,38);
-          gb.display.setTextColor(BLACK, WHITE);
           gb.display.print("\25:restart");
           while(1){
             if(gb.update()){
@@ -94,10 +97,12 @@ void loop(){
     gb.display.print(F(" \nGen:"));
     gb.display.print(gen);
     gb.display.print(" ");
-
-    gb.display.drawFastVLine(32+graphCursor+1,34,14,BLACK);
-    gb.display.drawFastVLine(32+graphCursor,34,14,WHITE);
-    gb.display.drawPixel(32+graphCursor, LCDHEIGHT-pop/32, BLACK);
+    
+    gb.display.setColor(WHITE);
+    gb.display.drawFastVLine(32+graphCursor,34,14);
+    gb.display.setColor(BLACK, WHITE);
+    gb.display.drawFastVLine(32+graphCursor+1,34,14);
+    gb.display.drawPixel(32+graphCursor, LCDHEIGHT-pop/32);
     graphCursor++;
     if(graphCursor > LCDWIDTH-32) graphCursor = 0;
 
@@ -120,12 +125,12 @@ void reset(){
   gen = 0;
   graphCursor = 0;
   gb.display.clear();
-  gb.display.drawRect((LCDWIDTH-SX)/2-1,0,SX+2,SY+2,BLACK);
+  gb.display.drawRect((LCDWIDTH-SX)/2-1,0,SX+2,SY+2);
   for (byte x = 0; x < SX; x++) { 
     for (byte y = 0; y < SY; y++) {
       if(!(random()%4)){
         setCell(x, y, true);
-        gb.display.drawPixel(x+(LCDWIDTH-SX)/2,y+1,BLACK);
+        gb.display.drawPixel(x+(LCDWIDTH-SX)/2,y+1);
         pop++;
       }
     }
