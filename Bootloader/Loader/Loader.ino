@@ -115,7 +115,9 @@ void loop(){  //int currentDirectorySize = getDirectorySize(dir);
 }
 
 void updateCursor(){
-  gb.display.fillRect(0,0,FONTWIDTH,LCDHEIGHT, WHITE);
+  gb.display.setColor(WHITE);
+  gb.display.fillRect(0,0,FONTWIDTH,LCDHEIGHT);
+  gb.display.setColor(BLACK, WHITE);
   gb.display.setCursor(0,FONTHEIGHT*(selectedFile%PAGELENGTH));
   gb.display.print("\x10");
   /*gb.display.setCursor(0,40);
@@ -145,8 +147,8 @@ void updateList(){
   }
 
   if(numberOfFiles > PAGELENGTH){ //if there is several pages
-    gb.display.drawFastVLine(LCDWIDTH-2,0,LCDHEIGHT,BLACK);
-    gb.display.fillRect(LCDWIDTH-3, selectedPage*LCDHEIGHT/numberOfPages, 3, 1+LCDHEIGHT/numberOfPages, BLACK);
+    gb.display.drawFastVLine(LCDWIDTH-2,0,LCDHEIGHT);
+    gb.display.fillRect(LCDWIDTH-3, selectedPage*LCDHEIGHT/numberOfPages, 3, 1+LCDHEIGHT/numberOfPages);
   }
 
   while (1)
