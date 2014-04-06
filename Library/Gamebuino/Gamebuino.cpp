@@ -6,7 +6,6 @@
  */
 
 #include "Gamebuino.h"
-char loader[] = "LOADER";
 PROGMEM uint16_t startupSound[] = {0x1E, 0x10, 0x301E, 0x10, 0x602E, 0x602C, 0x602A, 0x6028, 0x6026, 0x6024, 0x6022, 0x80, 0x0000};
 
 Gamebuino::Gamebuino() {
@@ -78,13 +77,12 @@ boolean Gamebuino::update() {
         backlight.update();
         buttons.update();
         battery.update();
+		sound.update();
 
         return true;
 
     } else {
         if (!frameEndMicros) { //runs once at the end of the frame
-
-            sound.update();
             updatePopup();
 			displayBattery();
             display.update(); //send the buffer to the screen
@@ -399,7 +397,7 @@ void Gamebuino::changeGame(){
 	display.clear();
 	display.print("Loading...");
 	display.update();
-	load_game(loader);
+	load_game("LOADER");
 	display.persistence = false;
 	while(1){
 		if(update()){

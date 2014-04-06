@@ -20,7 +20,7 @@ int selectedFile;
 int selectedPage;
 int prevSelectedPage;
 int thisFile;
-#define PAGELENGTH 6
+#define PAGELENGTH (LCDHEIGHT/FONTHEIGHT)
 
 char completeName[13];
 #define BUFFER_SIZE 128
@@ -115,6 +115,7 @@ void loop(){  //int currentDirectorySize = getDirectorySize(dir);
 }
 
 void updateCursor(){
+  gb.sound.playTick();
   gb.display.setColor(WHITE);
   gb.display.fillRect(0,0,FONTWIDTH,LCDHEIGHT);
   gb.display.setColor(BLACK, WHITE);
