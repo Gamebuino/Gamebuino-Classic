@@ -8,12 +8,12 @@
 #ifndef GAMEBUINO_H
 #define	GAMEBUINO_H
 
-#define load_game (*((void(*)(const char* filename))(0x7ffc/2)))
-
 #define NOROT 0
 #define ROTCCW 1
 #define ROT180 2
 #define ROTCW 3
+
+#define load_game (*((void(*)(const char* filename))(0x7ffc/2)))
 
 #include <Arduino.h>
 #include <avr/pgmspace.h>
@@ -37,9 +37,8 @@ public:
 	void begin(const __FlashStringHelper* name);
     void begin();
     boolean update();
-    uint32_t getFrameCount();
+    uint32_t frameCount;
     void setFrameRate(uint8_t fps);
-    void setTimePerFrame(uint8_t time);
 	uint8_t getCpuLoad();
     
     uint16_t freeRam();
@@ -57,7 +56,6 @@ public:
     
 private:
     uint8_t timePerFrame;
-    uint32_t frameCount;
     uint32_t nextFrameMillis;
     void updatePopup();
     const __FlashStringHelper* popupText;

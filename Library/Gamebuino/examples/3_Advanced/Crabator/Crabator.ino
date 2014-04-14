@@ -153,8 +153,8 @@ PROGMEM uint16_t player_damage_sound[] = {
   0x5C5F, 0x0000};
 
 ///////////////////////////////////// MOBS
-#define NUMMOBS 16 //16
-#define INITNUMMOBS 4 //4
+#define NUMMOBS 16
+#define INITNUMMOBS 4
 #define MOBSRATE 6 //how often is the mob number increased (every X kills)
 #define BOSSFREQ 16//one boss every X kills (initially)
 #define BOSSRATE 1 //every boss killed, the next one will spawn X kills earlier
@@ -175,14 +175,14 @@ PROGMEM uint16_t mob_death_sound[] = {
   0x7C1F, 0x0000};
 
 
-#define NUMSPLASH 6 //8
+#define NUMSPLASH 16
 boolean splash_active[NUMSPLASH];
 int splash_x[NUMSPLASH];
 int splash_y[NUMSPLASH];
 int splash_dir[NUMSPLASH];
 
 ///////////////////////////////////// WEAPONS
-#define NUMBULLETS 8 //10
+#define NUMBULLETS 10
 int     bullets_x[NUMBULLETS];
 int     bullets_y[NUMBULLETS];
 byte    bullets_dir[NUMBULLETS];

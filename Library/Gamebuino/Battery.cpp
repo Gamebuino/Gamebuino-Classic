@@ -41,21 +41,3 @@ void Battery::update() {
 #endif
 }
 
-uint16_t Battery::getVoltage(){
-#if (ENABLE_BATTERY > 0)
-    return voltage;
-#endif
-}
-
-uint8_t Battery::getLevel(){
-#if (ENABLE_BATTERY > 0)
-    return level;
-#endif
-}
-
-void Battery::display(boolean disp){
-#if (ENABLE_BATTERY > 0)
-	show = disp;
-#endif
-}
-

@@ -110,16 +110,9 @@ boolean Gamebuino::update() {
     }
 }
 
-uint32_t Gamebuino::getFrameCount() {
-    return frameCount;
-}
-
 void Gamebuino::setFrameRate(uint8_t fps) {
     timePerFrame = 1000 / fps;
-}
-
-void Gamebuino::setTimePerFrame(uint8_t time) {
-    timePerFrame = time;
+	sound.prescaler = fps / 20;
 }
 
 uint8_t Gamebuino::getCpuLoad(){
@@ -375,7 +368,7 @@ void Gamebuino::displayBattery(){
 #if (ENABLE_BATTERY > 0)
     display.setColor(BLACK, WHITE);
 	display.setCursor(LCDWIDTH-FONTWIDTH+1,0);
-	if(!battery.getLevel()){
+	if(!battery.level){
 		if((frameCount % 16) < 8) { //blink
 			display.print(char(7));
 			if(!(frameCount % 16)){
@@ -383,28 +376,29 @@ void Gamebuino::displayBattery(){
 			}
 		}
 		else{
-		    display.print('x');
+			display.print('x');
 		}
 	}
 	else
 		if(battery.show){
-			display.print(char(7 + battery.getLevel() - 1));
+			display.print(char(7 + battery.level - 1));
 		}
 #endif
 }
 
 void Gamebuino::changeGame(){
 	display.clear();
-	display.print("Loading...");
+	display.print(F("Loading..."));
 	display.update();
 	load_game("LOADER");
 	display.persistence = false;
+	display.println(F("\nNo SD card or\nno LOADER.HEX\n\n\25:Exit"));
+	display.update();
 	while(1){
-		if(update()){
-			display.println("\nNo SD card or\nno LOADER.HEX\n\nA:Exit");
-			if(buttons.pressed(BTN_A))
-				break;
-		}
+	buttons.update();
+	if(buttons.pressed(BTN_A))
+		break;
+	delay(50);
 	}
 }
 

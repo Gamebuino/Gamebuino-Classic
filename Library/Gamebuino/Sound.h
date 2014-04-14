@@ -29,6 +29,8 @@ public:
     uint8_t getGlobalVolume();
     void setChannelVolume(int8_t volume, uint8_t channel);
     uint8_t getChannelVolume(uint8_t channel);
+	
+	uint8_t prescaler;
 
     void playOK();
     void playCancel();

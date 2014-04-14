@@ -17,7 +17,7 @@ void shoot(){
 
           bullets_dir[thisBullet] = playerDir;
           blast_bullet = thisBullet;
-          if(((currentWeapon == 1)||(currentWeapon==4))&&(gb.getFrameCount()%2))
+          if(((currentWeapon == 1)||(currentWeapon==4))&&(gb.frameCount%2))
           {
           }
           else{

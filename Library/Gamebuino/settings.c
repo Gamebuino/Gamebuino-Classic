@@ -1,7 +1,7 @@
 #ifndef SETTINGS_C
 #define	SETTINGS_C
 
-//SETTINGS YOU CAN EDIT (to save RAM and/or ROM)
+//SETTINGS YOU CAN EDIT
 
 #define SCR_CONTRAST 58
 #define NUM_CHANNELS 1 //number of sound channels, between 0 and 4
@@ -32,9 +32,10 @@
 //battery voltage monitor
 #define BAT_PIN A6
 #define NUM_LVL 3
-#define BAT_LVL_LOW		3500
-#define BAT_LVL_MED		3600
-#define BAT_LVL_HIGH	3700
+#define BAT_LVL_CRITIC  3600
+#define BAT_LVL_LOW		3700
+#define BAT_LVL_MED		3800
+#define BAT_LVL_HIGH	3900
 
 //SD card
 #define SD_CS 10
@@ -49,7 +50,7 @@
 #define AMBIENTLIGHT_PIN A7
 //auto back-light levels
 #define AMBIENTLIGHT_MIN 800 //800
-#define AMBIENTLIGHT_MAX 995 //1000
+#define AMBIENTLIGHT_MAX 980 //1000
 #define AMBIENTLIGHT_SMOOTHING 16
 
 //number of buttons

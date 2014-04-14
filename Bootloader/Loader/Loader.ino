@@ -9,9 +9,8 @@ Gamebuino gb;
 // use the second-to-last page in Flash, in Gamebuino the last one contains user settings
 #define TARGET_PAGE ((prog_char *)(0x7000-128))
 
-char fileName[9];
-char nextGameName[9];
-char prevGameName[9];
+char nextGameName[9] = "yyyyyyyy";
+char prevGameName[9] = "zzzzzzzz";
 byte initres;
 byte res;
 int numberOfFiles = 1;
@@ -22,14 +21,16 @@ int prevSelectedPage;
 int thisFile;
 #define PAGELENGTH (LCDHEIGHT/FONTHEIGHT)
 
-char completeName[13];
+char completeName[13] = "xxxxxxxx.xxx";
 #define BUFFER_SIZE 128
 char buffer[BUFFER_SIZE+4];
 
 void setup(){
   Serial.begin(115200);
   gb.begin(F("Game loader"));
-  gb.battery.display(false);
+  gb.battery.show = false;
+  gb.display.clear();
+  gb.display.persistence=true;
 
   initres=file.initFAT();
   if (initres!=NO_ERROR)
@@ -41,22 +42,46 @@ void setup(){
     while(1);
   }
 
-  /*gb.display.clear();
-  gb.display.println(F("Saving prev game"));
+
+  prevGameName[0] = pgm_read_byte(TARGET_PAGE);
+  prevGameName[1] = pgm_read_byte(TARGET_PAGE+1);
+  prevGameName[2] = pgm_read_byte(TARGET_PAGE+2);
+  prevGameName[3] = pgm_read_byte(TARGET_PAGE+3);
+  prevGameName[4] = pgm_read_byte(TARGET_PAGE+4);
+  prevGameName[5] = pgm_read_byte(TARGET_PAGE+5);
+  prevGameName[6] = pgm_read_byte(TARGET_PAGE+6);
+  prevGameName[7] = pgm_read_byte(TARGET_PAGE+7);
+  for(byte i=0; i<8; i++){
+    if(prevGameName[i] == ' ')
+      prevGameName[i] = '\0';
+  }
+
+  if(prevGameName[0]){
+    saveeeprom();
+  }
+  else{
+    gb.display.println(F("No prev game found"));
+  }
+
+  gb.display.println(F("\25:continue"));
   gb.display.update();
-  saveeeprom();*/
+  while(1){
+    gb.buttons.update();
+    if(gb.buttons.pressed(BTN_A)) break;
+    delay(50);
+  }
 
   file.findFirstFile(&file.DE);
   while(file.findNextFile(&file.DE) == NO_ERROR){
+    if(!strstr(file.DE.fileext, "HEX")) continue;
     numberOfFiles++;
   }
   numberOfPages = 1+numberOfFiles/PAGELENGTH;
   gb.display.setTextWrap(false);
-  gb.display.persistence=true;
   updateList();
 }
 
-void loop(){  //int currentDirectorySize = getDirectorySize(dir);
+void loop(){
   selectedFile = 0; //number of the selected file 0 for the 1st file, 1 for the 2nd, etc.
   thisFile = 0; //number of the file currently itering through
   while(1)
@@ -66,18 +91,26 @@ void loop(){  //int currentDirectorySize = getDirectorySize(dir);
         byte thisFile = 0;
         res = file.findFirstFile(&file.DE);
         while(res == NO_ERROR){
-          if(selectedFile == thisFile){
-            strcpy(fileName, file.DE.filename);
-            file.closeFile();
-            gb.display.clear();
-            /*gb.display.println(F("SD \x1A EEPROM"));
-            gb.display.update();
-            loadeeprom();*/
-            gb.display.print(F("Loading game"));
-            gb.display.update();
-            load_game(fileName);
+          if(strstr(file.DE.fileext, "HEX")){
+            if(selectedFile == thisFile){
+              strcpy(nextGameName, file.DE.filename);
+              file.closeFile();
+              gb.display.clear();
+              saveName();
+              loadeeprom();
+              gb.display.println(F("\25:continue"));
+              gb.display.update();
+              while(1){
+                gb.buttons.update();
+                if(gb.buttons.pressed(BTN_A)) break;
+                delay(50);
+              }
+              gb.display.print(F("\nLoading game..."));
+              gb.display.update();
+              load_game(nextGameName);
+            }
+            thisFile++;
           }
-          thisFile++;
           res = file.findNextFile(&file.DE);
         }
       }
@@ -114,124 +147,33 @@ void loop(){  //int currentDirectorySize = getDirectorySize(dir);
     }
 }
 
-void updateCursor(){
-  gb.sound.playTick();
-  gb.display.setColor(WHITE);
-  gb.display.fillRect(0,0,FONTWIDTH,LCDHEIGHT);
-  gb.display.setColor(BLACK, WHITE);
-  gb.display.setCursor(0,FONTHEIGHT*(selectedFile%PAGELENGTH));
-  gb.display.print("\x10");
-  /*gb.display.setCursor(0,40);
-   gb.display.print(selectedFile+1);
-   gb.display.print("/");
-   gb.display.print(numberOfFiles);
-   gb.display.print(" ");
-   gb.display.print(selectedPage+1);
-   gb.display.print("/");
-   gb.display.print(numberOfPages);
-   gb.display.print(" ");*/
-}
 
-void updateList(){
-  gb.display.clear();
-  if((selectedFile < thisFile) || (thisFile == 0)){ //when going to the previous page
-    thisFile = 0;
-    res = file.findFirstFile(&file.DE);
-    //iterate through previous pages
-    for(byte thisPage = 0; thisPage < selectedFile/PAGELENGTH; thisPage++){
-      //iterate through files of previous pages
-      for(byte i = 0; i<PAGELENGTH; i++){
-        file.findNextFile(&file.DE);
-        thisFile++;
-      }
-    }
+
+void saveName(){
+  gb.display.println(F("Saving name to flash"));
+  gb.display.update();
+  for(byte i=0; i<128; i++){
+    buffer[i] = pgm_read_byte(TARGET_PAGE+i);
   }
-
-  if(numberOfFiles > PAGELENGTH){ //if there is several pages
-    gb.display.drawFastVLine(LCDWIDTH-2,0,LCDHEIGHT);
-    gb.display.fillRect(LCDWIDTH-3, selectedPage*LCDHEIGHT/numberOfPages, 3, 1+LCDHEIGHT/numberOfPages);
-  }
-
-  while (1)
-  {
-    gb.display.print(" ");
-    gb.display.print(file.DE.filename);
-    gb.display.print(".");
-    gb.display.println(file.DE.fileext);
-    thisFile++;
-    //open next file
-    res = file.findNextFile(&file.DE);
-    if(res != NO_ERROR){
-      //selectedFile = thisFile-1;
-      break;
-    }
-    //don't display next page
-    if(thisFile > ((selectedFile/PAGELENGTH)*PAGELENGTH+PAGELENGTH-1))
-      break;
-  }
-  updateCursor();
-}
-
-void saveeeprom(){
-  strcpy(completeName, prevGameName);
   for(byte i=0; i<8; i++){
-    if(completeName[i] == ' ')
-      completeName[i] = '\0';
+    buffer[i] = nextGameName[i];
   }
-  strcat(completeName, ".SAV");
-  if(file.exists(completeName)){
-    file.delFile(completeName);
-    gb.display.println("Existing overwritten");
-  }
-  file.create(completeName);
-  res=file.openFile(completeName, FILEMODE_TEXT_WRITE);
-  if (res==NO_ERROR)
-  {
-    for(byte i=0; i< 1024/BUFFER_SIZE; i++){
-      buffer[BUFFER_SIZE+1] = '\0';
-      for(byte j = 0; j<BUFFER_SIZE; j+=2){
-        buffer[j] = 0x0F | EEPROM.read((i*BUFFER_SIZE+j)/2);
-        buffer[j+1] = 0xF0 |  EEPROM.read((i*BUFFER_SIZE+j)/2);
-      }
-      file.writeLn(buffer);
-    }
-    file.closeFile();
-    gb.display.print(F("Saved to "));
-    gb.display.println(completeName);
-    gb.display.update();
-  }
-  else{
-    gb.display.println(F("Error"));
-    gb.display.update();
-  }
-  delay(500);
+  write_flash_page (TARGET_PAGE, (unsigned char *)buffer);
 }
 
-void loadeeprom(){
-  res=file.openFile("BACKUP.MEM", FILEMODE_TEXT_READ);
-  if (res==NO_ERROR)
-  {
-    word result=0;
-    byte i = 0;
-    while ((result!=EOF) and (result!=FILE_IS_EMPTY))
-    {
-      result=file.readLn(buffer, BUFFER_SIZE+2);
-      if (result!=FILE_IS_EMPTY)
-      {
-        for(byte j=0; j<BUFFER_SIZE; j+=2){
-          EEPROM.write((i*BUFFER_SIZE+j)/2,(buffer[j] & 0xF0) | (buffer[j+1] & 0x0F));
-        }
-        i++;
-      }
-      else
-        gb.display.println(F("File empty"));
-      Serial.println();
-    }
-    file.closeFile();
-  }
-  else{
-    gb.display.println(F("Error"));
-    gb.display.update();
-  }
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

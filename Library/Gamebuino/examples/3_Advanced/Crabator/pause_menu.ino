@@ -51,11 +51,11 @@ void pause(){
             }
             gb.display.setCursor(0, 0);
             gb.display.print(F("Bat:"));
-            gb.display.print(gb.battery.getVoltage());
+            gb.display.print(gb.battery.voltage);
             gb.display.println(F("mV"));
 
             gb.display.print(F("Bat lvl:"));
-            gb.display.print(gb.battery.getLevel());
+            gb.display.print(gb.battery.level);
             gb.display.println(F("/3"));
 
             gb.display.print(F("Light:"));
@@ -68,11 +68,19 @@ void pause(){
             gb.display.print(gb.sound.getGlobalVolume());
             gb.display.print(F("/"));
             gb.display.println(VOLUME_GLOBAL_MAX);
+
+            gb.display.print("Mobs:");
+            gb.display.print(activeMobs);
+            gb.display.print("/");
+            gb.display.println(NUMMOBS);
+
+            gb.display.print("Killed:");
+            gb.display.println(kills);
           }
         }
         break;
       case 5: //change game
-        gb.changeGame();
+        load_game("LOADER");
       default:
         return;
       }
@@ -102,6 +110,7 @@ void displayHighScores(){
     }
   }
 }
+
 
 
 

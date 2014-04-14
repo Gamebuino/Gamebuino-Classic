@@ -23,14 +23,11 @@ class Battery {
 public:
     void begin();
     void update();
-    uint16_t getVoltage();
-    uint8_t getLevel();
-	void display(boolean disp);
 	boolean show;
+    uint8_t  level;
+    uint16_t voltage;
 private:
 #if (ENABLE_BATTERY > 0)
-    uint16_t voltage;
-    uint8_t  level;
     uint8_t  nextUpdate;
     uint16_t thresolds[NUM_LVL];
 #endif

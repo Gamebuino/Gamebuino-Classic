@@ -37,7 +37,7 @@ void initGame(){
     splash_active[thisSplash] = false;
   }
   blast_lifespan = 0; //reset explosion
-  gb.battery.display(false);
+  gb.battery.show = false;
   byte i = 0;
   while(i < 10){
     if(gb.update()){
@@ -59,9 +59,9 @@ void play(){
     if(gb.update()){
       if(gb.buttons.pressed(BTN_C)){
         gb.sound.playCancel();
-        gb.battery.display(true);
+        gb.battery.show = true;
         pause();
-        gb.battery.display(false);
+        gb.battery.show = false;
         //gb.enableDisplayBattery = false;
       }
       boolean moved = false;
@@ -134,7 +134,7 @@ void play(){
         }
       }
       if(!playerLife){
-        if((gb.getFrameCount()%2)==0){
+        if((gb.frameCount%2)==0){
           shake_magnitude = 2;
           shake_timeLeft = 1;
         }

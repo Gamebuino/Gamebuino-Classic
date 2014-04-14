@@ -18,12 +18,6 @@ void Backlight::set(uint8_t value) {
     analogWrite(BACKLIGHT_PIN, value);
 }
 
-void Backlight::setAuto(boolean val) {
-#if (ENABLE_BACKLIGHT > 0)
-    automatic = val;
-#endif
-}
-
 void Backlight::update() {
 #if (ENABLE_BACKLIGHT > 0)
     ambientLight = (ambientLight * (AMBIENTLIGHT_SMOOTHING - 1) + analogRead(AMBIENTLIGHT_PIN)) / AMBIENTLIGHT_SMOOTHING; //read value and smooth it

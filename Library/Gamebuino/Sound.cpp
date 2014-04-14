@@ -18,8 +18,6 @@ boolean _chanNoise[NUM_CHANNELS];
 
 #define NUM_FREQ 50
 uint8_t _halfPeriods[NUM_FREQ] = {219, 207, 195, 184, 174, 164, 155, 147, 138, 131, 123, 116, 110, 104, 98, 92, 87, 82, 78, 74, 69, 66, 62, 58, 55, 52, 49, 46, 44, 41, 39, 37, 35, 33, 31, 29,};
-//for OCR = 1118
-//uint8_t _halfPeriods[NUM_FREQ] = {219, 207, 195, 184, 174, 164, 155, 147, 138, 131, 123, 116, 110, 104, 98, 92, 87, 82, 78, 74, 69, 66, 62, 58, 55, 52, 49, 46, 44, 41, 39, 37, 35, 33, 31, 29, 28, 26, 25, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13};
 
 PROGMEM uint16_t sound_OK[] = {0x301E, 0x601E, 0x0000};
 PROGMEM uint16_t sound_Cancel[] = {0x601E, 0x301E, 0x0000};
@@ -28,12 +26,13 @@ PROGMEM uint16_t sound_Tick[] = {0x601F, 0x0000};
 
 void Sound::begin() {
 #if(NUM_CHANNELS > 0)
+	prescaler = 1;
     globalVolume = VOLUME_GLOBAL_MAX;
 	for(byte i=0; i<NUM_CHANNELS; i++){
 		chanVolumes[i] = VOLUME_CHANNEL_MAX;
 	}
     
-    analogWrite(3, 1); //just to get the right register settings for the PWM
+    analogWrite(3, 1); //just to get the right register settings for PWM (hem)
     TCCR2B = (TCCR2B & B11111000) | 1; //set timer 2 prescaler to 1 -> 30kHz PWM on pin 3
 
 
@@ -188,7 +187,7 @@ void Sound::update() {
                 _chanNoise[i] = noteNoise;
                 _chanOutputVolume[i] = globalVolume * chanVolumes[i] * noteVolume;
                 _chanOutput[i] = _chanOutputVolume[i];
-                nextChange[i] = noteDuration;
+                nextChange[i] = noteDuration*prescaler;
                 _chanHalfPeriod[i] = noteHalfPeriod;
 
                 //                Serial.print(i);

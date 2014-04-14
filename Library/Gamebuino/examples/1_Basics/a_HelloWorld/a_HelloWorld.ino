@@ -1,9 +1,10 @@
 //imports the SPI library (needed to communicate with Gamebuino's screen)
 #include <SPI.h>
-//importe the Gamebuino library
+//imports the Gamebuino library
 #include <Gamebuino.h>
 //creates a Gamebuino object named gb
 Gamebuino gb;
+
 // the setup routine runs once when Gamebuino starts up
 void setup(){
   // initialize the Gamebuino object
@@ -21,10 +22,9 @@ void loop(){
     //declare a variable named count of type integer :
     int count;
     //get the number of frames rendered and assign it to the "count" variable
-    count = gb.getFrameCount();
+    count = gb.frameCount;
     //prints the variable "count"
     gb.display.println(count);
-
   }
 }
 

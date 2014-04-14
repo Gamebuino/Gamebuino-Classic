@@ -15,13 +15,12 @@ class Backlight {
 public:
     void begin();
     void set(uint8_t value);
-    void setAuto(boolean val);
     void update();
+    boolean automatic;
     uint16_t ambientLight;
     uint8_t backlightValue;
 private:
 #if (ENABLE_BACKLIGHT > 0)
-    boolean automatic;
     uint8_t smoothing;
 #endif
 };
