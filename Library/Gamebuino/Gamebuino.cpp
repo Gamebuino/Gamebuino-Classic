@@ -16,7 +16,10 @@ void Gamebuino::begin(const __FlashStringHelper*  name, const uint8_t *logo) {
     nextFrameMillis = 0;
     frameCount = 0;
 	frameEndMicros = 1;
+	startMenuTimer = 255;
 
+	readSettings();
+	
     backlight.begin();
     buttons.begin();
     battery.begin();
@@ -36,22 +39,23 @@ void Gamebuino::begin(const __FlashStringHelper*  name, const uint8_t *logo) {
 	if(logo){
 	}
 	
+	if(startMenuTimer){
     sound.play(startupSound, 0);
-	while(1){
-		if(update()){
-			if(buttons.pressed(BTN_A)){
-				sound.stop(0);
-				break;
+		while(1){
+			if(update()){
+				if(buttons.pressed(BTN_B)){
+					sound.setVolume(0);
+				}
+				if(buttons.pressed(BTN_A) || ((frameCount>=startMenuTimer)&&(startMenuTimer != 255))){
+					sound.stop(0);
+					break;
+				}
+				if(!sound.getVolume()){
+					display.drawChar(72,31,'x', 1);
+				}
+				if(buttons.pressed(BTN_C))
+					changeGame();
 			}
-			if(buttons.pressed(BTN_B)){
-				sound.setGlobalVolume(0);
-			}
-			if(!sound.getGlobalVolume()){
-				display.drawChar(72,31,'x', 1);
-			}
-			if(buttons.pressed(BTN_C))
-				changeGame();
-			
 		}
 	}
 	display.persistence = false;
@@ -128,6 +132,7 @@ uint16_t Gamebuino::freeRam() {
 
 int8_t Gamebuino::menu(char** items, uint8_t length) {
 #if (ENABLE_GUI > 0)
+	display.persistence = false;
     int8_t activeItem = 0;
     int8_t currentY = LCDHEIGHT;
     int8_t targetY = 0;
@@ -146,11 +151,11 @@ int8_t Gamebuino::menu(char** items, uint8_t length) {
                 }
             }
             if (exit == false) {
-                if (buttons.pressed(BTN_DOWN)) {
+                if (buttons.repeat(BTN_DOWN,4)) {
                     activeItem++;
                     sound.playTick();
                 }
-                if (buttons.pressed(BTN_UP)) {
+                if (buttons.repeat(BTN_UP,4)) {
                     activeItem--;
                     sound.playTick();
                 }
@@ -188,6 +193,7 @@ return 0;
 
 void Gamebuino::keyboard(char* text, uint8_t length) {
 #if (ENABLE_GUI > 0)
+	display.persistence = false;
     //memset(text, 0, length); //clear the text
 	text[length-1] = '\0';
     //active character in the typing area
@@ -238,6 +244,7 @@ void Gamebuino::keyboard(char* text, uint8_t length) {
 					if((thisChar == 0)||(thisChar == 10)||(thisChar == 13)) //avoid line feed and carriage return
 						continue;
                     text[activeChar] = thisChar;
+                    text[activeChar+1] = '\0';
                 }
                 activeChar++;
                 sound.playOK();
@@ -340,20 +347,20 @@ void Gamebuino::adjustVolume(){
 #if (ENABLE_GUI > 0) || (NUM_CHANNELS > 0)
   while(1){
     if(update()==true){
-      byte volume = sound.getGlobalVolume();
+      byte volume = sound.getVolume();
       display.setTextSize(1);
       display.setColor(BLACK);
       display.setCursor(24, 16);
-      display.println("VOLUME");
+      display.println(F("VOLUME"));
       display.drawRoundRect(24,28,36,7,3);
       if(volume)
         display.fillRoundRect(24,28,12*volume,7,3);
       if(buttons.pressed(BTN_RIGHT) || buttons.pressed(BTN_UP)){
-        sound.setGlobalVolume(volume + 1);
+        sound.setVolume(volume + 1);
         sound.playOK();
       }
       if(buttons.pressed(BTN_LEFT) || buttons.pressed(BTN_DOWN)){
-        sound.setGlobalVolume(volume - 1);
+        sound.setVolume(volume - 1);
         sound.playCancel();
       }
       if(buttons.pressed(BTN_C)){
@@ -368,21 +375,30 @@ void Gamebuino::displayBattery(){
 #if (ENABLE_BATTERY > 0)
     display.setColor(BLACK, WHITE);
 	display.setCursor(LCDWIDTH-FONTWIDTH+1,0);
-	if(!battery.level){
+	if(battery.level>1){
+		if(battery.show){
+			display.print(char(6 + battery.level - 1));
+		}
+	}
+	if(battery.level==1){
 		if((frameCount % 16) < 8) { //blink
 			display.print(char(7));
-			if(!(frameCount % 16)){
-				sound.playTick();
-			}
 		}
 		else{
 			display.print('x');
 		}
 	}
-	else
-		if(battery.show){
-			display.print(char(7 + battery.level - 1));
-		}
+	if(!battery.level){
+        if (battery.level == 0) {//battery critic, power down
+			sound.stop();
+			backlight.set(0);
+			display.clear();
+			display.print(F("NO BATTERY"));
+			display.update();
+            set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+            sleep_enable();
+        }
+	}
 #endif
 }
 
@@ -390,15 +406,60 @@ void Gamebuino::changeGame(){
 	display.clear();
 	display.print(F("Loading..."));
 	display.update();
+	//SPSR &= ~(1 << SPI2X); //clear SPI speed x2 for compatibility issues
 	load_game("LOADER");
 	display.persistence = false;
 	display.println(F("\nNo SD card or\nno LOADER.HEX\n\n\25:Exit"));
 	display.update();
 	while(1){
-	buttons.update();
-	if(buttons.pressed(BTN_A))
-		break;
-	delay(50);
+		buttons.update();
+		if(buttons.pressed(BTN_A))
+			break;
+		delay(50);
+	}
+}
+
+boolean Gamebuino::settingsAvailable(){
+	if(pgm_read_word(SETTINGS_PAGE) == SETTINGS_TOKEN)
+		return true;
+	else
+		return false;
+}
+
+void Gamebuino::readSettings(){
+	if(settingsAvailable()){
+		display.contrast = pgm_read_byte(SETTINGS_PAGE+OFFSET_CONTRAST);
+		backlight.backlightMin = pgm_read_byte(SETTINGS_PAGE+OFFSET_BACKLIGHT_MIN);
+		backlight.backlightMax = pgm_read_byte(SETTINGS_PAGE+OFFSET_BACKLIGHT_MAX);
+		backlight.ambientLightMin = pgm_read_word(SETTINGS_PAGE+OFFSET_LIGHT_MIN);
+		backlight.ambientLightMax = pgm_read_word(SETTINGS_PAGE+OFFSET_LIGHT_MAX);
+		
+		sound.volumeMax = pgm_read_byte(SETTINGS_PAGE+OFFSET_VOLUME_MAX);
+		sound.globalVolume = pgm_read_byte(SETTINGS_PAGE+OFFSET_VOLUME_DEFAULT);
+
+		startMenuTimer = pgm_read_byte(SETTINGS_PAGE+OFFSET_START_MENU_TIMER);
+		
+		battery.thresolds[0] = pgm_read_word(SETTINGS_PAGE+OFFSET_BATTERY_CRITIC);
+		battery.thresolds[1] = pgm_read_word(SETTINGS_PAGE+OFFSET_BATTERY_LOW);
+		battery.thresolds[2] = pgm_read_word(SETTINGS_PAGE+OFFSET_BATTERY_MED);
+		battery.thresolds[3] = pgm_read_word(SETTINGS_PAGE+OFFSET_BATTERY_FULL);
+	}
+	else{
+		display.contrast = SCR_CONTRAST;
+		backlight.backlightMin = BACKLIGHT_MIN;
+		backlight.backlightMax = BACKLIGHT_MAX;
+		backlight.ambientLightMin = AMBIENTLIGHT_MIN;
+		backlight.ambientLightMax = AMBIENTLIGHT_MAX;
+		
+		sound.volumeMax = VOLUME_GLOBAL_MAX;
+		sound.globalVolume = VOLUME_GLOBAL_MAX;
+		
+		startMenuTimer = START_MENU_TIMER;
+		
+		battery.thresolds[0] = BAT_LVL_CRITIC;
+		battery.thresolds[1] = BAT_LVL_LOW;
+		battery.thresolds[2] = BAT_LVL_MED;
+		battery.thresolds[3] = BAT_LVL_FULL;
 	}
 }
 

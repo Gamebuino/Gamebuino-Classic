@@ -8,21 +8,18 @@
 #ifndef GAMEBUINO_H
 #define	GAMEBUINO_H
 
-#define NOROT 0
-#define ROTCCW 1
-#define ROT180 2
-#define ROTCW 3
-
-#define load_game (*((void(*)(const char* filename))(0x7ffc/2)))
-
 #include <Arduino.h>
 #include <avr/pgmspace.h>
+#include <avr/sleep.h>
 #include "settings.c"
 #include "Backlight.h"
 #include "Display.h"
 #include "Buttons.h"
 #include "Battery.h"
 #include "Sound.h"
+
+#define load_game (*((void(*)(const char* filename))(0x7ffc/2)))
+#define write_flash_page (*((void(*)(prog_char * page, unsigned char * buffer))(0x7ffa/2)))
 
 class Gamebuino {
 public:
@@ -37,6 +34,7 @@ public:
 	void begin(const __FlashStringHelper* name);
     void begin();
     boolean update();
+	boolean startMenuTimer;
     uint32_t frameCount;
     void setFrameRate(uint8_t fps);
 	uint8_t getCpuLoad();
@@ -50,6 +48,8 @@ public:
     void popup(const __FlashStringHelper* text, uint8_t duration);
 	void adjustVolume();
 	void changeGame();
+	boolean settingsAvailable();
+	void readSettings();
 	
 	boolean collidePointRect(int16_t x1, int16_t y1 ,int16_t x2 ,int16_t y2, int16_t w, int16_t h);
 	boolean collideRectRect(int16_t x1, int16_t y1, int16_t w1, int16_t h1 ,int16_t x2 ,int16_t y2, int16_t w2, int16_t h2);

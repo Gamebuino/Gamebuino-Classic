@@ -227,9 +227,9 @@ void displayScore(){
   gb.display.setCursor(0,0);
   //gb.display.print(gb.frameDurationMicros);
   //gb.display.print(gb.freeRam());
+  //gb.display.print(gb.getCpuLoad());
   gb.display.print('$');
   gb.display.println(score);
-  //gb.display.println(gb.getCpuLoad());
 }
 
 ///////////////////////////////////// SHAKE SCREEN

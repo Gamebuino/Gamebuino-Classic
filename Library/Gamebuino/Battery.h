@@ -26,11 +26,8 @@ public:
 	boolean show;
     uint8_t  level;
     uint16_t voltage;
-private:
-#if (ENABLE_BATTERY > 0)
-    uint8_t  nextUpdate;
     uint16_t thresolds[NUM_LVL];
-#endif
+    uint8_t  nextUpdate;
 };
 
 #endif	/* BATTERY_H */

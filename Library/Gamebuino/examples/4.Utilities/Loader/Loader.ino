@@ -5,10 +5,6 @@
 #include <Gamebuino.h>
 Gamebuino gb;
 
-#define write_flash_page (*((void(*)(prog_char * page, unsigned char * buffer))(0x7ffa/2)))
-// use the second-to-last page in Flash, in Gamebuino the last one contains user settings
-#define TARGET_PAGE ((prog_char *)(0x7000-128))
-
 char nextGameName[9] = "yyyyyyyy";
 char prevGameName[9] = "zzzzzzzz";
 byte initres;
@@ -42,15 +38,16 @@ void setup(){
     while(1);
   }
 
-
-  prevGameName[0] = pgm_read_byte(TARGET_PAGE);
-  prevGameName[1] = pgm_read_byte(TARGET_PAGE+1);
-  prevGameName[2] = pgm_read_byte(TARGET_PAGE+2);
-  prevGameName[3] = pgm_read_byte(TARGET_PAGE+3);
-  prevGameName[4] = pgm_read_byte(TARGET_PAGE+4);
-  prevGameName[5] = pgm_read_byte(TARGET_PAGE+5);
-  prevGameName[6] = pgm_read_byte(TARGET_PAGE+6);
-  prevGameName[7] = pgm_read_byte(TARGET_PAGE+7);
+  prog_char* address = SETTINGS_PAGE + OFFSET_CURRENTGAME;
+  prevGameName[0] = pgm_read_byte(address);
+  prevGameName[1] = pgm_read_byte(address+1);
+  prevGameName[2] = pgm_read_byte(address+2);
+  prevGameName[3] = pgm_read_byte(address+3);
+  prevGameName[4] = pgm_read_byte(address+4);
+  prevGameName[5] = pgm_read_byte(address+5);
+  prevGameName[6] = pgm_read_byte(address+6);
+  prevGameName[7] = pgm_read_byte(address+7);
+  
   for(byte i=0; i<8; i++){
     if(prevGameName[i] == ' ')
       prevGameName[i] = '\0';
@@ -147,18 +144,16 @@ void loop(){
     }
 }
 
-
-
 void saveName(){
   gb.display.println(F("Saving name to flash"));
   gb.display.update();
   for(byte i=0; i<128; i++){
-    buffer[i] = pgm_read_byte(TARGET_PAGE+i);
+    buffer[i] = pgm_read_byte(SETTINGS_PAGE+i);
   }
-  for(byte i=0; i<8; i++){
-    buffer[i] = nextGameName[i];
+  for(byte i=0; i<9; i++){
+    buffer[i+OFFSET_CURRENTGAME] = nextGameName[i];
   }
-  write_flash_page (TARGET_PAGE, (unsigned char *)buffer);
+  write_flash_page (SETTINGS_PAGE, (unsigned char *)buffer);
 }
 
 

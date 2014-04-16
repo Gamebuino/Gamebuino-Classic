@@ -27,7 +27,6 @@ PROGMEM uint16_t sound_Tick[] = {0x601F, 0x0000};
 void Sound::begin() {
 #if(NUM_CHANNELS > 0)
 	prescaler = 1;
-    globalVolume = VOLUME_GLOBAL_MAX;
 	for(byte i=0; i<NUM_CHANNELS; i++){
 		chanVolumes[i] = VOLUME_CHANNEL_MAX;
 	}
@@ -55,7 +54,7 @@ void Sound::play(uint16_t* soundData, uint8_t channel) {
 #if(NUM_CHANNELS > 0)
 	if(channel>=NUM_CHANNELS)
 		return;
-    stop(channel);
+    //stop(channel);
     data[channel] = soundData;
     playing[channel] = true;
     nextChange[channel] = 0;
@@ -103,15 +102,15 @@ void Sound::setLooping(uint8_t channel, boolean loop) {
 #endif
 }
 
-void Sound::setGlobalVolume(int8_t volume) {
+void Sound::setVolume(int8_t volume) {
 #if NUM_CHANNELS > 0
-    volume = (volume > VOLUME_GLOBAL_MAX) ? VOLUME_GLOBAL_MAX : volume;
+    volume = (volume > volumeMax) ? volumeMax : volume;
     volume = (volume < 0) ? 0 : volume;
     globalVolume = volume;
 #endif
 }
 
-uint8_t Sound::getGlobalVolume() {
+uint8_t Sound::getVolume() {
 #if NUM_CHANNELS > 0
     return globalVolume;
 #else

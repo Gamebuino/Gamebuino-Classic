@@ -114,7 +114,7 @@
 /* 500,1000,2000,4000,8000 supported.                     */
 /*                                                        */
 /**********************************************************/
-
+
 /**********************************************************/
 /* Version Numbers!                                       */
 /*                                                        */
@@ -180,7 +180,7 @@ asm(	".section .jumps,\"ax\",@progbits\n"
 #include "mmc_fat.h"
 
 #ifndef LED_START_FLASHES
-#define LED_START_FLASHES 0
+#define LED_START_FLASHES 3
 #endif
 
 #ifdef LUDICROUS_SPEED
@@ -301,6 +301,12 @@ int main(void) {
   SP=RAMEND;  // This is done by hardware reset
 #endif
 
+  // if the C button is currently pressed then try to run the loader app
+  DDRC &= ~(1 << PC3);
+  PORTC |= (1 << PC3);
+  if (!(PINC & (1<<PC3)))
+	  load_loader();
+
   // Adaboot no-wait mod
   ch = MCUSR;
   MCUSR = 0;
@@ -324,27 +330,22 @@ int main(void) {
 #endif
 #endif
 
-  // if the C button is currently pressed then try to run the loader app
-  DDRC &= ~(1 << PC3);
-  PORTC |= (1 << PC3);
-  if (!(PINC & (1<<PC3)))
-	  load_loader();
-
   // Set up watchdog to trigger after 500ms
   watchdogConfig(WATCHDOG_1S);
 
   /* Set LED pin as output */
-  LED_DDR |= _BV(LED);
+  //LED_DDR |= _BV(LED);
 
 #ifdef SOFT_UART
   /* Set TX pin as output */
-  UART_DDR |= _BV(UART_TX_BIT);
+  //UART_DDR |= _BV(UART_TX_BIT);
 #endif
 
 #if LED_START_FLASHES > 0
   /* Flash onboard LED to signal entering of bootloader */
   flash_led(LED_START_FLASHES * 2);
 #endif
+
 
   /* Forever loop */
   for (;;) {
@@ -615,9 +616,9 @@ void flash_led(uint8_t count) {
     TIFR1 = _BV(TOV1);
     while(!(TIFR1 & _BV(TOV1)));
 #ifdef __AVR_ATmega8__
-    LED_PORT ^= _BV(LED);
+    //LED_PORT ^= _BV(LED);
 #else
-    LED_PIN |= _BV(LED);
+    //LED_PIN |= _BV(LED);
 #endif
     watchdogReset();
   } while (--count);
@@ -678,24 +679,19 @@ void load_loader()
 	load_game(filename);
 }
 
-#define STACK_TOP ((char *)(1024 - 9))
-
 // loads a game and reboots
 void load_game(const char * filename)
 {
 	// don't want any interrupts corrupting our memory
 	asm("cli");
+	asm volatile ("clr __zero_reg__");
 
 	// if we're being called by the application then the filename could be anywhere in SRAM.
 	// push it to the stack so that we don't accidentally overwrite it
 	memcpy(FILENAME_LOCATION, filename, 9);
 
-	// reset the stack back to the top of ram. the top of ram is normally
-	// 0x8ff but we've reserved 9 bytes for the filename
-	asm("ldi r28, 0xf6");
-	asm("ldi r29, 0x08");
-	asm("out 62, r29");	// SPH
-	asm("out 61, r28");	// SPL
+	// reset the stack back to the top of ram, not including space for the filename.
+	SP=RAMEND-9;
 
 	load_file();
 	reboot();

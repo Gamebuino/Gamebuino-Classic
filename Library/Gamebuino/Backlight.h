@@ -19,10 +19,8 @@ public:
     boolean automatic;
     uint16_t ambientLight;
     uint8_t backlightValue;
-private:
-#if (ENABLE_BACKLIGHT > 0)
-    uint8_t smoothing;
-#endif
+	uint8_t backlightMin, backlightMax;
+	uint16_t ambientLightMin, ambientLightMax;
 };
 
 #endif	/* BACKLIGHT_H */

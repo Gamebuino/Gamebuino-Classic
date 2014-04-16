@@ -27,7 +27,7 @@ int ball_vy = 3;
 ///////////////////////////////////// SETUP
 void setup() {
   gb.begin(F("Pong Solo"));
-  gb.battery.display(false); //hide the battery indicator
+  gb.battery.show = false; //hide the battery indicator
 }
 
 ///////////////////////////////////// LOOP

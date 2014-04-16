@@ -116,6 +116,7 @@ public:
     void setTextWrap(boolean w);
 	
 	boolean persistence; //disable clean() at each frame if true
+	byte contrast;
 
 private:
     int8_t sclk, din, dc, cs, rst;

@@ -22,7 +22,7 @@ void Backlight::update() {
 #if (ENABLE_BACKLIGHT > 0)
     ambientLight = (ambientLight * (AMBIENTLIGHT_SMOOTHING - 1) + analogRead(AMBIENTLIGHT_PIN)) / AMBIENTLIGHT_SMOOTHING; //read value and smooth it
     if (automatic) {
-        backlightValue = map(constrain(ambientLight, AMBIENTLIGHT_MIN, AMBIENTLIGHT_MAX), AMBIENTLIGHT_MIN, AMBIENTLIGHT_MAX, BACKLIGHT_MAX, BACKLIGHT_MIN);
+        backlightValue = map(constrain(ambientLight, ambientLightMin, ambientLightMax), ambientLightMin, ambientLightMax, backlightMax, backlightMin);
         set(backlightValue);
     }
 #endif

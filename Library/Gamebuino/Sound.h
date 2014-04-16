@@ -25,8 +25,8 @@ public:
     void stop();
     void setLooping(uint8_t channel, boolean loop);
 
-    void setGlobalVolume(int8_t volume);
-    uint8_t getGlobalVolume();
+    void setVolume(int8_t volume);
+    uint8_t getVolume();
     void setChannelVolume(int8_t volume, uint8_t channel);
     uint8_t getChannelVolume(uint8_t channel);
 	
@@ -40,10 +40,11 @@ public:
     void setChannelHalfPeriod(uint8_t channel, uint8_t halfPeriod);
 
     static void generateOutput(); //!\\ DO NOT USE
+    uint8_t globalVolume;
+	uint8_t volumeMax;
 private:
 #if (NUM_CHANNELS > 0)
     uint16_t* data[NUM_CHANNELS];
-    uint8_t globalVolume;
     uint8_t chanVolumes[NUM_CHANNELS];
     uint16_t dataLength[NUM_CHANNELS];
     uint16_t cursorPosition[NUM_CHANNELS];

@@ -435,7 +435,7 @@ int load_file() {
 	uint16_t entrycounter = 0;
 	uint8_t i = 0;
 
-
+	
 	/* first, init mmc / fat */
 	if (fat16_init() != 0)
 		return 2;

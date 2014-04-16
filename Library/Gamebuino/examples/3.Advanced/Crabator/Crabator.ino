@@ -283,7 +283,7 @@ void displayTitle(){
   }*/
 }
 
-///////////////////////////////////// SCREE COORD
+///////////////////////////////////// SCREEN COORD
 boolean screenCoord(int absoluteX, int absoluteY, int &x, int &y){
   x = absoluteX - cameraX + 8;
   x = (x >= 0) ? x%(WORLD_W*8) : WORLD_W*8 + x%(WORLD_W*8);
@@ -297,10 +297,12 @@ boolean screenCoord(int absoluteX, int absoluteY, int &x, int &y){
 }
 
 ///////////////////////////////////// WRAP
-int wrap(int i, int imax){
+/*int wrap(int i, int imax){
   i = (i >= 0 ) ? i%(imax) : imax + i%(imax);
   return i;
-}
+}*/
+
+#define wrap(i, imax) ((imax+i)%(imax))
 
 ///////////////////////////////////// MOVE XYDS
 void moveXYDS(int &x, int &y, byte &dir, char speed){

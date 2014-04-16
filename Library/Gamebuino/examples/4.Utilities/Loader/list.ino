@@ -33,7 +33,7 @@ void updateList(){
   {
     if(strstr(file.DE.fileext, "HEX")){
       gb.display.print(" ");
-      gb.display.print(file.DE.filename);
+      gb.display.println(file.DE.filename);
       //gb.display.print(".");
       //gb.display.println(file.DE.fileext);
       thisFile++;

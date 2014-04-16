@@ -5,7 +5,7 @@ char* PROGMEM pauseMenu[PAUSEMENULENGTH] = {
   "High scores",
   "Volume",
   "System info",
-  "Change Game"
+  "Exit"
 };
 
 ///////////////////////////////////// PAUSE
@@ -24,21 +24,6 @@ void pause(){
       case 2: //high scores
         displayHighScores();
         break;
-        /*case 3: //music ON/OFF
-         if (gb.sound.isPlaying(1)) {
-         gb.sound.stop();
-         gb.popup("Music is OFF", 30);
-         } 
-         else {
-         gb.sound.play(tetris_main1, 1);
-         gb.sound.play(tetris_main2, 2);
-         gb.sound.play(tetris_drum, 3);
-         gb.sound.setLooping(1, true);
-         gb.sound.setLooping(2, true);
-         gb.sound.setLooping(3, true);
-         gb.popup("Music is ON", 30);
-         }
-         break;*/
       case 3: //Volume
         gb.adjustVolume();
         break;
@@ -65,9 +50,9 @@ void pause(){
             gb.display.println(gb.backlight.backlightValue);
 
             gb.display.print(F("Volume:"));
-            gb.display.print(gb.sound.getGlobalVolume());
+            gb.display.print(gb.sound.getVolume());
             gb.display.print(F("/"));
-            gb.display.println(VOLUME_GLOBAL_MAX);
+            gb.display.println(gb.sound.volumeMax);
 
             gb.display.print("Mobs:");
             gb.display.print(activeMobs);
@@ -80,7 +65,7 @@ void pause(){
         }
         break;
       case 5: //change game
-        load_game("LOADER");
+         gb.changeGame();
       default:
         return;
       }
