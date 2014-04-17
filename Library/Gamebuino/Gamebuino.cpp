@@ -393,10 +393,12 @@ void Gamebuino::displayBattery(){
 			sound.stop();
 			backlight.set(0);
 			display.clear();
-			display.print(F("NO BATTERY"));
+			display.print(F("NO BATTERY\n\nPLEASE\nTURN OFF"));
 			display.update();
             set_sleep_mode(SLEEP_MODE_PWR_DOWN);
             sleep_enable();
+			sleep_mode();
+			sleep_disable();
         }
 	}
 #endif

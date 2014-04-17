@@ -23,10 +23,6 @@ void Buttons::begin() {
     states[BTN_A] = 0;
     states[BTN_B] = 0;
     states[BTN_C] = 0;
-
-    for (uint8_t i = 0; i < NUM_BTN; i++) {
-        pinMode(pins[i], INPUT_PULLUP); //enable internal pull up resistors
-    }
 }
 
 /*
@@ -34,6 +30,7 @@ void Buttons::begin() {
  */
 void Buttons::update() {
     for (uint8_t thisButton = 0; thisButton < NUM_BTN; thisButton++) {
+        pinMode(pins[thisButton], INPUT_PULLUP); //enable internal pull up resistors
         if (digitalRead(pins[thisButton]) == LOW) { //if button pressed
             states[thisButton]++; //increase button hold time
         } else {
@@ -44,7 +41,9 @@ void Buttons::update() {
             else
                 states[thisButton] = 0xFF; //button just released
         }
+        pinMode(pins[thisButton], INPUT); //disable internal pull up resistors to save power
     }
+	
 
 }
 
