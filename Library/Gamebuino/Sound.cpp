@@ -118,7 +118,7 @@ uint8_t Sound::getVolume() {
 #endif
 }
 
-void Sound::setChannelVolume(int8_t volume, uint8_t channel) {
+void Sound::setVolume(int8_t volume, uint8_t channel) {
 #if(NUM_CHANNELS > 0)
 	if(channel>=NUM_CHANNELS)
 		return;
@@ -128,7 +128,7 @@ void Sound::setChannelVolume(int8_t volume, uint8_t channel) {
 #endif
 }
 
-uint8_t Sound::getChannelVolume(uint8_t channel) {
+uint8_t Sound::getVolume(uint8_t channel) {
 #if(NUM_CHANNELS > 0)
 	if(channel>=NUM_CHANNELS)
 		return 255;

@@ -1,4 +1,4 @@
-#include <tinyFAT.h>
+#include <tinyFAT.h> //requires the tinyFAT library. You can download it here : http://www.henningkarlsen.com/electronics/library.php?id=37
 #include <SPI.h>
 #include <Gamebuino.h>
 Gamebuino gb;

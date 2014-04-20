@@ -41,7 +41,7 @@ void pause(){
 
             gb.display.print(F("Bat lvl:"));
             gb.display.print(gb.battery.level);
-            gb.display.println(F("/3"));
+            gb.display.println(F("/4"));
 
             gb.display.print(F("Light:"));
             gb.display.println(gb.backlight.ambientLight);

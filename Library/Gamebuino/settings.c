@@ -58,7 +58,7 @@
 #define BAT_PIN A6
 #define NUM_LVL 4
 #define BAT_LVL_CRITIC  3500
-#define BAT_LVL_LOW		3600
+#define BAT_LVL_LOW		3550
 #define BAT_LVL_MED		3700
 #define BAT_LVL_FULL	3900
 

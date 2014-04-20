@@ -27,8 +27,8 @@ public:
 
     void setVolume(int8_t volume);
     uint8_t getVolume();
-    void setChannelVolume(int8_t volume, uint8_t channel);
-    uint8_t getChannelVolume(uint8_t channel);
+    void setVolume(int8_t volume, uint8_t channel);
+    uint8_t getVolume(uint8_t channel);
 	
 	uint8_t prescaler;
 

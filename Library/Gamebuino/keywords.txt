@@ -1,0 +1,103 @@
+Gamebuino 	KEYWORD3
+gb 	KEYWORD3
+display	KEYWORD1
+backlight	KEYWORD1
+battery	KEYWORD1
+sound	KEYWORD1
+buttons	KEYWORD1
+
+//core
+begin	KEYWORD1
+update	KEYWORD1
+setFrameRate	KEYWORD1
+frameCount	KEYWORD1
+changeGame	KEYWORD1
+menu	KEYWORD1
+keyboard	KEYWORD1
+popup	KEYWORD1
+adjustVolume	KEYWORD1
+getCpuLoad	KEYWORD1
+freeRam	KEYWORD1
+frameDurationMicros	KEYWORD1
+
+//buttons
+pressed	KEYWORD1
+released	KEYWORD1
+held	KEYWORD1
+repeat	KEYWORD1
+timeHeld	KEYWORD1
+BTN_A 	LITERAL1
+BTN_B 	LITERAL1
+BTN_C 	LITERAL1
+BTN_UP 	LITERAL1
+BTN_RIGHT 	LITERAL1
+BTN_DOWN 	LITERAL1
+BTN_LEFT 	LITERAL1
+
+//sound
+play	KEYWORD1
+isPlaying	KEYWORD1
+stop	KEYWORD1
+setLooping	KEYWORD1
+prescaler	KEYWORD1
+setVolume	KEYWORD1
+getVolume	KEYWORD1
+playOK	KEYWORD1
+playCancel	KEYWORD1
+playTick	KEYWORD1
+
+//battery
+voltage	KEYWORD1
+level	KEYWORD1
+show	KEYWORD1
+
+//backlight
+set	KEYWORD1
+automatic	KEYWORD1
+backlightValue	KEYWORD1
+ambientLight	KEYWORD1
+backlightMin	KEYWORD1
+backlightMax	KEYWORD1
+ambientLightMin	KEYWORD1
+ambientLightMax	KEYWORD1
+
+//Display
+setContrast	KEYWORD1
+clear	KEYWORD1
+update	KEYWORD1
+fillScreen	KEYWORD1
+persistence	KEYWORD1
+setColor	KEYWORD1
+drawPixel	KEYWORD1
+getPixel	KEYWORD1
+drawLine	KEYWORD1
+drawFastVLine	KEYWORD1
+drawFastHLine	KEYWORD1
+drawRect	KEYWORD1
+fillRect	KEYWORD1
+drawRoundRect	KEYWORD1
+fillRoundRect	KEYWORD1
+drawCircle	KEYWORD1
+fillCircle	KEYWORD1
+drawCircleHelper	KEYWORD1
+fillCircleHelper	KEYWORD1
+drawTriangle	KEYWORD1
+fillTriangle	KEYWORD1
+drawBitmap	KEYWORD1
+drawChar	KEYWORD1
+print	KEYWORD1
+setCursor	KEYWORD1
+setTextSize	KEYWORD1
+setTextWrap	KEYWORD1
+
+LCDWIDTH 	LITERAL1
+LCDHEIGHT 	LITERAL1
+FONTWIDTH 	LITERAL1
+FONTHEIGHT 	LITERAL1
+NOROT 	LITERAL1
+ROTCCW 	LITERAL1
+ROT180 	LITERAL1
+ROTCW 	LITERAL1
+FLIPH 	LITERAL1
+FLIPV 	LITERAL1
+FLIPVH 	LITERAL1

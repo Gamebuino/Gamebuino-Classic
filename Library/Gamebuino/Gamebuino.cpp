@@ -7,6 +7,57 @@
 
 #include "Gamebuino.h"
 PROGMEM uint16_t startupSound[] = {0x1E, 0x10, 0x301E, 0x10, 0x602E, 0x602C, 0x602A, 0x6028, 0x6026, 0x6024, 0x6022, 0x80, 0x0000};
+static unsigned char PROGMEM gamebuinoLogo[] =
+{
+  84,10, //width and height
+  B00000011, B11100001, B10000001, B10000110, B01111111, B00111110, B00011000, B01101101, B10000011, B00001111, B00001111, 
+  B00001110, B00000001, B10000011, B10000110, B01100000, B00110011, B00011000, B01101101, B11000011, B00011001, B10001111, 
+  B00011000, B00000011, B11000011, B10001110, B01100000, B00110011, B00011000, B01101101, B11100011, B00110000, B11001111, 
+  B00011000, B00000011, B11000011, B10011110, B01100000, B00110110, B00110000, B11001101, B11100011, B01100000, B11001111, 
+  B00110000, B00000110, B11000111, B10011110, B01111110, B00111110, B00110000, B11001101, B10110011, B01100000, B11001111, 
+  B00110000, B00001100, B11000110, B11110110, B01100000, B00110011, B00110000, B11011001, B10110110, B01100000, B11001111, 
+  B00110011, B11001111, B11001100, B11110110, B01100000, B01100001, B10110000, B11011011, B00011110, B01100000, B11001111, 
+  B00110000, B11011000, B01101100, B11100110, B11000000, B01100001, B10110000, B11011011, B00011110, B01100001, B10001111, 
+
+  B00011001, B10011000, B01101100, B11000110, B11000000, B01100011, B10110001, B10011011, B00001110, B00110011, B00001111, 
+  B00001111, B10110000, B01111000, B11000110, B11111111, B01111110, B00011111, B00011011, B00000110, B00011110, B00001111, 
+};
+
+static unsigned char PROGMEM startMenuIcons[] =
+{
+  16,28, //width and height
+  B00111100, B00000000, 
+  B01000010, B00001110, 
+  B10010001, B00011011, 
+  B10011001, B00010101, 
+  B10011101, B00010001, 
+  B10011001, B00010101, 
+  B10010001, B00011111, 
+  B01000010, B00001110, 
+
+  B00111100, B00000000, 
+  B00000000, B00000000, 
+  B00000000, B00000000, 
+  B00000000, B00001110, 
+  B00000000, B00010111, 
+  B00000000, B00010001, 
+  B00000000, B00010101, 
+  B00000000, B00010001, 
+
+  B00000000, B00011111, 
+  B00000000, B00001110, 
+  B00000000, B00000000, 
+  B00000000, B00000000, 
+  B01111000, B00000000, 
+  B10000100, B00001110, 
+  B11111111, B11011111, 
+  B11000000, B01010001, 
+
+  B11000000, B01010111, 
+  B10000000, B10010001, 
+  B10000000, B10011111, 
+  B11111111, B10001110, 
+};
 
 Gamebuino::Gamebuino() {
 }
@@ -29,32 +80,42 @@ void Gamebuino::begin(const __FlashStringHelper*  name, const uint8_t *logo) {
     backlight.set(BACKLIGHT_MAX);
 	display.persistence = true;
 	
-	uint8_t offset = 0;
-	if(logo){
-		offset = pgm_read_byte(logo)+2; //offset by the logo width
-		display.drawBitmap(0, 12, logo);
-	}
-	display.setCursor(offset,12); 
-	display.print(name);
-	if(logo){
-	}
-	
 	if(startMenuTimer){
+	#if LCDWIDTH == LCDWIDTH_NOROT
+		display.drawBitmap(0,0, gamebuinoLogo);
+		if(logo){
+			display.drawBitmap(0, 12+FONTHEIGHT, logo);
+		}
+		display.setCursor(0,12);
+	#else
+		display.drawBitmap(7,0, gamebuinoLogo);
+		display.drawBitmap(-41,12,gamebuinoLogo);
+		if(logo){
+			display.drawBitmap(0, 24+FONTHEIGHT, logo);
+		}
+		display.setCursor(0,24); 
+	#endif
+	display.print(name);
+	display.drawBitmap(LCDWIDTH-16, LCDHEIGHT-28, startMenuIcons);
+	display.drawChar(LCDWIDTH-5-2*FONTWIDTH,LCDHEIGHT-17,'\23', 1); //speaker logo
+
     sound.play(startupSound, 0);
-		while(1){
-			if(update()){
-				if(buttons.pressed(BTN_B)){
-					sound.setVolume(0);
-				}
-				if(buttons.pressed(BTN_A) || ((frameCount>=startMenuTimer)&&(startMenuTimer != 255))){
-					sound.stop(0);
-					break;
-				}
-				if(!sound.getVolume()){
-					display.drawChar(72,31,'x', 1);
-				}
-				if(buttons.pressed(BTN_C))
-					changeGame();
+	while(1){
+		if(update()){
+			if(buttons.pressed(BTN_B)){
+				sound.setVolume(0);
+			}
+			
+			if(sound.getVolume()) display.drawChar(LCDWIDTH-5-FONTWIDTH,LCDHEIGHT-17,'\24', 1);
+			else display.drawChar(LCDWIDTH-5-FONTWIDTH,LCDHEIGHT-17,'x', 1);
+			
+			if(buttons.pressed(BTN_A) || ((frameCount>=startMenuTimer)&&(startMenuTimer != 255))){
+				sound.stop(0);
+				break;
+			}
+			
+			if(buttons.pressed(BTN_C))
+				changeGame();
 			}
 		}
 	}
@@ -375,31 +436,30 @@ void Gamebuino::displayBattery(){
 #if (ENABLE_BATTERY > 0)
     display.setColor(BLACK, WHITE);
 	display.setCursor(LCDWIDTH-FONTWIDTH+1,0);
-	if(battery.level>1){
-		if(battery.show){
-			display.print(char(6 + battery.level - 1));
-		}
-	}
-	if(battery.level==1){
-		if((frameCount % 16) < 8) { //blink
-			display.print(char(7));
-		}
-		else{
-			display.print('x');
-		}
-	}
-	if(!battery.level){
-        if (battery.level == 0) {//battery critic, power down
+	switch(battery.level){
+		case 0://battery critic, power down
 			sound.stop();
 			backlight.set(0);
 			display.clear();
 			display.print(F("NO BATTERY\n\nPLEASE\nTURN OFF"));
 			display.update();
-            set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+			while(1);
+            /*set_sleep_mode(SLEEP_MODE_PWR_DOWN);
             sleep_enable();
 			sleep_mode();
-			sleep_disable();
-        }
+			sleep_disable();*/
+			break;
+		case 1: //empty battery
+			if((frameCount % 16) < 8) display.print('\7'); //blinking battery
+			else display.print('x');
+			break;
+		case 2://low battery
+		case 3://full battery
+		case 4://full battery
+			if(battery.show){
+				display.print(char(5+battery.level));
+			}
+			break;
 	}
 #endif
 }
