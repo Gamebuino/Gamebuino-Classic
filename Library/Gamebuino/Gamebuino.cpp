@@ -525,6 +525,14 @@ void Gamebuino::readSettings(){
 	}
 }
 
+void Gamebuino::getDefaultName(char* string){
+	if(settingsAvailable()){	
+		for(byte i=0; i<USERNAME_LENGTH; i++){
+			string[i] = (char)pgm_read_byte(SETTINGS_PAGE+OFFSET_USERNAME+i);
+		}
+	}
+}
+
 boolean Gamebuino::collidePointRect(int16_t x1, int16_t y1 ,int16_t x2 ,int16_t y2, int16_t w, int16_t h){
   if((x1>=x2)&&(x1<x2+w))
     if((y1>=y2)&&(y1<y2+h))

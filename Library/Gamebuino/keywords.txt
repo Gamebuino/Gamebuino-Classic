@@ -12,6 +12,7 @@ update	KEYWORD1
 setFrameRate	KEYWORD1
 frameCount	KEYWORD1
 changeGame	KEYWORD1
+getDefaultName KEYWORD1
 menu	KEYWORD1
 keyboard	KEYWORD1
 popup	KEYWORD1

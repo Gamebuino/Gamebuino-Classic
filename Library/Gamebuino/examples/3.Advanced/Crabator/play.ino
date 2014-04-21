@@ -255,14 +255,15 @@ void loadHighscore(){
 
 ///////////////////////////////////// SAVE HIGHSCORE
 void saveHighscore(){
-  gb.keyboard(name[RANKMAX-1], NAMELENGTH);
+  gb.getDefaultName(name[RANKMAX-1]);
+  gb.keyboard(name[RANKMAX-1], NAMELENGTH+1);
   highscore[RANKMAX-1] = score;
   for(byte i=RANKMAX-1; i>0; i--){ //bubble sorting FTW
     if(highscore[i-1] < highscore[i]){
       char tempName[NAMELENGTH];
-      assignArray(tempName, name[i-1], NAMELENGTH);
-      assignArray(name[i-1], name[i], NAMELENGTH);
-      assignArray(name[i], tempName, NAMELENGTH);
+      strcpy(tempName, name[i-1]);
+      strcpy(name[i-1], name[i]);
+      strcpy(name[i], tempName);
       unsigned int tempScore;
       tempScore = highscore[i-1];
       highscore[i-1] = highscore[i];

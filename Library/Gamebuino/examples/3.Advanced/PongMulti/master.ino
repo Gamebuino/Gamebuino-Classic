@@ -15,6 +15,7 @@ void updateMaster(){
 ///////////////////////////////////// MASTER READ
 void masterRead(){
   if(Wire.requestFrom(2, SLAVE_DATA_BUFFER_LENGTH)){    // request 6 bytes from slave device #2
+    disconnected = false;
     paused = false;
     while(Wire.available()){    // slave may send less than requested
       char data_in = Wire.read(); // receive byte per byte
@@ -22,14 +23,25 @@ void masterRead(){
       case PLAYER_Y:
         oponent_y = Wire.read();
         break;
+      case SLAVE_PAUSED:
+        gb.popup(F("Slave paused"),15);
+        paused = true;
+        break;
+      case I_AM_MASTER:
+        gb.popup(F("1 master max"),15);
+        paused = true;
+        break;
       default:
+        gb.popup(F("Wrong slave data"),15);
+        paused = true;
         break;
       }
     }
   }
   else{
-    gb.popup(F("DISCONNECTED!"),15);
+    gb.popup(F("Slave disconnected"),15);
     paused = true;
+    disconnected = true;
   }
 }
 
@@ -48,6 +60,8 @@ void masterWrite(){
   Wire.write(oponent_score);
   Wire.endTransmission();    // stop transmitting
 }
+
+
 
 
 

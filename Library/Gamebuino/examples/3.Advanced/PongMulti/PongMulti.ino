@@ -5,10 +5,14 @@ Gamebuino gb = Gamebuino();
 #include <Wire.h>
 
 boolean isMaster;
-boolean singlePlayer;
-boolean paused = false;
+boolean paused = true;
+boolean disconnected = false;
+boolean slave_updated = false;
+
 
 //I2C variables identifiers :
+#define SLAVE_PAUSED 1
+#define I_AM_MASTER 2
 #define PLAYER_Y 10
 #define BALL_X 20
 #define BALL_Y 21
@@ -18,15 +22,15 @@ boolean paused = false;
 
 //we use char type instead of int because it's easier to send over I2C
 //player variables
-char player_w = 2;
-char player_h = 12;
+char player_w = 3;
+char player_h = 16;
 char player_y = (LCDHEIGHT-player_h)/2;
 char player_x = 0;
-char player_vy = 1;
+char player_vy = 2;
 byte player_score = 0;
 //oponent variables
-char oponent_w = 2;
-char oponent_h = 12;
+char oponent_w = 3;
+char oponent_h = 16;
 char oponent_x = LCDWIDTH - oponent_w;
 char oponent_y = (LCDHEIGHT-oponent_h)/2;
 char oponent_vy = player_vy;
@@ -35,12 +39,11 @@ byte oponent_score = 0;
 char ball_size = 6;
 char ball_x = (LCDWIDTH-ball_size)/2;
 char ball_y = (LCDHEIGHT-ball_size)/2;
-char ball_vx = 2;
-char ball_vy = 2;
+char ball_vx = 3;
+char ball_vy = 3;
 
-#define MENULENGTH 3
+#define MENULENGTH 2
 char* PROGMEM menu[MENULENGTH] = {
-  "Single player",
   "Host (master)",
   "Join (slave)"
 };
@@ -48,28 +51,30 @@ char* PROGMEM menu[MENULENGTH] = {
 ///////////////////////////////////// SETUP
 void setup() {
   gb.begin(F("Pong Multiplayer")); //initialize the Gamebuino
-  gb.battery.display(false); //hide the battery indicator
+  gb.battery.show = false; //hide the battery indicator
+  //can be either master or slave:
+  setupMaster();
+  setupSlave();
 }
 
 ///////////////////////////////////// LOOP
 void loop() {
+
+  paused = true;
+  isMaster = false;
+  player_score = 0;
+  oponent_score = 0;
+  
   switch(gb.menu(menu, MENULENGTH)){
-  case 0: //single player
+  case 0: //Host
     paused = false;
-    singlePlayer = true;
-    isMaster = false;
-    break;
-  case 1: //Host
-    paused = false;
-    singlePlayer = false;
+    disconnected = false;
     isMaster = true;
-    setupMaster();
     break;
-  case 2: //Join
+  case 1: //Join
     paused = false;
-    singlePlayer = false;
+    disconnected = false;
     isMaster = false;
-    setupSlave();
     break;
   default:
     break;
@@ -88,29 +93,24 @@ void loop() {
           player_y = min(LCDHEIGHT-player_h, player_y + player_vy);
         }
       }
-      if(singlePlayer){
-        updateGame();
-        gb.display.print(F(" solo"));
+
+      gb.display.setTextSize(1);
+      if(isMaster){
+        gb.display.print(F(" master "));
+        updateMaster();
       }
       else {
-        gb.display.setTextSize(1);
-        if(isMaster){
-          gb.display.print(F(" master "));
-          updateMaster();
-        }
-        else {
-          gb.display.print(F(" slave "));
-          updateSlave();
-        }
+        gb.display.print(F(" slave "));
+        updateSlave();
       }
 
-      updateSound();
       updateDisplay();
-
-
     }
   }
 }
+
+
+
 
 
 

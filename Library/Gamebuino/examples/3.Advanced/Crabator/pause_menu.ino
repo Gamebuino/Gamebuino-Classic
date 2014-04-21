@@ -65,7 +65,7 @@ void pause(){
         }
         break;
       case 5: //change game
-         gb.changeGame();
+        gb.changeGame();
       default:
         return;
       }
@@ -83,8 +83,9 @@ void displayHighScores(){
       gb.display.setCursor(0,FONTHEIGHT);
       for(byte thisScore=0; thisScore<RANKMAX; thisScore++){
         if(highscore[thisScore]==0)
-          break;
-        gb.display.print(name[thisScore]);
+          gb.display.print('-');
+        else
+          gb.display.print(name[thisScore]);
         gb.display.setCursor(LCDWIDTH-3*FONTWIDTH,FONTHEIGHT+FONTHEIGHT*thisScore);
         gb.display.println(highscore[thisScore]);
       }            
@@ -95,6 +96,7 @@ void displayHighScores(){
     }
   }
 }
+
 
 
 
