@@ -1,16 +1,4 @@
 void saveeeprom(){
-  gb.display.clear();
-  gb.display.print(F("Save "));
-  gb.display.print(prevGameName);
-  gb.display.println(F(".SAV?"));
-  gb.display.println(F("\25:yes \26:no"));
-  gb.display.update();
-  while(1){
-    gb.buttons.update();
-    if(gb.buttons.pressed(BTN_A)) break;
-    if(gb.buttons.pressed(BTN_B)) return;
-    delay(50);
-  }
 
   boolean isEmpty = true;
   for(int i = 0; i< 1024; i++){
@@ -23,6 +11,20 @@ void saveeeprom(){
     gb.display.println(F("Nothing to be saved!"));
     return;
   }
+  gb.display.clear();
+  gb.display.print(F("Save EEPROM to\n"));
+  gb.display.print(prevGameName);
+  gb.display.println(F(".SAV?"));
+  gb.display.println(F("\25:yes \26:no"));
+  gb.display.update();
+  while(1){
+    gb.buttons.update();
+    if(gb.buttons.pressed(BTN_A)) break;
+    if(gb.buttons.pressed(BTN_B)) return;
+    delay(50);
+  }
+
+
 
   strcpy(completeName, prevGameName);
   strcat(completeName, ".SAV");
@@ -62,4 +64,6 @@ void saveeeprom(){
     gb.display.update();
   }
 }
+
+
 

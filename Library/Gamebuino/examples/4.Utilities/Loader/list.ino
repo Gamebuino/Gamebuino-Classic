@@ -12,12 +12,16 @@ void updateList(){
   if((selectedFile < thisFile) || (thisFile == 0)){ //when going to the previous page
     thisFile = 0;
     res = file.findFirstFile(&file.DE);
+    while(res == NO_ERROR){ //go to the first HEX file
+      if(!showAll && strstr(file.DE.fileext, "HEX")) break;
+      res = file.findNextFile(&file.DE);
+    }
     //iterate through previous pages
     for(byte thisPage = 0; thisPage < selectedFile/PAGELENGTH; thisPage++){
       //iterate through files of previous pages
       for(byte i = 0; i<PAGELENGTH; i++){
         file.findNextFile(&file.DE);
-        if(strstr(file.DE.fileext, "HEX")){
+        if(showAll || strstr(file.DE.fileext, "HEX")){
           thisFile++;
         }
       }
@@ -31,17 +35,21 @@ void updateList(){
 
   while (1)
   {
-    if(strstr(file.DE.fileext, "HEX")){
+    if(showAll || strstr(file.DE.fileext, "HEX")){
       gb.display.print(" ");
-      gb.display.println(file.DE.filename);
-      //gb.display.print(".");
-      //gb.display.println(file.DE.fileext);
+      gb.display.print(file.DE.filename);
+      if(showAll){
+        gb.display.print(".");
+        gb.display.println(file.DE.fileext);
+      }
+      else{
+        gb.display.println();
+      }
       thisFile++;
     }
     //open next file
     res = file.findNextFile(&file.DE);
     if(res != NO_ERROR){
-      //selectedFile = thisFile-1;
       break;
     }
     //don't display next page
@@ -50,5 +58,8 @@ void updateList(){
   }
   updateCursor();
 }
+
+
+
 
 

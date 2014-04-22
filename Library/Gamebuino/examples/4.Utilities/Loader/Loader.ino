@@ -17,6 +17,8 @@ int prevSelectedPage;
 int thisFile;
 #define PAGELENGTH (LCDHEIGHT/FONTHEIGHT)
 
+boolean showAll = false; //display non-HEX files
+
 char completeName[13] = "xxxxxxxx.xxx";
 #define BUFFER_SIZE 128
 char buffer[BUFFER_SIZE+4];
@@ -47,7 +49,7 @@ void setup(){
   prevGameName[5] = pgm_read_byte(address+5);
   prevGameName[6] = pgm_read_byte(address+6);
   prevGameName[7] = pgm_read_byte(address+7);
-  
+
   for(byte i=0; i<8; i++){
     if(prevGameName[i] == ' ')
       prevGameName[i] = '\0';
@@ -60,17 +62,21 @@ void setup(){
     gb.display.println(F("No prev game found"));
   }
 
-  gb.display.println(F("\25:continue"));
-  gb.display.update();
-  while(1){
-    gb.buttons.update();
-    if(gb.buttons.pressed(BTN_A)) break;
-    delay(50);
-  }
+  /*gb.display.println(F("\25:continue"));
+   gb.display.update();
+   while(1){
+   gb.buttons.update();
+   if(gb.buttons.pressed(BTN_A)) break;
+   delay(50);
+   }*/
 
   file.findFirstFile(&file.DE);
+  while(res == NO_ERROR){ //go to the first HEX file
+    if(!showAll && strstr(file.DE.fileext, "HEX")) break;
+    res = file.findNextFile(&file.DE);
+  }
   while(file.findNextFile(&file.DE) == NO_ERROR){
-    if(!strstr(file.DE.fileext, "HEX")) continue;
+    if(!showAll && !strstr(file.DE.fileext, "HEX")) continue;
     numberOfFiles++;
   }
   numberOfPages = 1+numberOfFiles/PAGELENGTH;
@@ -87,21 +93,25 @@ void loop(){
       if(gb.buttons.pressed(BTN_A)){
         byte thisFile = 0;
         res = file.findFirstFile(&file.DE);
+        while(res == NO_ERROR){ //go to the first HEX file
+          if(!showAll && strstr(file.DE.fileext, "HEX")) break;
+          res = file.findNextFile(&file.DE);
+        }
         while(res == NO_ERROR){
-          if(strstr(file.DE.fileext, "HEX")){
+          if(showAll || strstr(file.DE.fileext, "HEX")){
             if(selectedFile == thisFile){
               strcpy(nextGameName, file.DE.filename);
               file.closeFile();
               gb.display.clear();
               saveName();
               loadeeprom();
-              gb.display.println(F("\25:continue"));
-              gb.display.update();
-              while(1){
-                gb.buttons.update();
-                if(gb.buttons.pressed(BTN_A)) break;
-                delay(50);
-              }
+              /*gb.display.println(F("\25:continue"));
+               gb.display.update();
+               while(1){
+               gb.buttons.update();
+               if(gb.buttons.pressed(BTN_A)) break;
+               delay(50);
+               }*/
               gb.display.print(F("\nLoading game..."));
               gb.display.update();
               load_game(nextGameName);
@@ -145,8 +155,8 @@ void loop(){
 }
 
 void saveName(){
-  gb.display.println(F("Saving name to flash"));
-  gb.display.update();
+  //gb.display.println(F("Saving name to flash"));
+  //gb.display.update();
   for(byte i=0; i<128; i++){
     buffer[i] = pgm_read_byte(SETTINGS_PAGE+i);
   }
@@ -155,6 +165,10 @@ void saveName(){
   }
   write_flash_page (SETTINGS_PAGE, (unsigned char *)buffer);
 }
+
+
+
+
 
 
 
