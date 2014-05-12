@@ -18,8 +18,8 @@ unsigned batteryCritic, batteryLow, batteryMed, batteryFull;
 
 #define MAINMENU_LENGTH 5
 char* PROGMEM mainMenu[MAINMENU_LENGTH] = {
-  "See all settings",
   "Change settings",
+  "See all settings",
   "Default settings",
   "Erase settings",
   "Save and Exit"
@@ -36,11 +36,11 @@ void setup(){
 
 void loop(){
   switch(gb.menu(mainMenu,MAINMENU_LENGTH)){
-  case 0: //display settings
-    seeAllSettings();
-    break;
-  case 1: //change settings
+  case 0: //change settings
     changeSettings();
+    break;
+  case 1: //display settings
+    seeAllSettings();
     break;
   case 2: //default settings
     restoreSettings();

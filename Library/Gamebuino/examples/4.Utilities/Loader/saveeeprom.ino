@@ -12,17 +12,17 @@ void saveeeprom(){
     return;
   }
   gb.display.clear();
-  gb.display.print(F("Save EEPROM to\n"));
+  gb.display.print(F("Saving EEPROM to\n"));
   gb.display.print(prevGameName);
   gb.display.println(F(".SAV?"));
-  gb.display.println(F("\25:yes \26:no"));
+  /*gb.display.println(F("\25:yes \26:no"));
   gb.display.update();
   while(1){
     gb.buttons.update();
     if(gb.buttons.pressed(BTN_A)) break;
     if(gb.buttons.pressed(BTN_B)) return;
     delay(50);
-  }
+  }*/
 
 
 

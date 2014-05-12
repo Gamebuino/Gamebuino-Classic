@@ -236,7 +236,7 @@ int crate_x, crate_y;
 PROGMEM uint16_t power_up[] = {0x3C1E,0x4C1E,0x581E,0x6C1E,0x7C1E,0x401E,0x501E,0x5C1E,0x701E,0x801E,0x481E,0x581E,0x641E,0x781E,0x881E,0x0000};
 
 ///////////////////////////////////// SCORE
-#define RANKMAX 8 //store 5 high scores
+#define RANKMAX 7 //store 5 high scores
 int score = 0;
 //int lastScore = 0;
 int kills = 0;

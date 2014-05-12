@@ -17,8 +17,6 @@ int prevSelectedPage;
 int thisFile;
 #define PAGELENGTH (LCDHEIGHT/FONTHEIGHT)
 
-boolean showAll = false; //display non-HEX files
-
 char completeName[13] = "xxxxxxxx.xxx";
 #define BUFFER_SIZE 128
 char buffer[BUFFER_SIZE+4];
@@ -31,6 +29,7 @@ void setup(){
   gb.display.persistence=true;
 
   initres=file.initFAT();
+
   if (initres!=NO_ERROR)
   {
     gb.display.clear();
@@ -71,13 +70,10 @@ void setup(){
    }*/
 
   file.findFirstFile(&file.DE);
-  while(res == NO_ERROR){ //go to the first HEX file
-    if(!showAll && strstr(file.DE.fileext, "HEX")) break;
-    res = file.findNextFile(&file.DE);
-  }
-  while(file.findNextFile(&file.DE) == NO_ERROR){
-    if(!showAll && !strstr(file.DE.fileext, "HEX")) continue;
+
+  while(res == NO_ERROR){
     numberOfFiles++;
+    res = file.findNextFile(&file.DE);
   }
   numberOfPages = 1+numberOfFiles/PAGELENGTH;
   gb.display.setTextWrap(false);
@@ -93,31 +89,25 @@ void loop(){
       if(gb.buttons.pressed(BTN_A)){
         byte thisFile = 0;
         res = file.findFirstFile(&file.DE);
-        while(res == NO_ERROR){ //go to the first HEX file
-          if(!showAll && strstr(file.DE.fileext, "HEX")) break;
-          res = file.findNextFile(&file.DE);
-        }
         while(res == NO_ERROR){
-          if(showAll || strstr(file.DE.fileext, "HEX")){
-            if(selectedFile == thisFile){
-              strcpy(nextGameName, file.DE.filename);
-              file.closeFile();
-              gb.display.clear();
-              saveName();
-              loadeeprom();
-              /*gb.display.println(F("\25:continue"));
-               gb.display.update();
-               while(1){
-               gb.buttons.update();
-               if(gb.buttons.pressed(BTN_A)) break;
-               delay(50);
-               }*/
-              gb.display.print(F("\nLoading game..."));
-              gb.display.update();
-              load_game(nextGameName);
-            }
-            thisFile++;
+          if(selectedFile == thisFile){
+            strcpy(nextGameName, file.DE.filename);
+            file.closeFile();
+            gb.display.clear();
+            saveName();
+            loadeeprom();
+            /*gb.display.println(F("\25:continue"));
+             gb.display.update();
+             while(1){
+             gb.buttons.update();
+             if(gb.buttons.pressed(BTN_A)) break;
+             delay(50);
+             }*/
+            gb.display.print(F("\nLoading game..."));
+            gb.display.update();
+            load_game(nextGameName);
           }
+          thisFile++;
           res = file.findNextFile(&file.DE);
         }
       }
@@ -165,6 +155,7 @@ void saveName(){
   }
   write_flash_page (SETTINGS_PAGE, (unsigned char *)buffer);
 }
+
 
 
 

@@ -28,8 +28,8 @@ boolean changeValue(unsigned &val, unsigned minVal, unsigned maxVal, const __Fla
 
 #define SETTINGSMENU_LENGTH 6
 char* PROGMEM settingsMenu[SETTINGSMENU_LENGTH] = {
-  "Player name",
   "Display",
+  "Player name",
   "Sound",
   "Interface",
   "Battery",
@@ -40,10 +40,10 @@ void changeSettings(){
   while(1){
     switch(gb.menu(settingsMenu, SETTINGSMENU_LENGTH)){
     case 0: //display
-      gb.keyboard(userName,USERNAME_LENGTH+1);
-      break;
-    case 1: //display
       displaySettings();
+      break;
+    case 1: //username
+      gb.keyboard(userName,USERNAME_LENGTH+1);
       break;
     case 2: //sound
       soundSettings();
@@ -81,7 +81,7 @@ void displaySettings(){
       gb.setFrameRate(41);
       while(1){
         if(gb.update()){
-          if(changeValue(contrast, 50, 70, F("Adjust constrast to\nsee \"GRAY\" correctly\n")))
+          if(changeValue(contrast, 30, 80, F("Adjust constrast to\nsee \"GRAY\" correctly\n")))
             break;
           gb.display.setCursor(0,20);
           gb.display.println("BLACK");

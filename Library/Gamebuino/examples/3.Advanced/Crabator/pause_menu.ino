@@ -5,7 +5,7 @@ char* PROGMEM pauseMenu[PAUSEMENULENGTH] = {
   "High scores",
   "Volume",
   "System info",
-  "Exit"
+  "Change game"
 };
 
 ///////////////////////////////////// PAUSE
