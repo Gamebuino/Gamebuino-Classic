@@ -117,8 +117,10 @@ static inline unsigned char mmc_init(void)
 	SPI_DDR  |= 1<<SPI_CLK | 1<<SPI_MOSI | 1<<SPI_SS; // SPI Data -> Output
 	MMC_DDR |= 1<<MMC_CS; 	//MMC Chip Select -> Output
 	
-	
-	SPCR = 1<<SPE | 1<<MSTR | SPI_INIT_CLOCK; //SPI Enable, SPI Master Mode
+	// Enable SPI, Master, clock rate f_osc/128
+	SPCR = (1 << SPE) | (1 << MSTR) | (1 << SPR1) | (1 << SPR0);
+	// clear double speed
+	SPSR &= ~(1 << SPI2X);
 	
 	unsigned char i;
 	
