@@ -1,0 +1,10 @@
+Version:
+	1.0	30 Jan 2011  -	initial release
+	1.1	31 Jan 2011  -	added option to set SPI speed, and increased the default speed
+	2.0	12 Feb 2011  -	added support for reading and writing text-files, in addition to a few support-functions
+	2.01	27 Mar 2011  -	updated some of the examples to be compatible with ITDB02_Graph(16) v4.0
+	2.02	19 Apr 2011  -	moved the ITDB02_Integration examples to the ITDB02_tinyFAT and ITDB02_tinyFAT16 libraries
+	2.1	26 Apr 2011  -	added setSSpin() function
+	3.0	03 Jun 2012  -	added Arduino 1.0 support
+				rewritten all the low-level functions
+				fixed a bug making it possible to read past the first 32MB
