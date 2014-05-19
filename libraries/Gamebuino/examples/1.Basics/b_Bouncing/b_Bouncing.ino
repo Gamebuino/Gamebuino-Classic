@@ -1,6 +1,6 @@
 //imports the SPI library (needed to communicate with Gamebuino's screen)
 #include <SPI.h>
-//importe the Gamebuino library
+//imports the Gamebuino library
 #include <Gamebuino.h>
 //creates a Gamebuino object named gb
 Gamebuino gb;
