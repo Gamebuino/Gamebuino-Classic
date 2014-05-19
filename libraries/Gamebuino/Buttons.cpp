@@ -75,7 +75,7 @@ boolean Buttons::released(uint8_t button) {
  * @return true when 'button' is held for 'time' frames
  */
 boolean Buttons::held(uint8_t button, uint8_t time){
-    if(states[button] == time)
+    if(states[button] == (time+1))
         return true;
     else
         return false;

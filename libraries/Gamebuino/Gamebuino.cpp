@@ -381,7 +381,7 @@ void Gamebuino::keyboard(char* text, uint8_t length) {
 void Gamebuino::popup(const __FlashStringHelper* text, uint8_t duration){
 #if (ENABLE_GUI > 0)
     popupText = text;
-    popupTimeLeft = duration;
+    popupTimeLeft = duration+12;
 #endif
 }
 
@@ -469,6 +469,7 @@ void Gamebuino::changeGame(){
 	display.print(F("Loading..."));
 	display.update();
 	//SPSR &= ~(1 << SPI2X); //clear SPI speed x2 for compatibility issues
+    SPI.setClockDivider(SPI_CLOCK_DIV128);
 	load_game("LOADER");
 	display.persistence = false;
 	display.println(F("\nNo SD card or\nno LOADER.HEX\n\n\25:Exit"));

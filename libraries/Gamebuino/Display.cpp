@@ -29,7 +29,7 @@ void Display::begin(int8_t SCLK, int8_t DIN, int8_t DC, int8_t CS, int8_t RST) {
 
     SPI.begin();
     SPI.setBitOrder(MSBFIRST);
-    SPI.setClockDivider(SPI_CLOCK_DIV4);
+    SPI.setClockDivider(SPI_CLOCK_DIV8); //can be set to 4 but some random pixels will start to appear on some displays
     SPI.setDataMode(SPI_MODE3);
     // set pin directions
     pinMode(din, OUTPUT);
@@ -106,7 +106,7 @@ void Display::data(uint8_t c) {
 }
 
 void Display::setContrast(uint8_t val) {
-	contrast = constrain(val, 50, 70);
+	contrast = constrain(val, 30, 80);
     /*if (contrast > 0x7f) {
         contrast = 0x7f;
     }*/
