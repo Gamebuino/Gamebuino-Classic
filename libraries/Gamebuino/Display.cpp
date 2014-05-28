@@ -43,7 +43,7 @@ void Display::begin(int8_t SCLK, int8_t DIN, int8_t DC, int8_t CS, int8_t RST) {
     // toggle RST low to reset
     if (rst > 0) {
         digitalWrite(rst, LOW);
-        delay(5);
+        delay(10);
         digitalWrite(rst, HIGH);
     }
 

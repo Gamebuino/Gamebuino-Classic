@@ -39,7 +39,7 @@ public:
     void setFrameRate(uint8_t fps);
 	uint8_t getCpuLoad();
     
-    uint16_t freeRam();
+    uint16_t getFreeRam();
     uint16_t frameDurationMicros;
     uint32_t frameStartMicros, frameEndMicros;
     

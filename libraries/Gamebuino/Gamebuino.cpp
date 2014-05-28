@@ -184,7 +184,7 @@ uint8_t Gamebuino::getCpuLoad(){
 	return(frameDurationMicros/(10*timePerFrame));
 }
 
-uint16_t Gamebuino::freeRam() {
+uint16_t Gamebuino::getFreeRam() {
     //from http://www.controllerprojects.com/2011/05/23/determining-sram-usage-on-arduino/
     extern int __heap_start, *__brkval;
     int v;
@@ -443,11 +443,10 @@ void Gamebuino::displayBattery(){
 			display.clear();
 			display.print(F("NO BATTERY\n\nPLEASE\nTURN OFF"));
 			display.update();
-			while(1);
-            /*set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+            set_sleep_mode(SLEEP_MODE_PWR_DOWN);
             sleep_enable();
 			sleep_mode();
-			sleep_disable();*/
+			sleep_disable();
 			break;
 		case 1: //empty battery
 			if((frameCount % 16) < 8) display.print('\7'); //blinking battery
@@ -458,6 +457,11 @@ void Gamebuino::displayBattery(){
 		case 4://full battery
 			if(battery.show){
 				display.print(char(5+battery.level));
+			}
+			break;
+		default:
+			if(battery.show){
+				display.print('/');
 			}
 			break;
 	}
