@@ -16,6 +16,7 @@ getDefaultName KEYWORD1
 menu	KEYWORD1
 keyboard	KEYWORD1
 popup	KEYWORD1
+pickRandomSeed	KEYWORD1
 adjustVolume	KEYWORD1
 getCpuLoad	KEYWORD1
 freeRam	KEYWORD1
@@ -36,9 +37,12 @@ BTN_DOWN 	LITERAL1
 BTN_LEFT 	LITERAL1
 
 //sound
-play	KEYWORD1
+playTrack	KEYWORD1
+setTrackLooping	KEYWORD1
+stopTrack	KEYWORD1
+playNote	KEYWORD1
 isPlaying	KEYWORD1
-stop	KEYWORD1
+stopNote	KEYWORD1
 setLooping	KEYWORD1
 prescaler	KEYWORD1
 setVolume	KEYWORD1

@@ -10,8 +10,7 @@ char* PROGMEM pauseMenu[PAUSEMENULENGTH] = {
 
 ///////////////////////////////////// PAUSE
 void pause(){
-  //gb.enableDisplayBattery = true;
-  gb.popup(F(""),0);
+  gb.battery.show = true;
   while(true){
     if(gb.update()){
       switch(gb.menu(pauseMenu, PAUSEMENULENGTH)){
@@ -25,7 +24,7 @@ void pause(){
         displayHighScores();
         break;
       case 3: //Volume
-        gb.adjustVolume();
+        //gb.adjustVolume();
         break;
       case 4: //System info
         while (1) {
@@ -96,9 +95,3 @@ void displayHighScores(){
     }
   }
 }
-
-
-
-
-
-

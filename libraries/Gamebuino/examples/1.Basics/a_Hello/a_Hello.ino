@@ -9,7 +9,7 @@ Gamebuino gb;
 void setup(){
   // initialize the Gamebuino object
   gb.begin(F("My first game"));
-  gb.popup(F("Let's go!"), 30);
+  gb.popup(F("Let's go!"), 100);
 }
 
 // the loop routine runs over and over again forever
@@ -27,5 +27,3 @@ void loop(){
     gb.display.println(count);
   }
 }
-
-

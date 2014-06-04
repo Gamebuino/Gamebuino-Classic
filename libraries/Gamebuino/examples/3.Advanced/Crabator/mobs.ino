@@ -48,9 +48,6 @@ boolean spawnMob(byte thisMob){
 
 ///////////////////////////////////// SPAWN ALL MOBS
 boolean spawnMobs(){
-  /*gb.setCursor(0,32);
-   gb.setTextColor(BLACK, WHITE);
-   gb.print("Spawning ");*/
   for(byte thisMob=0; thisMob<activeMobs; thisMob++){ //put mobs far away
     mobs_x[thisMob] = 9999;
     mobs_y[thisMob] = 9999;
@@ -58,13 +55,6 @@ boolean spawnMobs(){
   for(byte thisMob=0; thisMob<activeMobs; thisMob++){
     if(!spawnMob(thisMob)) //try to spawn a mob
         return false; //return false if an error occur
-    /*gb.buzz(2000,3);
-     gb.setCursor(0,40);
-     gb.print(thisMob+1);
-     gb.print("/");
-     gb.print(NUMMOBS);
-     gb.print(" ");
-     gb.display();*/
   }
   return true;
 }
@@ -172,7 +162,7 @@ void damageMob(byte thisMob, byte thisBullet){
     kills++;
     boss_nextSpawn--;
     if(bullets_weapon[thisBullet]!=3){ //if it's no the RPG
-      gb.sound.play(mob_death_sound,0);
+      gb.sound.playTrack(mob_death_sound,0);
     }
     if(mobs_size[thisMob] == boss_size)
       score += 4;
@@ -193,4 +183,3 @@ void damageMob(byte thisMob, byte thisBullet){
   else { //the mob survives
   }
 }
-

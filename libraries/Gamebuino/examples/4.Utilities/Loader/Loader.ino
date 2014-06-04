@@ -72,9 +72,9 @@ void setup(){
   file.findFirstFile(&file.DE);
 
   while(res == NO_ERROR){
-    numberOfFiles++;
     res = file.findNextFile(&file.DE);
     if(res != NO_ERROR) break;
+    numberOfFiles++;
   }
   numberOfPages = 1+numberOfFiles/PAGELENGTH;
   gb.display.setTextWrap(false);

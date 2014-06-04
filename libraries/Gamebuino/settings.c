@@ -16,7 +16,7 @@
 #define ENABLE_BACKLIGHT 1 //disable automatic back-light
 #define TINY_FONT 1 //0 = 5x7 font ; 1 = 3x5 font7
 #define DISPLAY_ROT NOROT //set to NOROT, ROTCCW, ROT180 or ROTCW
-#define START_MENU_TIMER 40 //skips the start menu after 2 seconds
+#define START_MENU_TIMER 255 //40 = 40 frames (2sec) before start menu is skipped, 0 = no start menu, 255 = start menu until you press A
 
 //IT'S STRONGLY ADVISED TO LEAVE THE FOLLOWING SETTINGS ALONE
 
@@ -51,8 +51,8 @@
 #define SCR_RST A0
 
 //sound
-#define VOLUME_GLOBAL_MAX 3
-#define VOLUME_CHANNEL_MAX 255/NUM_CHANNELS/VOLUME_GLOBAL_MAX/7 //7 is the volume max of a note
+#define VOLUME_GLOBAL_MAX 1
+#define VOLUME_CHANNEL_MAX 255/NUM_CHANNELS/VOLUME_GLOBAL_MAX/7/9 //7=instrument volume 9=note volume
 
 //battery voltage monitor
 #define BAT_PIN A6

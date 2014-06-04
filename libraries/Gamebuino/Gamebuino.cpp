@@ -6,7 +6,8 @@
  */
 
 #include "Gamebuino.h"
-PROGMEM uint16_t startupSound[] = {0x1E, 0x10, 0x301E, 0x10, 0x602E, 0x602C, 0x602A, 0x6028, 0x6026, 0x6024, 0x6022, 0x80, 0x0000};
+PROGMEM uint16_t startupSound[] = {0x0005,0x3089,0x208,0x238,0x7849,0x1468,0x0000};
+
 static unsigned char PROGMEM gamebuinoLogo[] =
 {
   84,10, //width and height
@@ -99,7 +100,7 @@ void Gamebuino::begin(const __FlashStringHelper*  name, const uint8_t *logo) {
 	display.drawBitmap(LCDWIDTH-16, LCDHEIGHT-28, startMenuIcons);
 	display.drawChar(LCDWIDTH-5-2*FONTWIDTH,LCDHEIGHT-17,'\23', 1); //speaker logo
 
-    sound.play(startupSound, 0);
+    sound.playTrack(startupSound, 0);
 	while(1){
 		if(update()){
 			if(buttons.pressed(BTN_B)){
@@ -110,7 +111,7 @@ void Gamebuino::begin(const __FlashStringHelper*  name, const uint8_t *logo) {
 			else display.drawChar(LCDWIDTH-5-FONTWIDTH,LCDHEIGHT-17,'x', 1);
 			
 			if(buttons.pressed(BTN_A) || ((frameCount>=startMenuTimer)&&(startMenuTimer != 255))){
-				sound.stop(0);
+				sound.stopTrack(0);
 				break;
 			}
 			
@@ -142,7 +143,8 @@ boolean Gamebuino::update() {
         backlight.update();
         buttons.update();
         battery.update();
-		sound.update();
+		sound.updateTrack();
+		sound.updateNote();
 
         return true;
 
@@ -178,6 +180,10 @@ boolean Gamebuino::update() {
 void Gamebuino::setFrameRate(uint8_t fps) {
     timePerFrame = 1000 / fps;
 	sound.prescaler = fps / 20;
+}
+
+void Gamebuino::pickRandomSeed(){
+	randomSeed(battery.voltage * ~micros() + backlight.ambientLight + micros());
 }
 
 uint8_t Gamebuino::getCpuLoad(){
@@ -404,7 +410,7 @@ void Gamebuino::updatePopup(){
 #endif
 }
 
-void Gamebuino::adjustVolume(){
+/*void Gamebuino::adjustVolume(){
 #if (ENABLE_GUI > 0) || (NUM_CHANNELS > 0)
   while(1){
     if(update()==true){
@@ -430,7 +436,7 @@ void Gamebuino::adjustVolume(){
     }
   }
 #endif
-}
+}*/
 
 void Gamebuino::displayBattery(){
 #if (ENABLE_BATTERY > 0)
@@ -438,7 +444,7 @@ void Gamebuino::displayBattery(){
 	display.setCursor(LCDWIDTH-FONTWIDTH+1,0);
 	switch(battery.level){
 		case 0://battery critic, power down
-			sound.stop();
+			sound.stopTrack();
 			backlight.set(0);
 			display.clear();
 			display.print(F("NO BATTERY\n\nPLEASE\nTURN OFF"));

@@ -27,19 +27,13 @@ void collideCrate(){
     }
     if(currentWeapon<(NUMWEAPONS-1)){
       gb.popup(F("Upgraded !"), 30);
-      gb.sound.play(power_up,0);
+      gb.sound.playTrack(power_up,0);
     }
     else{
       gb.popup(F("Refilled !"), 30);
     }
     score -= 5;
     spawnCrate();
-    /*byte newWeapon;
-     do{
-     newWeapon = random(1,NUMWEAPONS);
-     } 
-     while (newWeapon == currentWeapon);
-     currentWeapon = newWeapon;*/
     currentWeapon = min(NUMWEAPONS-1, currentWeapon+1); //upgrade to the next weapon
     ammo = weapon_ammo[currentWeapon];
     //gb.popup(weapon_name[currentWeapon], 30);
@@ -56,10 +50,3 @@ void drawCrate(){
     gb.display.drawBitmap(x, y, crateSprite);
   }
 }
-
-
-
-
-
-
-

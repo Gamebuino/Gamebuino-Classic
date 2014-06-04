@@ -21,14 +21,12 @@ void shoot(){
           {
           }
           else{
-            gb.sound.play(weapons_sounds[currentWeapon], 0);
+            gb.sound.playTrack(weapons_sounds[currentWeapon], 0);
           }
           if(currentWeapon == 1){//with P90 cancel every two sounds to avoid continuous beep
-            //if(gb.getFrameCount()%2)
             if(random()%2)
-              gb.sound.play(p90_alternative_sound, 0);
+              gb.sound.playTrack(p90_alternative_sound, 0);
           }
-          //gb.buzz(weapon_soundFreq[currentWeapon], weapon_soundDuration[currentWeapon]);
           //player recoil
           byte recoil = weapon_playerRecoil[currentWeapon];
           moveXYDS(playerX, playerY, playerDir, -recoil);
@@ -45,16 +43,11 @@ void shoot(){
           break;
         }
       }
-    } 
-    /*else {
-     if(gb.buttons.pressed(BTN_A))
-     gb.sound.playTick();
-     }*/
+    }
   }
   else{
     currentWeapon = max(0, currentWeapon-1); //cut... no, magnum finally
     ammo = weapon_ammo[currentWeapon];
-    //ammo = 9999;
     nextShot = 20;
     gb.popup(F("Out of ammo!"), 30);
   }
@@ -74,11 +67,10 @@ void moveBullets(){
           blast_x = bullets_x[thisBullet];
           blast_y = bullets_y[thisBullet];
           blast_lifespan = 8;
-          gb.sound.play(blast_sound, 0);
+          gb.sound.playTrack(blast_sound, 0);
         }
         else{
         }
-        //gb.buzz(700,10);
         continue;
       }
 
@@ -91,10 +83,9 @@ void moveBullets(){
             blast_x = bullets_x[thisBullet];
             blast_y = bullets_y[thisBullet];
             blast_lifespan = 8;
-            gb.sound.play(blast_sound, 0);
+            gb.sound.playTrack(blast_sound, 0);
           } 
           else {
-            //gb.sound.play(mob_damage_sound, 0);
             damageMob(thisMob, thisBullet);
           }
           bullets_active[thisBullet] = false;
@@ -197,46 +188,3 @@ void drawSplashes(){
     }
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

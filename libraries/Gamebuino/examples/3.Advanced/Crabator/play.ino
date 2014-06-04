@@ -1,6 +1,5 @@
 ///////////////////////////////////// INIT GAME
 void initGame(){
-  setWorld(world, WORLD_W, WORLD_H, tiles);
   //lastScore = score;
   if(score > highscore[RANKMAX-1]){ //if the score is better than the worse high score
     saveHighscore();
@@ -97,11 +96,7 @@ void play(){
       int x, y;
       screenCoord(playerX, playerY, x, y);
       gb.display.drawBitmap(x-1, y-1, playerSprite, playerDir, NOFLIP);
-      //gb.fillRect(playerX_screen, playerY_screen, playerW, playerH, BLACK);
       byte thisSprite = 0;
-      //if (playerMoved)
-      //  thisSprite = (gb.frameCount/4)%8;
-      //gb.drawBitmap(LCDWIDTH/2-2, LCDHEIGHT/2-2, playerSprite[thisSprite], 8, 8, playerDir, NOFLIP,  BLACK);
       moveMobs();
       drawMobs();
       if(nextShot)
@@ -162,8 +157,7 @@ void play(){
             shake_magnitude = 3;
             shake_timeLeft = 4;
           }
-          gb.sound.play(player_damage_sound, 0);
-          //gb.buzz(500,100);
+          gb.sound.playTrack(player_damage_sound, 0);
           spawnMob(thisMob);
           if(playerLife < 0){ 
             byte timer=0;
@@ -225,9 +219,6 @@ void play(){
 ///////////////////////////////////// DISPLAY SCORE
 void displayScore(){
   gb.display.setCursor(0,0);
-  //gb.display.print(gb.frameDurationMicros);
-  //gb.display.print(gb.freeRam());
-  //gb.display.print(gb.getCpuLoad());
   gb.display.print('$');
   gb.display.println(score);
 }
@@ -238,6 +229,7 @@ void shakeScreen(){
     shake_timeLeft--;
     cameraX += random(-shake_magnitude,shake_magnitude+1);
     cameraY += random(-shake_magnitude,shake_magnitude+1); 
+    gb.backlight.set(gb.backlight.backlightValue+random(0,16)*shake_magnitude);
   }
 }
 
@@ -282,31 +274,3 @@ void saveHighscore(){
   }
   displayHighScores();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

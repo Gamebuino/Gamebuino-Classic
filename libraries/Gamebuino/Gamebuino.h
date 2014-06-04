@@ -37,8 +37,9 @@ public:
 	boolean startMenuTimer;
     uint32_t frameCount;
     void setFrameRate(uint8_t fps);
+	void pickRandomSeed();
+	
 	uint8_t getCpuLoad();
-    
     uint16_t getFreeRam();
     uint16_t frameDurationMicros;
     uint32_t frameStartMicros, frameEndMicros;
@@ -46,7 +47,7 @@ public:
     int8_t menu(char** items, uint8_t length);
     void keyboard(char* text, uint8_t length);
     void popup(const __FlashStringHelper* text, uint8_t duration);
-	void adjustVolume();
+	//void adjustVolume();
 	void changeGame();
 	boolean settingsAvailable();
 	void readSettings();

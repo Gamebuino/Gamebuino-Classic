@@ -137,11 +137,3 @@ void reset(){
     gb.display.update();
   }
 }
-
-
-
-
-
-
-
-

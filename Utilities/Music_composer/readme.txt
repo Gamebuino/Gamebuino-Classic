@@ -1,1 +1,0 @@
-For more info visit http://gamebuino.com/wiki/index.php?title=Music_composer
