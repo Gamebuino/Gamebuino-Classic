@@ -254,7 +254,7 @@ int8_t Gamebuino::menu(const char** items, uint8_t length) {
 			for (byte i = 0; i < length; i++) {
 				if (i == activeItem)
 				display.setCursor(3, currentY + FONTHEIGHT * activeItem);
-				display.println(items[i]);
+				display.println((const __FlashStringHelper*)pgm_read_word(items+i));
 			}
 
 			//display.fillRect(0, currentY + 3 + 8 * activeItem, 2, 2, BLACK);
