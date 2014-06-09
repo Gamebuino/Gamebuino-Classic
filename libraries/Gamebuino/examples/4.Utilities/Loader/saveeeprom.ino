@@ -14,7 +14,7 @@ void saveeeprom(){
   gb.display.clear();
   gb.display.print(F("Saving EEPROM to\n"));
   gb.display.print(prevGameName);
-  gb.display.println(F(".SAV?"));
+  gb.display.println(F(".SAV\n"));
   /*gb.display.println(F("\25:yes \26:no"));
   gb.display.update();
   while(1){

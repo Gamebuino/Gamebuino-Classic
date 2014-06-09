@@ -43,9 +43,11 @@ char ball_vx = 3;
 char ball_vy = 3;
 
 #define MENULENGTH 2
+const char strMaster[] PROGMEM = "Host (master)";
+const char strSlave[] PROGMEM = "Join (slave)";
 const char* menu[MENULENGTH] PROGMEM = {
-  "Host (master)",
-  "Join (slave)"
+  strMaster,
+  strSlave
 };
 
 ///////////////////////////////////// SETUP
@@ -65,7 +67,7 @@ void loop() {
   isMaster = false;
   player_score = 0;
   oponent_score = 0;
-  
+
   switch(gb.menu(menu, MENULENGTH)){
   case 0: //Host
     paused = false;
@@ -109,15 +111,3 @@ void loop() {
     }
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-

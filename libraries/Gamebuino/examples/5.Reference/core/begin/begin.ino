@@ -17,11 +17,15 @@ static unsigned char PROGMEM logo[]=
 
 void setup(){
   // initialize the Gamebuino object
-  gb.begin(F("Example game"), logo);
+  gb.begin();
+  gb.startMenu(F("Example game"), logo);
 }
 
 void loop(){
   if(gb.update()){
     gb.display.println("Hello world");
+    if(gb.buttons.pressed(BTN_C)){
+      gb.startMenu(F("Example game"), logo);
+    }
   }
 }

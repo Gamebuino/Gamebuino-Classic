@@ -1,3 +1,63 @@
+extern const prog_char strSaveAndExit[];
+
+///////////////////////////////////// SETTINGS MENU
+#define SETTINGSMENU_LENGTH 5
+const char strDisplay[] PROGMEM =  "Display";
+const char strPlayerName[] PROGMEM =  "Player name";
+const char strSound[] PROGMEM = "Sound";
+const char strInterface[] PROGMEM =   "Interface";
+const char* settingsMenu[SETTINGSMENU_LENGTH] PROGMEM = {
+  strDisplay,
+  strPlayerName,
+  strSound,
+  strInterface,
+  strSaveAndExit
+};
+
+///////////////////////////////////// DISPLAY MENU
+#define DISPLAYMENU_LENGTH 5
+const prog_char strContrast[] PROGMEM =  "Contrast";
+const prog_char strBacklightMin[] PROGMEM =  "Backlight min";
+const prog_char strBacklightMax[] PROGMEM =  "Backlight max";
+const prog_char strAmbiantMin[] PROGMEM =  "Ambiant min";
+const prog_char strAmbiantMax[] PROGMEM =  "Ambiant max";
+const char* displayMenu[DISPLAYMENU_LENGTH] PROGMEM = {
+  strContrast,
+  strBacklightMin,
+  strBacklightMax,
+  strAmbiantMin,
+  strAmbiantMax,
+};
+
+///////////////////////////////////// SOUND MENU
+#define SOUNDMENU_LENGTH 2
+const prog_char strDefaultVolume[] PROGMEM =  "Default volume";
+const prog_char strMaxVolume[] PROGMEM =  "Max volume";
+const char* soundMenu[SOUNDMENU_LENGTH] PROGMEM = {
+  strDefaultVolume,
+  strMaxVolume,
+};
+
+///////////////////////////////////// INTERFACE MENU
+#define INTERFACEMENU_LENGTH 1
+const prog_char strStartDuration[] PROGMEM =  "Start menu duration";
+const char* interfaceMenu[INTERFACEMENU_LENGTH] PROGMEM = {
+  strStartDuration,
+};
+
+///////////////////////////////////// BATTERY MENU
+#define BATTERYMENU_LENGTH 4
+const prog_char strCritic[] PROGMEM =  "Critic voltage";
+const prog_char strLow[] PROGMEM =  "Low voltage";
+const prog_char strMed[] PROGMEM =  "Med voltage";
+const prog_char strHigh[] PROGMEM =  "High voltage";
+const char* batteryMenu[BATTERYMENU_LENGTH] PROGMEM = {
+  strCritic,
+  strLow,
+  strMed,
+  strHigh,
+};
+
 boolean changeValue(unsigned &val, unsigned minVal, unsigned maxVal, const __FlashStringHelper* text){
   if(gb.buttons.pressed(BTN_A)||gb.buttons.pressed(BTN_B)){
     gb.sound.playOK();
@@ -25,16 +85,6 @@ boolean changeValue(unsigned &val, unsigned minVal, unsigned maxVal, const __Fla
   gb.display.println(text);
   return(false);
 }
-
-#define SETTINGSMENU_LENGTH 6
-const char* settingsMenu[SETTINGSMENU_LENGTH] PROGMEM = {
-  "Display",
-  "Player name",
-  "Sound",
-  "Interface",
-  "Battery",
-  "Save and Exit",
-};
 
 void changeSettings(){
   while(1){
@@ -64,15 +114,6 @@ void changeSettings(){
     }
   }
 }
-
-#define DISPLAYMENU_LENGTH 5
-const char* displayMenu[DISPLAYMENU_LENGTH] PROGMEM = {
-  "Contrast",
-  "Backlight min",
-  "Backlight max",
-  "Ambiant min",
-  "Ambiant max",
-};
 
 void displaySettings(){
   while(1){
@@ -150,11 +191,6 @@ void displaySettings(){
   }
 }
 
-#define SOUNDMENU_LENGTH 2
-const char* soundMenu[SOUNDMENU_LENGTH] PROGMEM = {
-  "Default volume",
-  "Max volume",
-};
 
 void soundSettings(){
   while(1){
@@ -176,7 +212,7 @@ void soundSettings(){
     case 1: //max volume
       while(1){
         if(gb.update()){
-          if(changeValue(volumeMax, 0, 3, F("Max volume:"))){
+          if(changeValue(volumeMax, 0, VOLUME_GLOBAL_MAX, F("Max volume:"))){
             gb.sound.setVolume(volumeMax);
             break;
           }
@@ -194,10 +230,6 @@ void soundSettings(){
   }
 }
 
-#define INTERFACEMENU_LENGTH 1
-const char* interfaceMenu[INTERFACEMENU_LENGTH] PROGMEM = {
-  "Start menu duration",
-};
 
 void interfaceSettings(){
   while(1){
@@ -217,14 +249,6 @@ void interfaceSettings(){
     }
   }
 }
-
-#define BATTERYMENU_LENGTH 4
-const char* batteryMenu[BATTERYMENU_LENGTH] PROGMEM = {
-  "Critic voltage",
-  "Low voltage",
-  "Med voltage",
-  "High voltage",
-};
 
 void batterySettings(){
   while(1){

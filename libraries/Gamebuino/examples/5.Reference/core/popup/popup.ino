@@ -3,16 +3,23 @@
 Gamebuino gb;
 
 void setup(){
-  gb.begin(F("Popup example")); 
+  gb.begin();
+  gb.startMenu(F("Popup example"));
 }
 
 void loop(){
   if(gb.update()){
+    gb.display.println("Press \25 \26 or \27\nto see a popup");
     if(gb.buttons.pressed(BTN_A))
-      gb.popup(F("A pressed"),20);
+      gb.popup(F("A pressed"),5);
     if(gb.buttons.pressed(BTN_B))
-      gb.popup(F("B pressed"),20);
+      gb.popup(F("B pressed"),5);
     if(gb.buttons.pressed(BTN_C))
-      gb.popup(F("C pressed"),20);
+      gb.popup(F("C pressed"),5);
+  }
+  
+  if(gb.buttons.pressed(BTN_C)){
+    gb.startMenu(F("Popup example"));
   }
 }
+

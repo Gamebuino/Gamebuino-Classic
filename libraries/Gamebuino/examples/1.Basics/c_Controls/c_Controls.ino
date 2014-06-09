@@ -50,6 +50,9 @@ void loop(){
     if(gb.buttons.pressed(BTN_B)){
       gb.sound.playCancel();
     }
+    if(gb.buttons.pressed(BTN_C)){
+      gb.startMenu(F("Controls"));
+    }
     
     //check that the ball is not going out of the screen
     //if the ball is touching the left side of the screen

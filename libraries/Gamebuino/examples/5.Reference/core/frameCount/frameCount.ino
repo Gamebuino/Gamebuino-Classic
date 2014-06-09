@@ -3,7 +3,8 @@
 Gamebuino gb;
 
 void setup(){
-  gb.begin(F("Count example"));
+  gb.begin();
+  gb.startMenu(F("Count example"));
 }
 
 void loop(){
@@ -12,8 +13,12 @@ void loop(){
     int count = gb.frameCount;
     gb.display.println(count);
 
-    if((count%5) < 2){ //true for 2 frames once every 5 frames
+    if( (count / 8) % 2 ){ //true half of the time on 8 frames
       gb.display.println(F("BLINK"));
+    }
+
+    if(gb.buttons.pressed(BTN_C)){
+      gb.startMenu(F("Count example"));
     }
 
   }

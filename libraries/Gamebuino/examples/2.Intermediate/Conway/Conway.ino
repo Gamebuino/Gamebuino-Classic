@@ -7,7 +7,7 @@ Gamebuino gb;
 //world size
 //use power of 2 for better perfomance
 #define SX 64
-#define SY 32 
+#define SY 32
 
 byte buffer[SX*SY/8];
 unsigned int pop = 0;
@@ -19,17 +19,19 @@ byte graphCursor = 0;
 void setup() {
   gb.begin();
   gb.startMenu(F("Conway's game of life"));
-  gb.battery.show = false;
-  gb.display.persistence = true;
-  randomSeed(analogRead(A7)*analogRead(A7)+analogRead(A7));
+  gb.pickRandomSeed();
   reset();
 }
 
 void loop(){
   if(gb.update()){
+    if(gb.buttons.pressed(BTN_C)){
+      gb.startMenu(F("Conway's game of life"));
+      reset();
+    }
     //compute next gen
     gen++;
-    for (byte x = 0; x < SX; x++) { 
+    for (byte x = 0; x < SX; x++) {
       for (byte y = 0; y < SY; y++) {
         byte count = 0;
         if(getCell(x-1,          (y-1+SY)%SY)) count++;
@@ -51,7 +53,7 @@ void loop(){
             gb.display.setColor(BLACK,WHITE);
             pop--;
           }
-        } 
+        }
         else { //if there is no cell
           if (count == 3) { //and 3 neighbors
             gb.display.drawPixel(x+1,y+1);
@@ -66,7 +68,7 @@ void loop(){
         }
       }
     }
-    for (byte x = 0; x < SX; x++) { 
+    for (byte x = 0; x < SX; x++) {
       for (byte y = 0; y < SY; y++) {
         setCell(x, y, gb.display.getPixel(x+1, y+1));
       }
@@ -122,12 +124,14 @@ byte getCell(byte x, byte y){
 }
 
 void reset(){
+  gb.battery.show = false;
+  gb.display.persistence = true;
   pop = 0;
   gen = 0;
   graphCursor = 0;
   gb.display.clear();
   gb.display.drawRect(0,0,SX+2,SY+2);
-  for (byte x = 0; x < SX; x++) { 
+  for (byte x = 0; x < SX; x++) {
     for (byte y = 0; y < SY; y++) {
       if(!(random()%4)){
         setCell(x, y, true);

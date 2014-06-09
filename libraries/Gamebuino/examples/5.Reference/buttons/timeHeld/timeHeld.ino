@@ -3,7 +3,8 @@
 Gamebuino gb;
 
 void setup(){
-  gb.begin(F("timeHeld example"));
+  gb.begin();
+  gb.startMenu(F("timeHeld example"));
 }
 
 void loop(){
@@ -16,8 +17,10 @@ void loop(){
     gb.display.print("BTN_B:");
     gb.display.println(gb.buttons.timeHeld(BTN_B));
 
-    gb.display.print("BTN_C:");
-    gb.display.println(gb.buttons.timeHeld(BTN_C));
+    if(gb.buttons.pressed(BTN_C)){
+      gb.startMenu(F("timeHeld example"));
+    }
   }
 }
+
 

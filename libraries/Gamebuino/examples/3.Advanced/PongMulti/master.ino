@@ -24,22 +24,22 @@ void masterRead(){
         oponent_y = Wire.read();
         break;
       case SLAVE_PAUSED:
-        gb.popup(F("Slave paused"),15);
+        gb.popup(F("Slave paused"),2);
         paused = true;
         break;
       case I_AM_MASTER:
-        gb.popup(F("1 master max"),15);
+        gb.popup(F("1 master max"),2);
         paused = true;
         break;
       default:
-        gb.popup(F("Wrong slave data"),15);
+        gb.popup(F("Wrong slave data"),2);
         paused = true;
         break;
       }
     }
   }
   else{
-    gb.popup(F("Slave disconnected"),15);
+    gb.popup(F("Slave disconnected"),2);
     paused = true;
     disconnected = true;
   }

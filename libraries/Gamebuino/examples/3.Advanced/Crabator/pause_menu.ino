@@ -1,11 +1,19 @@
 #define PAUSEMENULENGTH 6
-const char* PROGMEM pauseMenu[PAUSEMENULENGTH] = {
-  "Play",
-  "Restart",
-  "High scores",
-  "Volume",
-  "System info",
-  "Main menu"
+const char strPlay[] PROGMEM = "Play";
+const char strRestart[] PROGMEM = "Restart";
+const char strHighScores[] PROGMEM = "High scores";
+const char strVolume[] PROGMEM = "Volume";
+const char strSystemInfo[] PROGMEM = "System Info";
+const char strMainMenu[] PROGMEM = "Main Menu";
+
+
+const char* pauseMenu[PAUSEMENULENGTH] PROGMEM = {
+  strPlay,
+  strRestart,
+  strHighScores,
+  strVolume,
+  strSystemInfo,
+  strMainMenu
 };
 
 ///////////////////////////////////// PAUSE

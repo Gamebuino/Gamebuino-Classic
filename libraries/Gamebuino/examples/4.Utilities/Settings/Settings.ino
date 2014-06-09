@@ -1,4 +1,5 @@
 #include <SPI.h>
+#include <avr/pgmspace.h>
 #include <Gamebuino.h>
 Gamebuino gb;
 
@@ -18,13 +19,19 @@ unsigned volumeDefault;
 unsigned startMenuTimer;
 unsigned batteryCritic, batteryLow, batteryMed, batteryFull;
 
+const char strChangeSettings[] PROGMEM =  "Change settings";
+const char strSeeAllSettings[] PROGMEM =  "See all settings";
+const char strDefaultSettings[] PROGMEM = "Default settings";
+const char strEraseSettings[] PROGMEM =   "Erase settings";
+const char strSaveAndExit[] PROGMEM =     "Save and Exit";
+
 #define MAINMENU_LENGTH 5
 const char* mainMenu[MAINMENU_LENGTH] PROGMEM = {
-  "Change settings",
-  "See all settings",
-  "Default settings",
-  "Erase settings",
-  "Save and Exit"
+  strChangeSettings,
+  strSeeAllSettings,
+  strDefaultSettings,
+  strEraseSettings,
+  strSaveAndExit
 };
 
 void setup(){
@@ -39,6 +46,9 @@ void setup(){
 
 void loop(){
   switch(gb.menu(mainMenu,MAINMENU_LENGTH)){
+  case -1:
+    gb.startMenu(logo);
+    break;
   case 0: //change settings
     changeSettings();
     break;
@@ -129,7 +139,4 @@ void eraseSettings(){
   gb.display.println(F("Settings page erased."));
   pressAtoContinue();
 }
-
-
-
 

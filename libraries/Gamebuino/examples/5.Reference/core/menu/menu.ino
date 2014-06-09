@@ -2,22 +2,33 @@
 #include <Gamebuino.h>
 Gamebuino gb;
 
-#define MENULENGTH 6
-char* PROGMEM menu[MENULENGTH] = {
-  "System info",
-  "Change game"
+////declare all the variables needed to make a menu
+//number of items in the menu
+#define MENULENGTH 2
+//The differents strings to put in the menu
+//each string can be used in different menus
+const char strSystemInfo[] PROGMEM = "Stystem info";
+const char strChangeGame[] PROGMEM = "Change game";
+//Put all the different items together in a menu (an array of strings actually)
+const char* menu[MENULENGTH] PROGMEM = {
+  strSystemInfo,
+  strChangeGame,
 };
 
 void setup(){
-  gb.begin(F("Menu example"));
+  gb.begin();
+  gb.startMenu(F("Menu example"));
 }
 
 void loop(){
   switch(gb.menu(menu, MENULENGTH)){
-    case 0:
+    case -1: //nothing selected
+      gb.startMenu(F("Menu example"));
+      break;
+    case 0: //display system info
       displaySystemInfo();
       break;
-    case 1:
+    case 1: //change game
       gb.changeGame();
       break;
     default:
