@@ -16,8 +16,8 @@ class Sound {
 public:
 	void begin();
 
-	void playTrack(uint16_t* track, uint16_t** instruments, uint8_t channel);
-	void playTrack(uint16_t* track, uint8_t channel);
+	void playTrack(const uint16_t* track, const uint16_t** instruments, uint8_t channel);
+	void playTrack(const uint16_t* track, uint8_t channel);
 	void updateTrack();
 	void setTrackLooping(uint8_t channel, boolean loop);
 	void stopTrack(uint8_t channel);

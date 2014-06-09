@@ -23,16 +23,17 @@
 
 class Gamebuino {
 public:
-    Gamebuino();
     Backlight backlight;
     Buttons buttons;
     Battery battery;
     Sound sound;
     Display display;
 
-	void begin(const __FlashStringHelper* name, const uint8_t *logo);
-	void begin(const __FlashStringHelper* name);
     void begin();
+	void startMenu(const __FlashStringHelper* name, const uint8_t *logo);
+	void startMenu(const __FlashStringHelper* name);
+	void startMenu(const uint8_t* logo);
+    void startMenu();
     boolean update();
 	boolean startMenuTimer;
     uint32_t frameCount;
@@ -44,7 +45,7 @@ public:
     uint16_t frameDurationMicros;
     uint32_t frameStartMicros, frameEndMicros;
     
-    int8_t menu(char** items, uint8_t length);
+    int8_t menu(const char** items, uint8_t length);
     void keyboard(char* text, uint8_t length);
     void popup(const __FlashStringHelper* text, uint8_t duration);
 	//void adjustVolume();

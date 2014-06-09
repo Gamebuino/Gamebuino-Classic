@@ -6,7 +6,8 @@ Gamebuino gb;
 char buffer[7];
 
 void setup(){
-  gb.begin(F("Battery logger"));
+  gb.begin();
+  gb.startMenu(F("Battery logger"));
   gb.backlight.automatic = false;
   gb.backlight.set(0);
   gb.display.clear();

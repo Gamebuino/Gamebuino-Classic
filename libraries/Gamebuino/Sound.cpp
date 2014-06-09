@@ -17,28 +17,27 @@ uint8_t _chanOutput[NUM_CHANNELS]; //current value of the outputted waveform
 boolean _chanNoise[NUM_CHANNELS]; //if a random value should be added to the waveform to generate noise
 
 
-PROGMEM uint16_t squareWaveInstrument[] = {0x0101, 0x03F7};
-PROGMEM uint16_t noiseInstrument[] = {0x0101, 0x03FF};
-PROGMEM uint16_t *defaultInstruments[] = {squareWaveInstrument,noiseInstrument};
+const uint16_t squareWaveInstrument[] PROGMEM = {0x0101, 0x03F7};
+const uint16_t noiseInstrument[] PROGMEM = {0x0101, 0x03FF};
+const uint16_t *defaultInstruments[] PROGMEM = {squareWaveInstrument,noiseInstrument};
 
-PROGMEM uint16_t playOKTrack[] = {0x0005,0x138,0x168,0x0000};
-PROGMEM uint16_t playCancelTrack[] = {0x0005,0x168,0x138,0x0000};
-PROGMEM uint16_t playTickTrack[] = {0x0045,0x168,0x0000};
+const uint16_t playOKTrack[] PROGMEM = {0x0005,0x138,0x168,0x0000};
+const uint16_t playCancelTrack[] PROGMEM = {0x0005,0x168,0x138,0x0000};
+const uint16_t playTickTrack[] PROGMEM = {0x0045,0x168,0x0000};
 
 #if(EXTENDED_NOTE_RANGE > 0)
 //extended note range
 #define NUM_PITCH 64
-uint8_t _halfPeriods[NUM_PITCH] = {246,232,219,207,195,184,174,164,155,146,138,130,123,116,110,104,98,92,87,82,78,73,69,65,62,58,55,52,49,46,44,41,39,37,35,33,31,29,28,26,25,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1};
+const uint8_t _halfPeriods[NUM_PITCH] PROGMEM= {246,232,219,207,195,184,174,164,155,146,138,130,123,116,110,104,98,92,87,82,78,73,69,65,62,58,55,52,49,46,44,41,39,37,35,33,31,29,28,26,25,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1};
 #else
 //regular note range
 #define NUM_PITCH 36
-uint8_t _halfPeriods[NUM_PITCH] = {246,232,219,207,195,184,174,164,155,146,138,130,123,116,110,104,98,92,87,82,78,73,69,65,62,58,55,52,49,46,44,41,39,37,35,33};
+const uint8_t _halfPeriods[NUM_PITCH] PROGMEM= {246,232,219,207,195,184,174,164,155,146,138,130,123,116,110,104,98,92,87,82,78,73,69,65,62,58,55,52,49,46,44,41,39,37,35,33};
 #endif
 
 #endif
 
 void Sound::begin() {
-
 #if(NUM_CHANNELS > 0)
 	prescaler = 1;
 	for(byte i=0; i<NUM_CHANNELS; i++){
@@ -63,11 +62,11 @@ void Sound::begin() {
 #endif
 }
 
-void Sound::playTrack(uint16_t* track, uint16_t** instruments, uint8_t channel){
+void Sound::playTrack(const uint16_t* track, const uint16_t** instruments, uint8_t channel){
 #if(NUM_CHANNELS > 0)
 	stopTrack(channel);
-	trackData[channel] = track;
-	trackInstruments[channel] = instruments;
+	trackData[channel] = (uint16_t*)track;
+	trackInstruments[channel] = (uint16_t**)instruments;
 	trackCursor[channel] = 0;
 	trackPlaying[channel] = true;
 	noteVolume[channel] = 9;
@@ -75,11 +74,11 @@ void Sound::playTrack(uint16_t* track, uint16_t** instruments, uint8_t channel){
 	volumeSlideStepDuration[channel] = 0;
 	arpeggioStepDuration[channel] = 0;
 	tremoloStepDuration[channel] = 0;
-	Serial.print("play track\n");
+	//Serial.print("play track\n");
 #endif
 }
 
-void Sound::playTrack(uint16_t* track, uint8_t channel){
+void Sound::playTrack(const uint16_t* track, uint8_t channel){
 #if(NUM_CHANNELS > 0)
 	playTrack(track, defaultInstruments, channel);
 #endif
@@ -101,21 +100,21 @@ void Sound::updateTrack(){
 					else{
 						trackPlaying[i] = false;
 						stopNote(i);
-						Serial.print("\ntrack end\n");
+						//Serial.print("\ntrack end\n");
 						continue;
 					}
 				}
 
 				while (data & 0x0001){ //read all commands and instrument changes
 					data >>= 2;
-					Serial.print("\ncmd\t");
+					//Serial.print("\ncmd\t");
 					uint8_t command = data & 0x0F;
 					data >>= 4;
-					Serial.print(command);
-					Serial.print("\t");
-					Serial.print(data & 0x1F);
-					Serial.print("\t");
-					Serial.println(int8_t(data >> 5) - 16);
+					//Serial.print(command);
+					//Serial.print("\t");
+					//Serial.print(data & 0x1F);
+					//Serial.print("\t");
+					//Serial.println(int8_t(data >> 5) - 16);
 					switch(command){
 					case 0: //volume
 						noteVolume[i] = data & 0x1F;
@@ -153,7 +152,7 @@ void Sound::updateTrack(){
 				
 				uint8_t duration = data;
 				
-				Serial.print("\ntrack update");
+				//Serial.print("\ntrack update");
 				//Serial.print("\t");
 				//Serial.print(duration);
 				//Serial.print("\t");
@@ -162,7 +161,7 @@ void Sound::updateTrack(){
 				//Serial.print(pitch);
 				//Serial.print("\t");
 				//Serial.print(instrumentID);
-				Serial.print("\n");
+				//Serial.print("\n");
 				
 				//PLAY NOTE
 				//set note
@@ -183,14 +182,18 @@ void Sound::updateTrack(){
 }
 
 void Sound::stopTrack(uint8_t channel){
+#if(NUM_CHANNELS > 0)
 	stopNote(channel);
 	trackPlaying[channel] = false;
+#endif
 }
 
 void Sound::stopTrack(){
+#if(NUM_CHANNELS > 0)
 	for(uint8_t i=0; i<NUM_CHANNELS; i++){
 		stopTrack(i);
 	}
+#endif
 }
 
 void Sound::stopNote(uint8_t channel) {
@@ -232,14 +235,14 @@ void Sound::updateNote() {
 			
 			if(noteDuration[i] == 0){
 				stopNote(i);
-				Serial.println("note end");
+				//Serial.println("note end");
 				continue;
 			} else {
 				noteDuration[i]--;
 			}
 			
 			if (instrumentNextChange[i] == 0) {
-				Serial.print("instr update:");
+				//Serial.print("instr update:");
 				//Serial.print("\t");
 				
 				//read the step data from the progmem and decode it
@@ -272,7 +275,7 @@ void Sound::updateNote() {
 				//Serial.print(stepVolume);
 				//Serial.print("\n");
 				//Serial.print(_chanOutput[i]);
-				Serial.print("\n");
+				//Serial.print("\n");
 				
 				instrumentCursor[i]++;
 				
@@ -281,7 +284,7 @@ void Sound::updateNote() {
 						instrumentCursor[i] = instrumentLength[i] - instrumentLooping[i];
 					} else {
 						stopNote(i);
-						Serial.println("instrument end");
+						//Serial.println("instrument end");
 					}
 				}
 			}
@@ -305,7 +308,7 @@ void Sound::updateNote() {
 			volume = constrain(volume, 0, 9);
 			
 			noInterrupts();
-			_chanHalfPeriod[i] = _halfPeriods[pitch];
+			_chanHalfPeriod[i] = pgm_read_byte(_halfPeriods + pitch);
 			_chanOutput[i] = _chanOutputVolume[i] = volume * globalVolume * chanVolumes[i] * stepVolume[i];
 			//Serial.println(volume);
 			interrupts();
@@ -457,15 +460,21 @@ void Sound::setTrackLooping(uint8_t channel, boolean loop) {
 }
 
 void Sound::playOK(){
+#if(NUM_CHANNELS > 0)
 	playTrack(playOKTrack,0);
+#endif
 }
 
 void Sound::playCancel(){
+#if(NUM_CHANNELS > 0)
 	playTrack(playCancelTrack,0);
+#endif
 }
 
 void Sound::playTick(){
+#if(NUM_CHANNELS > 0)
 	playTrack(playTickTrack,0);
+#endif
 }
 
 void Sound::setVolume(int8_t volume) {

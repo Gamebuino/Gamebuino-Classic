@@ -8,7 +8,9 @@ Gamebuino gb;
 // the setup routine runs once when Gamebuino starts up
 void setup(){
   // initialize the Gamebuino object
-  gb.begin(F("My first game"));
+  gb.begin();
+  //display the main menu:
+  gb.startMenu(F("My first game"));
   gb.popup(F("Let's go!"), 100);
 }
 

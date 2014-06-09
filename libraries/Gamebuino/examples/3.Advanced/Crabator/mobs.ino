@@ -67,19 +67,22 @@ void moveMobs(){
     //if the mob is close to the screen
     if( (distanceBetween(mobs_x[thisMob], playerX, WORLD_W*8) < (LCDWIDTH+32)) &&  (distanceBetween(mobs_y[thisMob], playerY, WORLD_H*8) < (LCDHEIGHT+32))){
       moveXYDS(mobs_x[thisMob], mobs_y[thisMob], mobs_dir[thisMob], 1); //go forward
+
       //if there is a collision, move a step backward and pick a new random direction
       if(checkMobCollisions(thisMob)){
         moveXYDS(mobs_x[thisMob], mobs_y[thisMob], mobs_dir[thisMob], -1);
         mobs_dir[thisMob] = random()%4;
         continue;
       }
-      if(random(0,32)==0){ //randomly change movement direction
+
+      //go in a random direction
+      if(random(0,32)==0){ 
         mobs_dir[thisMob] = random()%4;
         continue;
       }
+
+      //go in the direction on the player (randomly choose between X and Y axis)
       if(random(0,16)==0){
-        //if the distance between the plaer and the mob is larger on the X axis
-        //if( ( abs(LCDWIDTH/2 - x) - abs(LCDHEIGHT/2 - y) ) > 0){
         if(random(0,2)){
           //get closer to the player on the X axis
           if((LCDWIDTH/2 - x) > 0){ //go to the left if the player is on the left
@@ -89,7 +92,7 @@ void moveMobs(){
             mobs_dir[thisMob] = 1;
           }
         }
-        //if the distance between the plaer and the mob is larger on the Y axis
+        //if the distance between the player and the mob is larger on the Y axis
         else {
           //get closer to the player on the Y axis
           if((LCDHEIGHT/2 - y) > 0){ //go downward

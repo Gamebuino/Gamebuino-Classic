@@ -1,0 +1,12 @@
+2014-06-09
+ - changelog created! \o/
+ - "const" added to all PROGMEM variables for compatibity with the last avrgcc update
+	It will require you to add "const" before the variables which use PROGMEM or you'll get compilation errors
+ - gb.startMenu() function added. It's used to display the main menu instead of gb.begin()
+	It should be called just after gb.begin() with the arguments you were used to put in the gb.begin() function.
+	It allows you to display the main menu again whenever you want.
+ - The "play" icon the the start menu is now blinking, for people who didn't know what to do
+ - when you call the startMenu without the F("name") argent, it leaves more space for the logo
+ - logo of Loader, Settings, and Crabator added
+ - Emulator added in /utilities along with .elf files
+ - bitmap encoder now ask you which file you want to encode and saves the output in the same folder in a txt file

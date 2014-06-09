@@ -1,11 +1,11 @@
 #define PAUSEMENULENGTH 6
-char* PROGMEM pauseMenu[PAUSEMENULENGTH] = {
-  "Resume",
+const char* PROGMEM pauseMenu[PAUSEMENULENGTH] = {
+  "Play",
   "Restart",
   "High scores",
   "Volume",
   "System info",
-  "Change game"
+  "Main menu"
 };
 
 ///////////////////////////////////// PAUSE
@@ -16,9 +16,11 @@ void pause(){
       switch(gb.menu(pauseMenu, PAUSEMENULENGTH)){
       case 0: //resume
         delay(100);
-        return;
+        play();
+        break;
       case 1: //restart
-        initGame();   
+        initGame();
+        play();
         return;
       case 2: //high scores
         displayHighScores();
@@ -64,7 +66,9 @@ void pause(){
         }
         break;
       case 5: //change game
-        gb.changeGame();
+        //gb.changeGame();
+        gb.startMenu(logo);
+        break;
       default:
         return;
       }

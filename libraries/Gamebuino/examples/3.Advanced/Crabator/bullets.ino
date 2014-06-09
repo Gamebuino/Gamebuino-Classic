@@ -21,7 +21,7 @@ void shoot(){
           {
           }
           else{
-            gb.sound.playTrack(weapons_sounds[currentWeapon], 0);
+            gb.sound.playTrack((uint16_t*)pgm_read_word(&(weapons_sounds[currentWeapon])), 0);
           }
           if(currentWeapon == 1){//with P90 cancel every two sounds to avoid continuous beep
             if(random()%2)

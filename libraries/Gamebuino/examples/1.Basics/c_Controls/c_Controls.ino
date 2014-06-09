@@ -15,7 +15,9 @@ int ball_size = 6; //the size of the ball in number of pixels
 // the setup routine runs once when Gamebuino starts up
 void setup(){
   // initialize the Gamebuino object
-  gb.begin(F("Controls"));
+  gb.begin();
+  // show the start menu
+  gb.startMenu(F("Controls"));
 }
 
 // the loop routine runs over and over again forever

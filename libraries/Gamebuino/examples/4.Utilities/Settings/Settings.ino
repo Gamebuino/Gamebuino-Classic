@@ -2,6 +2,8 @@
 #include <Gamebuino.h>
 Gamebuino gb;
 
+extern const byte logo[] PROGMEM;
+
 byte buffer[128];
 unsigned token;
 char currentGame[9];
@@ -17,7 +19,7 @@ unsigned startMenuTimer;
 unsigned batteryCritic, batteryLow, batteryMed, batteryFull;
 
 #define MAINMENU_LENGTH 5
-char* PROGMEM mainMenu[MAINMENU_LENGTH] = {
+const char* mainMenu[MAINMENU_LENGTH] PROGMEM = {
   "Change settings",
   "See all settings",
   "Default settings",
@@ -26,7 +28,8 @@ char* PROGMEM mainMenu[MAINMENU_LENGTH] = {
 };
 
 void setup(){
-  gb.begin(F("Change settings"));
+  gb.begin();
+  gb.startMenu(logo);
   if(!gb.settingsAvailable()){
     restoreSettings();
     saveSettings();

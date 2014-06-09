@@ -43,14 +43,15 @@ char ball_vx = 3;
 char ball_vy = 3;
 
 #define MENULENGTH 2
-char* PROGMEM menu[MENULENGTH] = {
+const char* menu[MENULENGTH] PROGMEM = {
   "Host (master)",
   "Join (slave)"
 };
 
 ///////////////////////////////////// SETUP
 void setup() {
-  gb.begin(F("Pong Multiplayer")); //initialize the Gamebuino
+  gb.begin(); //initialize the Gamebuino
+  gb.startMenu(F("Pong Multiplayer")); //shows the main menu
   gb.battery.show = false; //hide the battery indicator
   //can be either master or slave:
   setupMaster();

@@ -10,7 +10,8 @@ PROGMEM uint16_t myTrack[] = {
 
 ///////////////////////////////////// SETUP
 void setup() {
-  gb.begin(F("Music"));
+  gb.begin();
+  gb.startMenu(F("Sound demo"));
   gb.sound.playTrack(myTrack,0);
 }
 

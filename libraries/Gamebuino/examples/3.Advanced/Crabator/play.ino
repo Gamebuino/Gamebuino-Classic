@@ -36,32 +36,31 @@ void initGame(){
     splash_active[thisSplash] = false;
   }
   blast_lifespan = 0; //reset explosion
+}
+
+///////////////////////////////////// PLAY
+void play(){
   gb.battery.show = false;
   byte i = 0;
   while(i < 10){
     if(gb.update()){
-      gb.display.setCursor(20,10);
-      gb.display.setTextSize(3);
-      gb.display.print(F("GO!"));
+      gb.display.setTextSize(2);
+      gb.display.setCursor(6,16);
+      gb.display.print(F("LET'S GO!"));
       i++;
     }
   }
   gb.display.setTextSize(1);
   gb.popup(F("\x15:shoot \x16:run"), 60);
-}
-
-///////////////////////////////////// PLAY
-void play(){
-  initGame();
-  //while(!gb.buttonPressed(BTN_C)){
+  
   while(true){
     if(gb.update()){
       if(gb.buttons.pressed(BTN_C)){
         gb.sound.playCancel();
-        gb.battery.show = true;
-        pause();
-        gb.battery.show = false;
-        //gb.enableDisplayBattery = false;
+        return;
+        //gb.battery.show = true;
+        //pause();
+        //gb.battery.show = false;
       }
       boolean moved = false;
       if(gb.buttons.repeat(BTN_RIGHT, 1)){
@@ -229,7 +228,7 @@ void shakeScreen(){
     shake_timeLeft--;
     cameraX += random(-shake_magnitude,shake_magnitude+1);
     cameraY += random(-shake_magnitude,shake_magnitude+1); 
-    gb.backlight.set(gb.backlight.backlightValue+random(0,16)*shake_magnitude);
+    gb.backlight.set(gb.backlight.backlightValue+random(0,64*shake_magnitude));
   }
 }
 

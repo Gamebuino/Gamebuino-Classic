@@ -17,7 +17,8 @@ unsigned int gen = 0;
 byte graphCursor = 0;
 
 void setup() {
-  gb.begin(F("Conway's game of life"));
+  gb.begin();
+  gb.startMenu(F("Conway's game of life"));
   gb.battery.show = false;
   gb.display.persistence = true;
   randomSeed(analogRead(A7)*analogRead(A7)+analogRead(A7));

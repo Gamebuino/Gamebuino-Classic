@@ -27,7 +27,7 @@ boolean changeValue(unsigned &val, unsigned minVal, unsigned maxVal, const __Fla
 }
 
 #define SETTINGSMENU_LENGTH 6
-char* PROGMEM settingsMenu[SETTINGSMENU_LENGTH] = {
+const char* settingsMenu[SETTINGSMENU_LENGTH] PROGMEM = {
   "Display",
   "Player name",
   "Sound",
@@ -66,7 +66,7 @@ void changeSettings(){
 }
 
 #define DISPLAYMENU_LENGTH 5
-char* PROGMEM displayMenu[DISPLAYMENU_LENGTH] = {
+const char* displayMenu[DISPLAYMENU_LENGTH] PROGMEM = {
   "Contrast",
   "Backlight min",
   "Backlight max",
@@ -151,7 +151,7 @@ void displaySettings(){
 }
 
 #define SOUNDMENU_LENGTH 2
-char* PROGMEM soundMenu[SOUNDMENU_LENGTH] = {
+const char* soundMenu[SOUNDMENU_LENGTH] PROGMEM = {
   "Default volume",
   "Max volume",
 };
@@ -195,7 +195,7 @@ void soundSettings(){
 }
 
 #define INTERFACEMENU_LENGTH 1
-char* PROGMEM interfaceMenu[INTERFACEMENU_LENGTH] = {
+const char* interfaceMenu[INTERFACEMENU_LENGTH] PROGMEM = {
   "Start menu duration",
 };
 
@@ -219,7 +219,7 @@ void interfaceSettings(){
 }
 
 #define BATTERYMENU_LENGTH 4
-char* PROGMEM batteryMenu[BATTERYMENU_LENGTH] = {
+const char* batteryMenu[BATTERYMENU_LENGTH] PROGMEM = {
   "Critic voltage",
   "Low voltage",
   "Med voltage",

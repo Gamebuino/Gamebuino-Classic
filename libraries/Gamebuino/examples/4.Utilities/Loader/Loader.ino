@@ -5,6 +5,8 @@
 #include <Gamebuino.h>
 Gamebuino gb;
 
+extern const byte logo[] PROGMEM;
+
 char nextGameName[9] = "yyyyyyyy";
 char prevGameName[9] = "zzzzzzzz";
 byte initres;
@@ -23,7 +25,8 @@ char buffer[BUFFER_SIZE+4];
 
 void setup(){
   Serial.begin(115200);
-  gb.begin(F("Game loader"));
+  gb.begin();
+  gb.startMenu(logo);
   gb.battery.show = false;
   gb.display.clear();
   gb.display.persistence=true;
@@ -33,8 +36,7 @@ void setup(){
   if (initres!=NO_ERROR)
   {
     gb.display.clear();
-    gb.display.print(F("Insert SD card"));
-    gb.display.println(F("and restart."));
+    gb.display.print(F("Insert SD card and restart."));
     gb.display.update();
     while(1);
   }
@@ -104,7 +106,7 @@ void loop(){
              if(gb.buttons.pressed(BTN_A)) break;
              delay(50);
              }*/
-            gb.display.print(F("\nLoading game..."));
+            gb.display.print(F("\nLoading game...\nDo NOT turn off!"));
             gb.display.update();
             load_game(nextGameName);
           }
