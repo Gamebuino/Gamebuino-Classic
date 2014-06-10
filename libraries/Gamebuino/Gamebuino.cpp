@@ -62,20 +62,28 @@ const uint8_t startMenuIcons[] PROGMEM =
 
 void Gamebuino::begin() {
 	timePerFrame = 50;
-	nextFrameMillis = 0;
-	frameCount = 0;
+	//nextFrameMillis = 0;
+	//frameCount = 0;
 	frameEndMicros = 1;
 	startMenuTimer = 255;
-
+	//read default settings from flash memory (set using settings.hex)
 	readSettings();
-	
+	//init everything
 	backlight.begin();
 	backlight.set(BACKLIGHT_MAX);
 	buttons.begin();
+	buttons.update();
 	battery.begin();
 	display.begin(SCR_CLK, SCR_DIN, SCR_DC, SCR_CS, SCR_RST);
 	sound.begin();
-	sound.playTrack(startupSound, 0);
+	
+	//mute when B is held during start up
+	if(buttons.pressed(BTN_B)){
+		sound.setVolume(0);
+	}
+	else{
+		sound.playTrack(startupSound, 0);
+	}
 	
 }
 
@@ -99,6 +107,7 @@ void Gamebuino::startMenu(const __FlashStringHelper*  name, const uint8_t *logo)
 		while(1){
 			if(update()){
 				uint8_t logoOffset = pgm_read_byte(name)?FONTHEIGHT:0; //add an offset the logo when there is a name to display
+				//draw graphics
 				#if LCDWIDTH == LCDWIDTH_NOROT
 				display.drawBitmap(0,0, gamebuinoLogo);
 				if(logo){
@@ -115,26 +124,34 @@ void Gamebuino::startMenu(const __FlashStringHelper*  name, const uint8_t *logo)
 				#endif
 				display.print(name);
 				display.drawBitmap(LCDWIDTH-16, LCDHEIGHT-28, startMenuIcons);
-				display.drawChar(LCDWIDTH-6-2*FONTWIDTH,LCDHEIGHT-17,'\23', 1); //speaker logo
 				//blinking "play" logo:
 				display.setColor(WHITE);
-				if(frameCount/8%2)
-					display.fillRect(LCDWIDTH-16, LCDHEIGHT-28, 8, 9);
-				display.setColor(BLACK);
-				
-				if(buttons.pressed(BTN_B)){
-					sound.setVolume(0);
+				if(frameCount/4%2){
+					display.fillRect(LCDWIDTH-13, LCDHEIGHT-26, 3, 5);
 				}
-				
-				if(sound.getVolume()) display.drawChar(LCDWIDTH-6-FONTWIDTH,LCDHEIGHT-17,'\24', 1);
-				else display.drawChar(LCDWIDTH-6-FONTWIDTH,LCDHEIGHT-17,'x', 1);
-				
+				display.setColor(BLACK);
+				//toggle volume when B is pressed
+				if(buttons.pressed(BTN_B)){
+					sound.setVolume(sound.globalVolume+1);
+					sound.playTick();
+				}
+				//draw the speaker depending on the volume
+				#if FONTWIDTH < 5
+				display.drawChar(LCDWIDTH-7-2*FONTWIDTH,LCDHEIGHT-16,'\23', 1); //speaker logo
+				if(sound.getVolume()) display.drawChar(LCDWIDTH-7-FONTWIDTH,LCDHEIGHT-16,'\24', 1); //sound wave
+				else display.drawChar(LCDWIDTH-7-FONTWIDTH,LCDHEIGHT-16,'x', 1);
+				#else
+				display.drawChar(LCDWIDTH-5-2*FONTWIDTH,LCDHEIGHT-17,'\23', 1); //speaker logo
+				if(sound.getVolume()) display.drawChar(LCDWIDTH-5-FONTWIDTH,LCDHEIGHT-17,'\24', 1); //sound wave
+				else display.drawChar(LCDWIDTH-5-FONTWIDTH,LCDHEIGHT-17,'x', 1);
+				#endif
+				//leave the menu
 				if(buttons.pressed(BTN_A) || ((frameCount>=startMenuTimer)&&(startMenuTimer != 255))){
 					sound.stopTrack(0);
 					sound.playOK();
 					break;
 				}
-				
+				//flash the loader
 				if(buttons.pressed(BTN_C))
 				changeGame();
 			}

@@ -1,3 +1,5 @@
+const char muliplierChars[] PROGMEM = " kMG";
+
 void updateCursor(){
   gb.sound.playTick();
   gb.display.setColor(WHITE);
@@ -30,9 +32,39 @@ void updateList(){
   while (1)
   {
     gb.display.print(" ");
+
+    boolean isHex = false;
+    if(strstr(file.DE.fileext,"HEX")){
+      isHex = true;
+    }
+
+    if(isHex){
+      gb.display.print(" ");
+    }
+    else{
+      gb.display.print("*");
+    }
+
     gb.display.print(file.DE.filename);
     gb.display.print(".");
-    gb.display.println(file.DE.fileext);
+    gb.display.print(file.DE.fileext);
+
+    unsigned long size = file.DE.fileSize;
+    byte multiplier = 0;
+    while(1){
+      if(size < 999){
+        gb.display.print(" ");
+        gb.display.print(size);
+        if(multiplier){
+          gb.display.print((char)pgm_read_byte(muliplierChars + multiplier));
+        }
+        gb.display.println('B');
+        break;
+      }
+      size /= 1024;
+      multiplier ++;
+    }
+
     thisFile++;
     //open next file
     res = file.findNextFile(&file.DE);
@@ -45,13 +77,3 @@ void updateList(){
   }
   updateCursor();
 }
-
-
-
-
-
-
-
-
-
-

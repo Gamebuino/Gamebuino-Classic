@@ -20,12 +20,12 @@ void Display::begin(int8_t SCLK, int8_t DIN, int8_t DC, int8_t CS, int8_t RST) {
     rst = RST;
     cs = CS;
 
-    cursor_y = cursor_x = 0;
+    //cursor_y = cursor_x = 0;
     textsize = 1;
     color = BLACK;
 	bgcolor = WHITE;
     wrap = true;
-	persistence = false;
+	//persistence = false;
 
     SPI.begin();
     SPI.setBitOrder(MSBFIRST);

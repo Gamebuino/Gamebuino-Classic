@@ -1,3 +1,20 @@
+2014-06-10
+ - zero initilizers removed (unecessary use of flash memory)
+ - loader 
+	can't load non-hex files
+	displays a "x" in front of non-hex files
+	display the file size
+	number of page calculation fixed
+ - settings
+	sub menus fixed
+	added 'save' in every sub menu
+ - start menu
+	blinking cursor in the start menu slightly changed
+	mute when "B" is held during startup (it was making a small sound during 1 frame)
+	toggle volume when "B" is pressed in the startup menu
+	speaker icon placement improved, adapts depending on the font size
+ - sound.setVolume now applies a modulo instead of a min-max constrain
+ - updated HEX and ELF files
 2014-06-09
  - changelog created! \o/
  - "const" added to all PROGMEM variables for compatibity with the last avrgcc update
@@ -10,3 +27,4 @@
  - logo of Loader, Settings, and Crabator added
  - Emulator added in /utilities along with .elf files
  - bitmap encoder now ask you which file you want to encode and saves the output in the same folder in a txt file
+ - menu() function and examples changed to actually use flash memory instead of RAM

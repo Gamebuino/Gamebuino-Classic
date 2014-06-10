@@ -16,13 +16,13 @@ void Buttons::begin() {
     pins[BTN_B] = BTN_B_PIN;
     pins[BTN_C] = BTN_C_PIN;
 
-    states[BTN_LEFT] = 0;
-    states[BTN_UP] = 0;
-    states[BTN_RIGHT] = 0;
-    states[BTN_DOWN] = 0;
-    states[BTN_A] = 0;
-    states[BTN_B] = 0;
-    states[BTN_C] = 0;
+    //states[BTN_LEFT] = 0;
+    //states[BTN_UP] = 0;
+    //states[BTN_RIGHT] = 0;
+    //states[BTN_DOWN] = 0;
+    //states[BTN_A] = 0;
+    //states[BTN_B] = 0;
+    //states[BTN_C] = 0;
 }
 
 /*

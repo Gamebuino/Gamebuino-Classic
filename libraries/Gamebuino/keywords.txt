@@ -6,9 +6,9 @@ battery	KEYWORD1
 sound	KEYWORD1
 buttons	KEYWORD1
 
-// core
+//core
 begin	KEYWORD1
-startMenu KEYWORD1
+startMenu	KEYWORD1
 update	KEYWORD1
 setFrameRate	KEYWORD1
 frameCount	KEYWORD1

@@ -12,7 +12,7 @@ void Battery::begin() {
     voltage = BAT_LVL_FULL;
     level = NUM_LVL;
     nextUpdate = 1;
-	show = false;
+	//show = false;
 #endif
 }
 

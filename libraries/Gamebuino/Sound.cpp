@@ -44,7 +44,7 @@ void Sound::begin() {
 		chanVolumes[i] = VOLUME_CHANNEL_MAX;
 	}
 	
-	analogWrite(3, 1); //just to get the right register settings for PWM (hem)
+	analogWrite(3, 1); //lazy version to get the right register settings for PWM (hem)
 	TCCR2B = (TCCR2B & B11111000) | 1; //set timer 2 prescaler to 1 -> 30kHz PWM on pin 3
 
 	// initialize timer1 
@@ -479,9 +479,7 @@ void Sound::playTick(){
 
 void Sound::setVolume(int8_t volume) {
 #if NUM_CHANNELS > 0
-	volume = (volume > volumeMax) ? volumeMax : volume;
-	volume = (volume < 0) ? 0 : volume;
-	globalVolume = volume;
+	globalVolume = volume % (volumeMax+1);
 #endif
 }
 

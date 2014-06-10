@@ -4,7 +4,7 @@
 #include <avr/io.h>
 #include <avr/pgmspace.h> 
 
-//standard ascii 3x5 font 
+//standard ascii 3x5 font
 static unsigned char font[] PROGMEM = {
     0x3F, 0x21, 0x3F, // 0
     0x0A, 0x10, 0x0A, // 1

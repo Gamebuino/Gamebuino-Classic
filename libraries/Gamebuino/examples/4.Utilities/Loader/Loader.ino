@@ -78,7 +78,7 @@ void setup(){
     if(res != NO_ERROR) break;
     numberOfFiles++;
   }
-  numberOfPages = 1+numberOfFiles/PAGELENGTH;
+  numberOfPages = ((numberOfFiles-1)/PAGELENGTH) + 1;
   gb.display.setTextWrap(false);
   updateList();
 }
@@ -90,33 +90,11 @@ void loop(){
     if(gb.update()){
 
       if(gb.buttons.pressed(BTN_A)){
-        byte thisFile = 0;
-        res = file.findFirstFile(&file.DE);
-        while(res == NO_ERROR){
-          if(selectedFile == thisFile){
-            strcpy(nextGameName, file.DE.filename);
-            file.closeFile();
-            gb.display.clear();
-            saveName();
-            loadeeprom();
-            /*gb.display.println(F("\25:continue"));
-             gb.display.update();
-             while(1){
-             gb.buttons.update();
-             if(gb.buttons.pressed(BTN_A)) break;
-             delay(50);
-             }*/
-            gb.display.print(F("\nLoading game...\nDo NOT turn off!"));
-            gb.display.update();
-            load_game(nextGameName);
-          }
-          thisFile++;
-          res = file.findNextFile(&file.DE);
-        }
+        loadSelectedFile();
       }
 
       if(gb.buttons.repeat(BTN_DOWN,3)){
-        selectedFile++;
+        selectedFile++; 
         if(gb.buttons.repeat(BTN_B,1)){
           selectedFile += PAGELENGTH-1;
         }
@@ -159,22 +137,57 @@ void saveName(){
   write_flash_page (SETTINGS_PAGE, (unsigned char *)buffer);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void loadSelectedFile(){
+  byte thisFile = 0;
+  res = file.findFirstFile(&file.DE);
+  while(res == NO_ERROR){
+    if(selectedFile == thisFile){
+      //check that this is an HEX file
+      if(strstr(file.DE.fileext,"HEX")){
+        strcpy(nextGameName, file.DE.filename);
+        file.closeFile();
+        gb.display.clear();
+        saveName();
+        loadeeprom();
+        /*gb.display.println(F("\25:continue"));
+         gb.display.update();
+         while(1){
+         gb.buttons.update();
+         if(gb.buttons.pressed(BTN_A)) break;
+         delay(50);
+         }*/
+        gb.display.print(F("\nLoading game...\nDo NOT turn off!"));
+        gb.display.update();
+        load_game(nextGameName);
+      }
+      else{ //not an HEX file
+        file.closeFile();
+        gb.sound.playCancel();
+        //draw frame
+        gb.display.setColor(WHITE);
+        gb.display.fillRoundRect(5,10,LCDWIDTH-10,FONTHEIGHT*3, 3);
+        gb.display.setColor(BLACK);
+        gb.display.drawRoundRect(5,10,LCDWIDTH-10,FONTHEIGHT*3, 3);
+        //draw error message
+        gb.display.setCursor(0,10+3);
+        gb.display.println("   Not an HEX file ");
+        gb.display.println("   \25: OK ");
+        //wait for A to be pressed
+        while(1){
+          if(gb.update()){
+            if(gb.buttons.pressed(BTN_A)){
+              gb.display.setColor(BLACK);
+              updateList();
+              return;
+            }
+          }
+        }
+      }
+    }
+    thisFile++;
+    res = file.findNextFile(&file.DE);
+  }
+}
 
 
 

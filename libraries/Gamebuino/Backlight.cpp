@@ -9,7 +9,7 @@
 
 void Backlight::begin() {
 #if (ENABLE_BACKLIGHT > 0)
-    ambientLight = 0;
+    //ambientLight = 0;
     automatic = true;
 #endif
 }

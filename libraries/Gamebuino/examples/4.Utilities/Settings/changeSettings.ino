@@ -1,21 +1,24 @@
-extern const prog_char strSaveAndExit[];
+//used in every menu:
+const char strSave[] PROGMEM =            "Save";
 
 ///////////////////////////////////// SETTINGS MENU
-#define SETTINGSMENU_LENGTH 5
+#define SETTINGSMENU_LENGTH 6
 const char strDisplay[] PROGMEM =  "Display";
 const char strPlayerName[] PROGMEM =  "Player name";
 const char strSound[] PROGMEM = "Sound";
 const char strInterface[] PROGMEM =   "Interface";
+const char strBattery[] PROGMEM =   "Battery";
 const char* settingsMenu[SETTINGSMENU_LENGTH] PROGMEM = {
   strDisplay,
   strPlayerName,
   strSound,
   strInterface,
-  strSaveAndExit
+  strBattery,
+  strSave
 };
 
 ///////////////////////////////////// DISPLAY MENU
-#define DISPLAYMENU_LENGTH 5
+#define DISPLAYMENU_LENGTH 6
 const prog_char strContrast[] PROGMEM =  "Contrast";
 const prog_char strBacklightMin[] PROGMEM =  "Backlight min";
 const prog_char strBacklightMax[] PROGMEM =  "Backlight max";
@@ -27,26 +30,29 @@ const char* displayMenu[DISPLAYMENU_LENGTH] PROGMEM = {
   strBacklightMax,
   strAmbiantMin,
   strAmbiantMax,
+  strSave
 };
 
 ///////////////////////////////////// SOUND MENU
-#define SOUNDMENU_LENGTH 2
+#define SOUNDMENU_LENGTH 3
 const prog_char strDefaultVolume[] PROGMEM =  "Default volume";
 const prog_char strMaxVolume[] PROGMEM =  "Max volume";
 const char* soundMenu[SOUNDMENU_LENGTH] PROGMEM = {
   strDefaultVolume,
   strMaxVolume,
+  strSave
 };
 
 ///////////////////////////////////// INTERFACE MENU
-#define INTERFACEMENU_LENGTH 1
+#define INTERFACEMENU_LENGTH 2
 const prog_char strStartDuration[] PROGMEM =  "Start menu duration";
 const char* interfaceMenu[INTERFACEMENU_LENGTH] PROGMEM = {
   strStartDuration,
+  strSave
 };
 
 ///////////////////////////////////// BATTERY MENU
-#define BATTERYMENU_LENGTH 4
+#define BATTERYMENU_LENGTH 5
 const prog_char strCritic[] PROGMEM =  "Critic voltage";
 const prog_char strLow[] PROGMEM =  "Low voltage";
 const prog_char strMed[] PROGMEM =  "Med voltage";
@@ -56,6 +62,7 @@ const char* batteryMenu[BATTERYMENU_LENGTH] PROGMEM = {
   strLow,
   strMed,
   strHigh,
+  strSave
 };
 
 boolean changeValue(unsigned &val, unsigned minVal, unsigned maxVal, const __FlashStringHelper* text){
@@ -104,9 +111,9 @@ void changeSettings(){
     case 4: //battery
       batterySettings();
       break;
-    case 5: //save and exit
+    case 5: //save
       saveSettings();
-      gb.changeGame();
+      return;
       break;
     default:
       return;
@@ -184,6 +191,10 @@ void displaySettings(){
       }
       gb.backlight.automatic = true;
       break;
+    case 5: //save
+      saveSettings();
+      return;
+      break;
     default:
       return;
       break;
@@ -223,6 +234,10 @@ void soundSettings(){
         }
       }
       break;
+    case 2: //save
+      saveSettings();
+      return;
+      break;
     default:
       return;
       break;
@@ -242,6 +257,10 @@ void interfaceSettings(){
           }
         }
       }
+      break;
+    case 1: //save
+      saveSettings();
+      return;
       break;
     default:
       return;
@@ -296,6 +315,10 @@ void batterySettings(){
           gb.display.print(gb.battery.voltage);
         }
       }
+      break;
+    case 4: //save
+      saveSettings();
+      return;
       break;
     default:
       return;

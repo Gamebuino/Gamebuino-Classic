@@ -23,15 +23,13 @@ const char strChangeSettings[] PROGMEM =  "Change settings";
 const char strSeeAllSettings[] PROGMEM =  "See all settings";
 const char strDefaultSettings[] PROGMEM = "Default settings";
 const char strEraseSettings[] PROGMEM =   "Erase settings";
-const char strSaveAndExit[] PROGMEM =     "Save and Exit";
 
-#define MAINMENU_LENGTH 5
+#define MAINMENU_LENGTH 4
 const char* mainMenu[MAINMENU_LENGTH] PROGMEM = {
   strChangeSettings,
   strSeeAllSettings,
   strDefaultSettings,
   strEraseSettings,
-  strSaveAndExit
 };
 
 void setup(){
@@ -127,6 +125,15 @@ void saveSettings(){
   *(unsigned*)(&buffer[OFFSET_BATTERY_FULL]) = batteryFull;
 
   write_flash_page (SETTINGS_PAGE, buffer);
+  while(1){
+    if(gb.update()){
+      gb.display.println("Settings saved\n\n\25: OK");
+      if(gb.buttons.pressed(BTN_A)){
+        gb.sound.playOK();
+        return;
+      }
+    }
+  }
 }
 
 void eraseSettings(){
