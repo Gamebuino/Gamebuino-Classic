@@ -18,17 +18,18 @@ const char* pauseMenu[PAUSEMENULENGTH] PROGMEM = {
 
 ///////////////////////////////////// PAUSE
 void pause(){
-  gb.battery.show = true;
   while(true){
     if(gb.update()){
       switch(gb.menu(pauseMenu, PAUSEMENULENGTH)){
       case 0: //resume
         delay(100);
         play();
+        gb.battery.show = true;
         break;
       case 1: //restart
         initGame();
         play();
+        gb.battery.show = true;
         return;
       case 2: //high scores
         displayHighScores();
@@ -99,7 +100,7 @@ void displayHighScores(){
           gb.display.print(name[thisScore]);
         gb.display.setCursor(LCDWIDTH-3*FONTWIDTH,FONTHEIGHT+FONTHEIGHT*thisScore);
         gb.display.println(highscore[thisScore]);
-      }            
+      }
       if(gb.buttons.pressed(BTN_C)){
         gb.sound.playCancel();
         break;
