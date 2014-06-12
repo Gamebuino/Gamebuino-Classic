@@ -8,7 +8,7 @@
 
 //SETTINGS YOU CAN EDIT
 
-#define SCR_CONTRAST 50
+#define SCR_CONTRAST 60
 #define NUM_CHANNELS 1 //number of sound channels, between 0 and 4
 #define ENABLE_GUI 1 //enable menu, keyboard, pop-up, volume adjust functions
 #define ENABLE_BITMAPS 1 //will replace bitmaps with rectangles if disabled
@@ -69,7 +69,7 @@
 #define BACKLIGHT_PIN 5
 //auto back-light levels
 #define BACKLIGHT_MIN 0
-#define BACKLIGHT_MAX 128
+#define BACKLIGHT_MAX 255
 
 //ambient light sensor
 #define AMBIENTLIGHT_PIN A7

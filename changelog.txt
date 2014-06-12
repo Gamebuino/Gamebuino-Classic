@@ -1,9 +1,15 @@
+2014-06-12
+ - default contrast changed from 50 to 60
+ - default backlight changed from 128 to 255 (new batch of Gamebuinos has dimmer LEDs)
+ - bootloader updated with the last version of settings.hex
+ - crabator show battery in menu fixed
+ - crabator: added backlight effects when hit
 2014-06-10
  - zero initilizers removed (unecessary use of flash memory)
  - loader 
 	can't load non-hex files
 	displays a "x" in front of non-hex files
-	display the file size
+	displays the files' size
 	number of page calculation fixed
  - settings
 	sub menus fixed

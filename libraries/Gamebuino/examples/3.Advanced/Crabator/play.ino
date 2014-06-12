@@ -227,8 +227,9 @@ void shakeScreen(){
   if(shake_timeLeft){
     shake_timeLeft--;
     cameraX += random(-shake_magnitude,shake_magnitude+1);
-    cameraY += random(-shake_magnitude,shake_magnitude+1); 
-    gb.backlight.set(gb.backlight.backlightValue+random(0,64*shake_magnitude));
+    cameraY += random(-shake_magnitude,shake_magnitude+1);
+    byte backlightStep = gb.backlight.backlightMax / 4;
+    gb.backlight.set(gb.backlight.backlightValue-random(0,backlightStep*shake_magnitude));
   }
 }
 
