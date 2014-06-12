@@ -5,7 +5,7 @@
 #include <avr/pgmspace.h> 
 
 //standard ascii 3x5 font
-static unsigned char font[] PROGMEM = {
+const uint8_t font[] PROGMEM = {
     0x3F, 0x21, 0x3F, // 0
     0x0A, 0x10, 0x0A, // 1
     0x12, 0x08, 0x12, // 2

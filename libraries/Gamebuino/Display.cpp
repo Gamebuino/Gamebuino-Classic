@@ -8,7 +8,7 @@
 #include "Display.h"
 
 // a 5x7 font table
-extern uint8_t PROGMEM font[];
+extern const uint8_t font[] PROGMEM;
 
 // the memory buffer for the LCD
 uint8_t _displayBuffer[LCDWIDTH * LCDHEIGHT / 8];

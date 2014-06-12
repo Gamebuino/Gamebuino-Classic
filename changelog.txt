@@ -1,4 +1,6 @@
 2014-06-12
+ - added "const" to the "font" variable for the library to compile with the latest version of GBB
+	but you can no longer switch between different font sizes because of conflicting var name
  - default contrast changed from 50 to 60
  - default backlight changed from 128 to 255 (new batch of Gamebuinos has dimmer LEDs)
  - bootloader updated with the last version of settings.hex
