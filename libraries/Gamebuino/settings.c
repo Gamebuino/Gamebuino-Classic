@@ -21,7 +21,7 @@
 //IT'S STRONGLY ADVISED TO LEAVE THE FOLLOWING SETTINGS ALONE
 
 //addresses of settings stored in the program memory
-#define SETTINGS_PAGE ((prog_char *)(0x7000-128))
+#define SETTINGS_PAGE ((const char *)(0x7000-128))
 #define SETTINGS_TOKEN 			0xC001
 #define OFFSET_CURRENTGAME		2
 #define OFFSET_USERNAME			11

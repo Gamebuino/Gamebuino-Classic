@@ -225,7 +225,7 @@ uint16_t Gamebuino::getFreeRam() {
 	return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
 }
 
-int8_t Gamebuino::menu(const char** items, uint8_t length) {
+int8_t Gamebuino::menu(const char* const* items, uint8_t length) {
 #if (ENABLE_GUI > 0)
 	display.persistence = false;
 	int8_t activeItem = 0;

@@ -19,7 +19,7 @@
 #include "Sound.h"
 
 #define load_game (*((void(*)(const char* filename))(0x7ffc/2)))
-#define write_flash_page (*((void(*)(prog_char * page, unsigned char * buffer))(0x7ffa/2)))
+#define write_flash_page (*((void(*)(const char * page, unsigned char * buffer))(0x7ffa/2)))
 
 class Gamebuino {
 public:
@@ -45,7 +45,7 @@ public:
     uint16_t frameDurationMicros;
     uint32_t frameStartMicros, frameEndMicros;
     
-    int8_t menu(const char** items, uint8_t length);
+    int8_t menu(const char* const* items, uint8_t length);
     void keyboard(char* text, uint8_t length);
     void popup(const __FlashStringHelper* text, uint8_t duration);
 	//void adjustVolume();

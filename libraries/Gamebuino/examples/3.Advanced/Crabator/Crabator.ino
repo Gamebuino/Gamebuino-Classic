@@ -78,7 +78,7 @@ byte    blast_bullet;
 #define NUMWEAPONS 5
 byte currentWeapon;
 byte nextShot;
-char* PROGMEM weapon_name[NUMWEAPONS] = {
+const char*  const weapon_name[NUMWEAPONS] PROGMEM = {
   ".357","P90", "AK47", "RPG", "MG42"};
 byte weapon_size[NUMWEAPONS] = {
   2, 1, 2, 3, 2};
@@ -105,7 +105,7 @@ const uint16_t ak47_sound[] PROGMEM = {0x0045, 0x012C, 0x0000};
 const uint16_t mg42_sound[] PROGMEM = {0x0045,0x140,0x8141,0x7849,0x788D,0x52C,0x0000};
 const uint16_t rpg_sound[] PROGMEM = {0x0045,0x8101,0x7F30,0x0000};
 
-const uint16_t* weapons_sounds[NUMWEAPONS] PROGMEM= {
+const uint16_t* const weapons_sounds[NUMWEAPONS] PROGMEM= {
   magnum_sound, p90_sound, ak47_sound, rpg_sound, mg42_sound};
 const uint16_t blast_sound[] PROGMEM = {0x0045,0x7849,0x784D,0xA28,0x0000};
 int crate_x, crate_y;

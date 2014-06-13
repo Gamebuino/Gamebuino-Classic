@@ -5,12 +5,12 @@ void loadeeprom(){
       completeName[i] = '\0';
   }
   strcat(completeName, ".SAV");
-  gb.display.print("Loading saved game\n");
-  gb.display.println(completeName);
-  gb.display.update();
   res=file.openFile(completeName, FILEMODE_TEXT_READ);
   if (res==NO_ERROR)
   {
+    gb.display.print("Loading saved game\n");
+    gb.display.println(completeName);
+    gb.display.update();
     word result=0;
     byte i = 0;
     while ((result!=EOF) and (result!=FILE_IS_EMPTY))
@@ -32,7 +32,7 @@ void loadeeprom(){
   }
   else{
     gb.display.println(F("No saved game"));
-    gb.display.println(F("Cleaning EEPROM")); 
+    gb.display.println(F("Cleaning EEPROM"));
     gb.display.update();
     for (int i = 0; i < 1024; i++){
       if(EEPROM.read(i))

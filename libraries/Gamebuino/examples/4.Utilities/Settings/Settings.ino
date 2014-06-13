@@ -25,7 +25,7 @@ const char strDefaultSettings[] PROGMEM = "Default settings";
 const char strEraseSettings[] PROGMEM =   "Erase settings";
 
 #define MAINMENU_LENGTH 4
-const char* mainMenu[MAINMENU_LENGTH] PROGMEM = {
+const char* const mainMenu[MAINMENU_LENGTH] PROGMEM = {
   strChangeSettings,
   strSeeAllSettings,
   strDefaultSettings,

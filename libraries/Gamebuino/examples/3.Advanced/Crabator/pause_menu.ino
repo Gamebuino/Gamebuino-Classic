@@ -7,7 +7,7 @@ const char strSystemInfo[] PROGMEM = "System Info";
 const char strMainMenu[] PROGMEM = "Main Menu";
 
 
-const char* pauseMenu[PAUSEMENULENGTH] PROGMEM = {
+const char* const pauseMenu[PAUSEMENULENGTH] PROGMEM = {
   strPlay,
   strRestart,
   strHighScores,

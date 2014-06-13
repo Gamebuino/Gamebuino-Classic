@@ -45,7 +45,7 @@ char ball_vy = 3;
 #define MENULENGTH 2
 const char strMaster[] PROGMEM = "Host (master)";
 const char strSlave[] PROGMEM = "Join (slave)";
-const char* menu[MENULENGTH] PROGMEM = {
+const char* const menu[MENULENGTH] PROGMEM = {
   strMaster,
   strSlave
 };

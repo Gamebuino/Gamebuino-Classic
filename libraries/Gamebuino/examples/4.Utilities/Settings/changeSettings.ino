@@ -8,7 +8,7 @@ const char strPlayerName[] PROGMEM =  "Player name";
 const char strSound[] PROGMEM = "Sound";
 const char strInterface[] PROGMEM =   "Interface";
 const char strBattery[] PROGMEM =   "Battery";
-const char* settingsMenu[SETTINGSMENU_LENGTH] PROGMEM = {
+const char* const settingsMenu[SETTINGSMENU_LENGTH] PROGMEM = {
   strDisplay,
   strPlayerName,
   strSound,
@@ -19,12 +19,12 @@ const char* settingsMenu[SETTINGSMENU_LENGTH] PROGMEM = {
 
 ///////////////////////////////////// DISPLAY MENU
 #define DISPLAYMENU_LENGTH 6
-const prog_char strContrast[] PROGMEM =  "Contrast";
-const prog_char strBacklightMin[] PROGMEM =  "Backlight min";
-const prog_char strBacklightMax[] PROGMEM =  "Backlight max";
-const prog_char strAmbiantMin[] PROGMEM =  "Ambiant min";
-const prog_char strAmbiantMax[] PROGMEM =  "Ambiant max";
-const char* displayMenu[DISPLAYMENU_LENGTH] PROGMEM = {
+const char strContrast[] PROGMEM =  "Contrast";
+const char strBacklightMin[] PROGMEM =  "Backlight min";
+const char strBacklightMax[] PROGMEM =  "Backlight max";
+const char strAmbiantMin[] PROGMEM =  "Ambiant min";
+const char strAmbiantMax[] PROGMEM =  "Ambiant max";
+const char* const displayMenu[DISPLAYMENU_LENGTH] PROGMEM = {
   strContrast,
   strBacklightMin,
   strBacklightMax,
@@ -35,9 +35,9 @@ const char* displayMenu[DISPLAYMENU_LENGTH] PROGMEM = {
 
 ///////////////////////////////////// SOUND MENU
 #define SOUNDMENU_LENGTH 3
-const prog_char strDefaultVolume[] PROGMEM =  "Default volume";
-const prog_char strMaxVolume[] PROGMEM =  "Max volume";
-const char* soundMenu[SOUNDMENU_LENGTH] PROGMEM = {
+const char strDefaultVolume[] PROGMEM =  "Default volume";
+const char strMaxVolume[] PROGMEM =  "Max volume";
+const char* const soundMenu[SOUNDMENU_LENGTH] PROGMEM = {
   strDefaultVolume,
   strMaxVolume,
   strSave
@@ -45,19 +45,19 @@ const char* soundMenu[SOUNDMENU_LENGTH] PROGMEM = {
 
 ///////////////////////////////////// INTERFACE MENU
 #define INTERFACEMENU_LENGTH 2
-const prog_char strStartDuration[] PROGMEM =  "Start menu duration";
-const char* interfaceMenu[INTERFACEMENU_LENGTH] PROGMEM = {
+const char strStartDuration[] PROGMEM =  "Start menu duration";
+const char* const interfaceMenu[INTERFACEMENU_LENGTH] PROGMEM = {
   strStartDuration,
   strSave
 };
 
 ///////////////////////////////////// BATTERY MENU
 #define BATTERYMENU_LENGTH 5
-const prog_char strCritic[] PROGMEM =  "Critic voltage";
-const prog_char strLow[] PROGMEM =  "Low voltage";
-const prog_char strMed[] PROGMEM =  "Med voltage";
-const prog_char strHigh[] PROGMEM =  "High voltage";
-const char* batteryMenu[BATTERYMENU_LENGTH] PROGMEM = {
+const char strCritic[] PROGMEM =  "Critic voltage";
+const char strLow[] PROGMEM =  "Low voltage";
+const char strMed[] PROGMEM =  "Med voltage";
+const char strHigh[] PROGMEM =  "High voltage";
+const char* const batteryMenu[BATTERYMENU_LENGTH] PROGMEM = {
   strCritic,
   strLow,
   strMed,

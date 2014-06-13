@@ -19,7 +19,7 @@ boolean _chanNoise[NUM_CHANNELS]; //if a random value should be added to the wav
 
 const uint16_t squareWaveInstrument[] PROGMEM = {0x0101, 0x03F7};
 const uint16_t noiseInstrument[] PROGMEM = {0x0101, 0x03FF};
-const uint16_t *defaultInstruments[] PROGMEM = {squareWaveInstrument,noiseInstrument};
+const uint16_t* const defaultInstruments[] PROGMEM = {squareWaveInstrument,noiseInstrument};
 
 const uint16_t playOKTrack[] PROGMEM = {0x0005,0x138,0x168,0x0000};
 const uint16_t playCancelTrack[] PROGMEM = {0x0005,0x168,0x138,0x0000};
@@ -62,7 +62,7 @@ void Sound::begin() {
 #endif
 }
 
-void Sound::playTrack(const uint16_t* track, const uint16_t** instruments, uint8_t channel){
+void Sound::playTrack(const uint16_t* track, const uint16_t* const* instruments, uint8_t channel){
 #if(NUM_CHANNELS > 0)
 	stopTrack(channel);
 	trackData[channel] = (uint16_t*)track;

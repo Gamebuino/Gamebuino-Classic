@@ -10,7 +10,7 @@ Gamebuino gb;
 const char strSystemInfo[] PROGMEM = "Stystem info";
 const char strChangeGame[] PROGMEM = "Change game";
 //Put all the different items together in a menu (an array of strings actually)
-const char* menu[MENULENGTH] PROGMEM = {
+const char* const menu[MENULENGTH] PROGMEM = {
   strSystemInfo,
   strChangeGame,
 };
