@@ -13,7 +13,6 @@
 #include <avr/pgmspace.h>
 #include <SPI.h>
 
-
 #include "settings.c"
 
 //colors
@@ -40,7 +39,7 @@
 #define LCDHEIGHT_NOROT 48
 #define LCDWIDTH_NOROT 84
 	
-#if TINY_FONT == 0
+/*#if TINY_FONT == 0
 	#include "font5x7.c"
 	#define FONTWIDTH 6
 	#define FONTHEIGHT 8
@@ -48,7 +47,7 @@
 	#include "font3x5.c"
 	#define FONTWIDTH 4
 	#define FONTHEIGHT 6
-#endif
+#endif*/
 
 #define swap(a, b) { int8_t t = a; a = b; b = t; }
 
@@ -108,6 +107,9 @@ public:
     
     void drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap);
     void drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap, uint8_t rotation, uint8_t flip);
+	
+	void setFont(const uint8_t* f);
+	uint8_t fontWidth, fontHeight;
     void drawChar(int8_t x, int8_t y, unsigned char c, uint8_t size);
 
     virtual size_t write(uint8_t);
@@ -123,7 +125,7 @@ private:
     volatile uint8_t *mosiport, *clkport, *csport, *dcport;
     uint8_t mosipinmask, clkpinmask, cspinmask, dcpinmask;
 	
-
+	uint8_t *font;
     int8_t cursor_x, cursor_y;
 	uint8_t color, bgcolor;
     uint8_t textsize;

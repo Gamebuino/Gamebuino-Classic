@@ -4,7 +4,7 @@ Gamebuino gb;
 
 void setup(){
   gb.begin();
-  gb.startMenu(F("Update example"));
+  gb.titleScreen(F("Update example"));
 }
 
 void loop(){
@@ -19,7 +19,7 @@ void loop(){
         break;
 
       if(gb.buttons.pressed(BTN_C)){
-        gb.startMenu(F("Update example"));
+        gb.titleScreen(F("Update example"));
       }
     }
   }
@@ -35,7 +35,7 @@ void loop(){
         break;
 
       if(gb.buttons.pressed(BTN_C)){
-        gb.startMenu(F("Update example"));
+        gb.titleScreen(F("Update example"));
       }
     }
   }

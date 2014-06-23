@@ -17,7 +17,7 @@ void setup(){
   // initialize the Gamebuino object
   gb.begin();
   // shows the start menu
-  gb.startMenu(F("Bouncing Ball"));
+  gb.titleScreen(F("Bouncing Ball"));
 }
 
 // the loop routine runs over and over again forever

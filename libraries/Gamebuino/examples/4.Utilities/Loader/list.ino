@@ -3,9 +3,9 @@ const char muliplierChars[] PROGMEM = " kMG";
 void updateCursor(){
   gb.sound.playTick();
   gb.display.setColor(WHITE);
-  gb.display.fillRect(0,0,FONTWIDTH,LCDHEIGHT);
+  gb.display.fillRect(0,0,gb.display.fontWidth,LCDHEIGHT);
   gb.display.setColor(BLACK, WHITE);
-  gb.display.setCursor(0,FONTHEIGHT*(selectedFile%PAGELENGTH));
+  gb.display.setCursor(0,gb.display.fontHeight*(selectedFile%PAGELENGTH));
   gb.display.print("\x10");
 }
 

@@ -84,7 +84,7 @@ boolean changeValue(unsigned &val, unsigned minVal, unsigned maxVal, const __Fla
   }
   if (val > maxVal) val=minVal;
   if (val < minVal) val=maxVal;
-  gb.display.setCursor(0,LCDHEIGHT-FONTHEIGHT);
+  gb.display.setCursor(0,LCDHEIGHT-gb.display.fontHeight);
   gb.display.print(F("\21"));
   gb.display.print(val);
   gb.display.println(F("\20 \25:Accept"));

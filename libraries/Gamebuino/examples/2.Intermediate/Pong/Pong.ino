@@ -27,7 +27,7 @@ int ball_vy = 3;
 ///////////////////////////////////// SETUP
 void setup() {
   gb.begin();
-  gb.startMenu(F("Pong Solo"));
+  gb.titleScreen(F("Pong Solo"));
   gb.battery.show = false; //hide the battery indicator
 }
 
@@ -36,7 +36,7 @@ void loop() {
   if(gb.update()){
     //pause the game if C is pressed
     if(gb.buttons.pressed(BTN_C)){
-      gb.startMenu(F("Pong Solo"));
+      gb.titleScreen(F("Pong Solo"));
     }
     //move the player
     if(gb.buttons.repeat(BTN_UP, 1)){

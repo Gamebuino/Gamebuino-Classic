@@ -1,0 +1,10 @@
+simply drag and drop the .elf file on gbsim.exe !
+
+Key binding:
+UP:		Z
+LEFT:	Q
+DOWN:	S
+RIGHT:	D
+A:		K
+B:		L
+C:		R

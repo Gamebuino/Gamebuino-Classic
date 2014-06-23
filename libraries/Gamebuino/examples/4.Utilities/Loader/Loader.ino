@@ -7,7 +7,7 @@ Gamebuino gb;
 
 extern const byte logo[] PROGMEM;
 
-char nextGameName[9] = "yyyyyyyy";
+char nextGameName[9] = "\0\0\0\0\0\0\0\0";
 char prevGameName[9] = "zzzzzzzz";
 byte initres;
 byte res;
@@ -17,16 +17,15 @@ int selectedFile;
 int selectedPage;
 int prevSelectedPage;
 int thisFile;
-#define PAGELENGTH (LCDHEIGHT/FONTHEIGHT)
+#define PAGELENGTH (LCDHEIGHT/gb.display.fontHeight)
 
 char completeName[13] = "xxxxxxxx.xxx";
 #define BUFFER_SIZE 128
 char buffer[BUFFER_SIZE+4];
 
 void setup(){
-  Serial.begin(115200);
+  //Serial.begin(115200);
   gb.begin();
-  gb.startMenu(logo);
   gb.battery.show = false;
   gb.display.clear();
   gb.display.persistence=true;
@@ -41,7 +40,7 @@ void setup(){
     while(1);
   }
 
-  prog_char* address = SETTINGS_PAGE + OFFSET_CURRENTGAME;
+  const char* address = SETTINGS_PAGE + OFFSET_CURRENTGAME;
   prevGameName[0] = pgm_read_byte(address);
   prevGameName[1] = pgm_read_byte(address+1);
   prevGameName[2] = pgm_read_byte(address+2);
@@ -58,10 +57,11 @@ void setup(){
 
   if(prevGameName[0]){
     saveeeprom();
+    saveName();
   }
-  else{
-    gb.display.println(F("No prev game found"));
-  }
+  /*else{
+   gb.display.println(F("No prev game found"));
+   }*/
 
   /*gb.display.println(F("\25:continue"));
    gb.display.update();
@@ -71,8 +71,12 @@ void setup(){
    delay(50);
    }*/
 
-  file.findFirstFile(&file.DE);
+  gb.titleScreen(logo);
+  gb.display.clear();
+  gb.display.persistence=true;
 
+  //count the number of files
+  file.findFirstFile(&file.DE);
   while(res == NO_ERROR){
     res = file.findNextFile(&file.DE);
     if(res != NO_ERROR) break;
@@ -94,7 +98,7 @@ void loop(){
       }
 
       if(gb.buttons.repeat(BTN_DOWN,3)){
-        selectedFile++; 
+        selectedFile++;
         if(gb.buttons.repeat(BTN_B,1)){
           selectedFile += PAGELENGTH-1;
         }
@@ -165,9 +169,9 @@ void loadSelectedFile(){
         gb.sound.playCancel();
         //draw frame
         gb.display.setColor(WHITE);
-        gb.display.fillRoundRect(5,10,LCDWIDTH-10,FONTHEIGHT*3, 3);
+        gb.display.fillRoundRect(5,10,LCDWIDTH-10,gb.display.fontHeight*3, 3);
         gb.display.setColor(BLACK);
-        gb.display.drawRoundRect(5,10,LCDWIDTH-10,FONTHEIGHT*3, 3);
+        gb.display.drawRoundRect(5,10,LCDWIDTH-10,gb.display.fontHeight*3, 3);
         //draw error message
         gb.display.setCursor(0,10+3);
         gb.display.println("   Not an HEX file ");
@@ -188,6 +192,7 @@ void loadSelectedFile(){
     res = file.findNextFile(&file.DE);
   }
 }
+
 
 
 

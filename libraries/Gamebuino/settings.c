@@ -8,17 +8,20 @@
 
 //SETTINGS YOU CAN EDIT
 
-#define SCR_CONTRAST 60
 #define NUM_CHANNELS 1 //number of sound channels, between 0 and 4
 #define ENABLE_GUI 1 //enable menu, keyboard, pop-up, volume adjust functions
 #define ENABLE_BITMAPS 1 //will replace bitmaps with rectangles if disabled
+#define DISPLAY_ROT NOROT //set to NOROT, ROTCCW, ROT180 or ROTCW
+
+//not really useful
 #define ENABLE_BATTERY 1 //disable battery monitoring
 #define ENABLE_BACKLIGHT 1 //disable automatic back-light
-#define TINY_FONT 1 //0 = 5x7 font ; 1 = 3x5 font7
-#define DISPLAY_ROT NOROT //set to NOROT, ROTCCW, ROT180 or ROTCW
-#define START_MENU_TIMER 255 //40 = 40 frames (2sec) before start menu is skipped, 0 = no start menu, 255 = start menu until you press A
 
 //IT'S STRONGLY ADVISED TO LEAVE THE FOLLOWING SETTINGS ALONE
+
+//defaults values of settings which can be adjusted on each Gamebuino using settings.hex
+#define SCR_CONTRAST 60
+#define START_MENU_TIMER 255 //40 = 40 frames (2sec) before start menu is skipped, 0 = no start menu, 255 = start menu until you press A
 
 //addresses of settings stored in the program memory
 #define SETTINGS_PAGE ((const char *)(0x7000-128))

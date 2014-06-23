@@ -248,6 +248,7 @@ void loadHighscore(){
 ///////////////////////////////////// SAVE HIGHSCORE
 void saveHighscore(){
   gb.getDefaultName(name[RANKMAX-1]);
+  gb.display.setFont(font5x7);
   gb.keyboard(name[RANKMAX-1], NAMELENGTH+1);
   highscore[RANKMAX-1] = score;
   for(byte i=RANKMAX-1; i>0; i--){ //bubble sorting FTW

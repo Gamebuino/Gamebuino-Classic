@@ -1,5 +1,25 @@
+2014-06-23
+ - back to work!
+ - gb.startMenu() changed to gb.titleScreen()
+	startMenuTimer now only skip it the first time it's called
+ - minor bitmap speed improvement
+ - font can now be dynamically changed using setFont();
+ - font example added
+ - font 3x5 number's changed to look more "retro"
+ - sound library changes (both in gamebuino lib, excel tracker and processing player):
+	note ID 63 is silent. It is named "Silence" in the excel tracker
+	sound.changeInstruments(const uint16_t* const* instruments, uint8_t channel) added,
+	it changes the set of instruments of a track.
+	The default instrument set is 0:square wave 1:noise
+ - Excel tracker
+	transpose column added
+	you now type note's name instead of ID (find their names in the "notes" tab)
+	use "Silence" instead of a note name to mute it
+ - bugs solved in the Processing sound player
+2014-06-13
+ - a few more "const" added and "prog_char" changed to "const char". Now actually compiles with avr-gcc > 4.6.1
 2014-06-12
- - added "const" to the "font" variable for the library to compile with the latest version of GBB
+ - added "const" to the "font" variable for the library to compile with the latest version of avr-gcc
 	but you can no longer switch between different font sizes because of conflicting var name
  - default contrast changed from 50 to 60
  - default backlight changed from 128 to 255 (new batch of Gamebuinos has dimmer LEDs)
@@ -25,9 +45,9 @@
  - updated HEX and ELF files
 2014-06-09
  - changelog created! \o/
- - "const" added to all PROGMEM variables for compatibity with the last avrgcc update
+ - "const" added to all PROGMEM variables for compatibity with the last avr-cc update
 	It will require you to add "const" before the variables which use PROGMEM or you'll get compilation errors
- - gb.startMenu() function added. It's used to display the main menu instead of gb.begin()
+ - gb.titleScreen() function added. It's used to display the main menu instead of gb.begin()
 	It should be called just after gb.begin() with the arguments you were used to put in the gb.begin() function.
 	It allows you to display the main menu again whenever you want.
  - The "play" icon the the start menu is now blinking, for people who didn't know what to do

@@ -6,7 +6,7 @@ char text[13] = "Default text";
 
 void setup(){
   gb.begin();
-  gb.startMenu(F("Keyword example"));
+  gb.titleScreen(F("Keyword example"));
   gb.keyboard(text, 12);
 }
 
@@ -16,7 +16,7 @@ void loop(){
     gb.display.println(text);
 
     if(gb.buttons.pressed(BTN_C)){
-      gb.startMenu(F("Keyword example"));
+      gb.titleScreen(F("Keyword example"));
       gb.keyboard(text, 12);
     }
   }

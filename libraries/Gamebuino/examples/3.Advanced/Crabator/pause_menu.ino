@@ -23,12 +23,16 @@ void pause(){
       switch(gb.menu(pauseMenu, PAUSEMENULENGTH)){
       case 0: //resume
         delay(100);
+        gb.display.setFont(font3x5);
         play();
+        gb.display.setFont(font5x7);
         gb.battery.show = true;
         break;
       case 1: //restart
         initGame();
+        gb.display.setFont(font3x5);
         play();
+        gb.display.setFont(font5x7);
         gb.battery.show = true;
         return;
       case 2: //high scores
@@ -38,9 +42,11 @@ void pause(){
         //gb.adjustVolume();
         break;
       case 4: //System info
+        gb.display.setFont(font3x5);
         while (1) {
           if (gb.update()) {
             if (gb.buttons.pressed(BTN_C)) {
+              gb.display.setFont(font5x7);
               gb.sound.playCancel();
               break;
             }
@@ -76,7 +82,7 @@ void pause(){
         break;
       case 5: //change game
         //gb.changeGame();
-        gb.startMenu(logo);
+        gb.titleScreen(logo);
         break;
       default:
         return;
@@ -92,17 +98,17 @@ void displayHighScores(){
       gb.display.setCursor(9+random(0,2),0+random(0,2));
       gb.display.println(F("HIGH SCORES"));
       gb.display.setTextWrap(false);
-      gb.display.setCursor(0,FONTHEIGHT);
+      gb.display.setCursor(0,gb.display.fontHeight);
       for(byte thisScore=0; thisScore<RANKMAX; thisScore++){
         if(highscore[thisScore]==0)
           gb.display.print('-');
         else
           gb.display.print(name[thisScore]);
-        gb.display.setCursor(LCDWIDTH-3*FONTWIDTH,FONTHEIGHT+FONTHEIGHT*thisScore);
+        gb.display.setCursor(LCDWIDTH-3*gb.display.fontWidth,gb.display.fontHeight+gb.display.fontHeight*thisScore);
         gb.display.println(highscore[thisScore]);
       }
-      if(gb.buttons.pressed(BTN_C)){
-        gb.sound.playCancel();
+      if(gb.buttons.pressed(BTN_A) || gb.buttons.pressed(BTN_B) || gb.buttons.pressed(BTN_C)){
+        gb.sound.playOK();
         break;
       }
     }

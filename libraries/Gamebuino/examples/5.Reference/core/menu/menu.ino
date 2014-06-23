@@ -17,13 +17,13 @@ const char* const menu[MENULENGTH] PROGMEM = {
 
 void setup(){
   gb.begin();
-  gb.startMenu(F("Menu example"));
+  gb.titleScreen(F("Menu example"));
 }
 
 void loop(){
   switch(gb.menu(menu, MENULENGTH)){
     case -1: //nothing selected
-      gb.startMenu(F("Menu example"));
+      gb.titleScreen(F("Menu example"));
       break;
     case 0: //display system info
       displaySystemInfo();

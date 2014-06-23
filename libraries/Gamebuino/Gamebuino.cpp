@@ -84,29 +84,28 @@ void Gamebuino::begin() {
 	else{
 		sound.playTrack(startupSound, 0);
 	}
-	
 }
 
-void Gamebuino::startMenu(const __FlashStringHelper* name){
-	startMenu(name, 0);
+void Gamebuino::titleScreen(const __FlashStringHelper* name){
+	titleScreen(name, 0);
 }
 
-void Gamebuino::startMenu(const uint8_t* logo){
-	startMenu(F(""), logo);
+void Gamebuino::titleScreen(const uint8_t* logo){
+	titleScreen(F(""), logo);
 }
 
-void Gamebuino::startMenu(){
-	startMenu(F(""));
+void Gamebuino::titleScreen(){
+	titleScreen(F(""));
 }
 
-void Gamebuino::startMenu(const __FlashStringHelper*  name, const uint8_t *logo){
+void Gamebuino::titleScreen(const __FlashStringHelper*  name, const uint8_t *logo){
 	if(startMenuTimer){
 		display.persistence = false;
 		battery.show = false;
 		display.setColor(BLACK);
 		while(1){
 			if(update()){
-				uint8_t logoOffset = pgm_read_byte(name)?FONTHEIGHT:0; //add an offset the logo when there is a name to display
+				uint8_t logoOffset = pgm_read_byte(name)?display.fontHeight:0; //add an offset the logo when there is a name to display
 				//draw graphics
 				#if LCDWIDTH == LCDWIDTH_NOROT
 				display.drawBitmap(0,0, gamebuinoLogo);
@@ -136,17 +135,18 @@ void Gamebuino::startMenu(const __FlashStringHelper*  name, const uint8_t *logo)
 					sound.playTick();
 				}
 				//draw the speaker depending on the volume
-				#if FONTWIDTH < 5
-				display.drawChar(LCDWIDTH-7-2*FONTWIDTH,LCDHEIGHT-16,'\23', 1); //speaker logo
-				if(sound.getVolume()) display.drawChar(LCDWIDTH-7-FONTWIDTH,LCDHEIGHT-16,'\24', 1); //sound wave
-				else display.drawChar(LCDWIDTH-7-FONTWIDTH,LCDHEIGHT-16,'x', 1);
-				#else
-				display.drawChar(LCDWIDTH-5-2*FONTWIDTH,LCDHEIGHT-17,'\23', 1); //speaker logo
-				if(sound.getVolume()) display.drawChar(LCDWIDTH-5-FONTWIDTH,LCDHEIGHT-17,'\24', 1); //sound wave
-				else display.drawChar(LCDWIDTH-5-FONTWIDTH,LCDHEIGHT-17,'x', 1);
-				#endif
+				if (display.fontWidth < 5){
+					display.drawChar(LCDWIDTH-7-2*display.fontWidth,LCDHEIGHT-16,'\23', 1); //speaker logo
+					if(sound.getVolume()) display.drawChar(LCDWIDTH-7-display.fontWidth,LCDHEIGHT-16,'\24', 1); //sound wave
+					else display.drawChar(LCDWIDTH-7-display.fontWidth,LCDHEIGHT-16,'x', 1);
+				} else {
+					display.drawChar(LCDWIDTH-5-2*display.fontWidth,LCDHEIGHT-17,'\23', 1); //speaker logo
+					if(sound.getVolume()) display.drawChar(LCDWIDTH-5-display.fontWidth,LCDHEIGHT-17,'\24', 1); //sound wave
+					else display.drawChar(LCDWIDTH-5-display.fontWidth,LCDHEIGHT-17,'x', 1);
+				}
 				//leave the menu
 				if(buttons.pressed(BTN_A) || ((frameCount>=startMenuTimer)&&(startMenuTimer != 255))){
+					startMenuTimer = 255; //don't automatically skip the title screen next time it's displayed
 					sound.stopTrack(0);
 					sound.playOK();
 					break;
@@ -237,7 +237,7 @@ int8_t Gamebuino::menu(const char* const* items, uint8_t length) {
 		if (update()) {
 			if (buttons.pressed(BTN_A) || buttons.pressed(BTN_B) || buttons.pressed(BTN_C)) {
 				exit = true; //time to exit menu !
-				targetY = -FONTHEIGHT * length - 2; //send the menu out of the screen
+				targetY = -display.fontHeight * length - 2; //send the menu out of the screen
 				if (buttons.pressed(BTN_A)) {
 					answer = activeItem;
 					sound.playOK();
@@ -258,7 +258,7 @@ int8_t Gamebuino::menu(const char* const* items, uint8_t length) {
 				if (activeItem == length) activeItem = 0;
 				if (activeItem < 0) activeItem = length - 1;
 
-				targetY = -FONTHEIGHT * activeItem + (FONTHEIGHT+4); //center the menu on the active item
+				targetY = -display.fontHeight * activeItem + (display.fontHeight+4); //center the menu on the active item
 			} else { //exit :
 				if ((currentY - targetY) <= 1)
 				return (answer);
@@ -270,15 +270,15 @@ int8_t Gamebuino::menu(const char* const* items, uint8_t length) {
 			display.setTextWrap(false);
 			for (byte i = 0; i < length; i++) {
 				if (i == activeItem)
-				display.setCursor(3, currentY + FONTHEIGHT * activeItem);
+				display.setCursor(3, currentY + display.fontHeight * activeItem);
 				display.println((const __FlashStringHelper*)pgm_read_word(items+i));
 			}
 
 			//display.fillRect(0, currentY + 3 + 8 * activeItem, 2, 2, BLACK);
 			display.setColor(WHITE);
-			display.drawFastHLine(0, currentY + FONTHEIGHT * activeItem - 1, LCDWIDTH);
+			display.drawFastHLine(0, currentY + display.fontHeight * activeItem - 1, LCDWIDTH);
 			display.setColor(BLACK);
-			display.drawRoundRect(0, currentY + FONTHEIGHT * activeItem - 2, LCDWIDTH, (FONTHEIGHT+3), 3);
+			display.drawRoundRect(0, currentY + display.fontHeight * activeItem - 2, LCDWIDTH, (display.fontHeight+3), 3);
 		}
 	}
 #else
@@ -327,8 +327,8 @@ void Gamebuino::keyboard(char* text, uint8_t length) {
 			if (activeY == KEYBOARD_H) activeY = 0;
 			if (activeY < 0) activeY = KEYBOARD_H - 1;
 			//set the keyboard position on screen
-			targetX = -(FONTWIDTH+1) * activeX + LCDWIDTH / 2 - 3;
-			targetY = -(FONTHEIGHT+1) * activeY + LCDHEIGHT / 2 - 4 - FONTHEIGHT;
+			targetX = -(display.fontWidth+1) * activeX + LCDWIDTH / 2 - 3;
+			targetY = -(display.fontHeight+1) * activeY + LCDHEIGHT / 2 - 4 - display.fontHeight;
 			//smooth the keyboard displacement
 			currentX = (targetX + currentX) / 2;
 			currentY = (targetY + currentY) / 2;
@@ -378,35 +378,35 @@ void Gamebuino::keyboard(char* text, uint8_t length) {
 			//draw the keyboard
 			for (int8_t y = 0; y < KEYBOARD_H; y++) {
 				for (int8_t x = 0; x < KEYBOARD_W; x++) {
-					display.drawChar(currentX + x * (FONTWIDTH+1), currentY + y * (FONTHEIGHT+1), x + y * KEYBOARD_W, 1);
+					display.drawChar(currentX + x * (display.fontWidth+1), currentY + y * (display.fontHeight+1), x + y * KEYBOARD_W, 1);
 				}
 			}
 			//draw instruction
-			display.setCursor(currentX-FONTWIDTH*6-2, currentY+1*(FONTHEIGHT+1));
+			display.setCursor(currentX-display.fontWidth*6-2, currentY+1*(display.fontHeight+1));
 			display.print(F("\25type"));
-			display.setCursor(currentX-FONTWIDTH*6-2, currentY+2*(FONTHEIGHT+1));
+			display.setCursor(currentX-display.fontWidth*6-2, currentY+2*(display.fontHeight+1));
 			display.print(F("\26back"));
-			display.setCursor(currentX-FONTWIDTH*6-2, currentY+3*(FONTHEIGHT+1));
+			display.setCursor(currentX-display.fontWidth*6-2, currentY+3*(display.fontHeight+1));
 			display.print(F("\27save"));
 			//erase some pixels around the selected character
 			display.setColor(WHITE);
-			display.drawFastHLine(currentX + activeX * (FONTWIDTH+1) - 1, currentY + activeY * (FONTHEIGHT+1) - 2, 7);
+			display.drawFastHLine(currentX + activeX * (display.fontWidth+1) - 1, currentY + activeY * (display.fontHeight+1) - 2, 7);
 			//draw the selection rectangle
 			display.setColor(BLACK);
-			display.drawRoundRect(currentX + activeX * (FONTWIDTH+1) - 2, currentY + activeY * (FONTHEIGHT+1) - 3, (FONTWIDTH+2)+(FONTWIDTH-1)%2, (FONTHEIGHT+5), 3);
+			display.drawRoundRect(currentX + activeX * (display.fontWidth+1) - 2, currentY + activeY * (display.fontHeight+1) - 3, (display.fontWidth+2)+(display.fontWidth-1)%2, (display.fontHeight+5), 3);
 			//draw keyboard outline
-			//display.drawRoundRect(currentX - 6, currentY - 6, KEYBOARD_W * (FONTWIDTH+1) + 12, KEYBOARD_H * (FONTHEIGHT+1) + 12, 8, BLACK);
+			//display.drawRoundRect(currentX - 6, currentY - 6, KEYBOARD_W * (display.fontWidth+1) + 12, KEYBOARD_H * (display.fontHeight+1) + 12, 8, BLACK);
 			//text field
-			display.drawFastHLine(0, LCDHEIGHT-FONTHEIGHT-2, LCDWIDTH);
+			display.drawFastHLine(0, LCDHEIGHT-display.fontHeight-2, LCDWIDTH);
 			display.setColor(WHITE);
-			display.fillRect(0, LCDHEIGHT-FONTHEIGHT-1, LCDWIDTH, FONTHEIGHT+1);
+			display.fillRect(0, LCDHEIGHT-display.fontHeight-1, LCDWIDTH, display.fontHeight+1);
 			//typed text
-			display.setCursor(0, LCDHEIGHT-FONTHEIGHT);
+			display.setCursor(0, LCDHEIGHT-display.fontHeight);
 			display.setColor(BLACK);
 			display.print(text);
 			//blinking cursor
 			if (((frameCount % 8) < 4) && (activeChar < (length-1)))
-			display.drawChar(FONTWIDTH * activeChar, LCDHEIGHT-FONTHEIGHT, '_',1);
+			display.drawChar(display.fontWidth * activeChar, LCDHEIGHT-display.fontHeight, '_',1);
 		}
 	}
 #endif
@@ -428,10 +428,10 @@ void Gamebuino::updatePopup(){
 		}
 		display.setTextSize(1);
 		display.setColor(WHITE);
-		display.fillRoundRect(0,LCDHEIGHT-FONTHEIGHT+yOffset-3,84,FONTHEIGHT+3,3);
+		display.fillRoundRect(0,LCDHEIGHT-display.fontHeight+yOffset-3,84,display.fontHeight+3,3);
 		display.setColor(BLACK);
-		display.drawRoundRect(0,LCDHEIGHT-FONTHEIGHT+yOffset-3,84,FONTHEIGHT+3,3);
-		display.setCursor(4, LCDHEIGHT-FONTHEIGHT+yOffset-1);
+		display.drawRoundRect(0,LCDHEIGHT-display.fontHeight+yOffset-3,84,display.fontHeight+3,3);
+		display.setCursor(4, LCDHEIGHT-display.fontHeight+yOffset-1);
 		display.print(popupText);
 		popupTimeLeft--;
 	}
@@ -469,7 +469,7 @@ while(1){
 void Gamebuino::displayBattery(){
 #if (ENABLE_BATTERY > 0)
 	display.setColor(BLACK, WHITE);
-	display.setCursor(LCDWIDTH-FONTWIDTH+1,0);
+	display.setCursor(LCDWIDTH-display.fontWidth+1,0);
 	switch(battery.level){
 	case 0://battery critic, power down
 		sound.stopTrack();
@@ -504,7 +504,7 @@ void Gamebuino::displayBattery(){
 
 void Gamebuino::changeGame(){
 	display.clear();
-	display.print(F("Loading...\nDo NOT turn off!"));
+	display.print(F("Loading...\n\nDON'T TURN OFF!"));
 	display.update();
 	//SPSR &= ~(1 << SPI2X); //clear SPI speed x2 for compatibility issues
 	SPI.setClockDivider(SPI_CLOCK_DIV128);

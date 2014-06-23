@@ -4,12 +4,11 @@ Gamebuino gb;
 
 void setup(){
   gb.begin();
-  gb.startMenu(F("Count example"));
+  gb.titleScreen(F("Count example"));
 }
 
 void loop(){
   if(gb.update()){
-
     int count = gb.frameCount;
     gb.display.println(count);
 
@@ -18,8 +17,7 @@ void loop(){
     }
 
     if(gb.buttons.pressed(BTN_C)){
-      gb.startMenu(F("Count example"));
+      gb.titleScreen(F("Count example"));
     }
-
   }
 }

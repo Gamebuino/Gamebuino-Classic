@@ -10,7 +10,7 @@ void setup(){
   // initialize the Gamebuino object
   gb.begin();
   //display the main menu:
-  gb.startMenu(F("My first game"));
+  gb.titleScreen(F("My first game"));
   gb.popup(F("Let's go!"), 100);
 }
 

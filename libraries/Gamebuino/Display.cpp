@@ -7,8 +7,8 @@
 
 #include "Display.h"
 
-// a 5x7 font table
-extern const uint8_t font[] PROGMEM;
+// a 3x5 font table
+extern const uint8_t font3x5[] PROGMEM;
 
 // the memory buffer for the LCD
 uint8_t _displayBuffer[LCDWIDTH * LCDHEIGHT / 8];
@@ -25,6 +25,7 @@ void Display::begin(int8_t SCLK, int8_t DIN, int8_t DC, int8_t CS, int8_t RST) {
     color = BLACK;
 	bgcolor = WHITE;
     wrap = true;
+	setFont(font3x5);
 	//persistence = false;
 
     SPI.begin();
@@ -509,11 +510,12 @@ void Display::fillTriangle(int8_t x0, int8_t y0,
 void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap) {
 	int8_t w = pgm_read_byte(bitmap);
 	int8_t h = pgm_read_byte(bitmap + 1);
+	bitmap = bitmap + 2; //add an offset to the pointer to start after the width and height
 #if (ENABLE_BITMAPS > 0)
     int8_t i, j, byteWidth = (w + 7) / 8;
     for (j = 0; j < h; j++) {
         for (i = 0; i < w; i++) {
-            if (pgm_read_byte(2 + bitmap + j * byteWidth + i / 8) & (B10000000 >> (i % 8))) {
+            if (pgm_read_byte(bitmap + j * byteWidth + i / 8) & (B10000000 >> (i % 8))) {
                 drawPixel(x + i, y + j);
             }
         }
@@ -525,8 +527,13 @@ void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap) {
 
 void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap,
         uint8_t rotation, uint8_t flip) {
+	if((rotation == NOROT) && (flip == NOFLIP)){
+		drawBitmap(x,y,bitmap); //use the faster algorithm
+		return;
+	}
 	int8_t w = pgm_read_byte(bitmap);
 	int8_t h = pgm_read_byte(bitmap + 1);
+	bitmap = bitmap + 2; //add an offset to the pointer to start after the width and height
 #if (ENABLE_BITMAPS > 0)
     int8_t i, j, //coordinates in the raw bitmap
             k, l, //coordinates in the rotated/flipped bitmap
@@ -536,7 +543,7 @@ void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap,
 
     for (j = 0; j < h; j++) {
         for (i = 0; i < w; i++) {
-            if (pgm_read_byte(2 + bitmap + j * byteWidth + i / 8) & (B10000000 >> (i % 8))) {
+            if (pgm_read_byte(bitmap + j * byteWidth + i / 8) & (B10000000 >> (i % 8))) {
                 switch (rotation) {
                     case NOROT: //no rotation
                         k = i;
@@ -576,22 +583,21 @@ void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap,
 }
 
 #if ARDUINO >= 100
-
 size_t Display::write(uint8_t c) {
 #else
-
 void Display::write(uint8_t c) {
 #endif
+
     if (c == '\n') {
-        cursor_y += textsize * FONTHEIGHT;
+        cursor_y += textsize * fontHeight;
         cursor_x = 0;
     } else if (c == '\r') {
         // skip em
     } else {
         drawChar(cursor_x, cursor_y, c, textsize);
-        cursor_x += textsize * FONTWIDTH;
-        if (wrap && (cursor_x > (LCDWIDTH - textsize * FONTWIDTH))) {
-            cursor_y += textsize * FONTHEIGHT;
+        cursor_x += textsize * fontWidth;
+        if (wrap && (cursor_x > (LCDWIDTH - textsize * fontWidth))) {
+            cursor_y += textsize * fontHeight;
             cursor_x = 0;
         }
     }
@@ -600,22 +606,29 @@ void Display::write(uint8_t c) {
 #endif
 }
 
+void Display::setFont(const uint8_t *f){
+	font = (uint8_t*)f;
+	fontWidth = pgm_read_byte(font) + 1;
+	fontHeight = pgm_read_byte(font+1) + 1;
+	font += 2; //offset the pointer to star after the width and height bytes
+}
+
 void Display::drawChar(int8_t x, int8_t y, unsigned char c, uint8_t size) {
 	int8_t tempcolor = color;
 
     if ((x >= LCDWIDTH) || // Clip right
             (y >= LCDHEIGHT) || // Clip bottom
-            ((x + (FONTWIDTH-1) * size - 1) < 0) || // Clip left
-            ((y + FONTHEIGHT * size - 1) < 0)) // Clip top
+            ((x + (fontWidth-1) * size - 1) < 0) || // Clip left
+            ((y + fontHeight * size - 1) < 0)) // Clip top
         return;
 
-    for (int8_t i = 0; i < FONTWIDTH; i++) {
+    for (int8_t i = 0; i < fontWidth; i++) {
         uint8_t line;
-        if (i == (FONTWIDTH-1))
+        if (i == (fontWidth-1))
             line = 0x0;
         else
-            line = pgm_read_byte(font + (c * (FONTWIDTH-1)) + i);
-        for (int8_t j = 0; j < FONTHEIGHT; j++) {
+            line = pgm_read_byte(font + (c * (fontWidth-1)) + i);
+        for (int8_t j = 0; j < fontHeight; j++) {
             if (line & 0x1) {
                 if (size == 1) // default size
                     drawPixel(x + i, y + j);

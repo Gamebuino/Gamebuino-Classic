@@ -17,7 +17,7 @@ void setup(){
   // initialize the Gamebuino object
   gb.begin();
   // show the start menu
-  gb.startMenu(F("Controls"));
+  gb.titleScreen(F("Controls"));
 }
 
 // the loop routine runs over and over again forever
@@ -51,7 +51,7 @@ void loop(){
       gb.sound.playCancel();
     }
     if(gb.buttons.pressed(BTN_C)){
-      gb.startMenu(F("Controls"));
+      gb.titleScreen(F("Controls"));
     }
     
     //check that the ball is not going out of the screen

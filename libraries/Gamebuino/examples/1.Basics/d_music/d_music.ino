@@ -11,7 +11,7 @@ const uint16_t myTrack[] PROGMEM = {
 ///////////////////////////////////// SETUP
 void setup() {
   gb.begin();
-  gb.startMenu(F("Sound demo"));
+  gb.titleScreen(F("Sound demo"));
   gb.sound.playTrack(myTrack,0);
 }
 
@@ -25,7 +25,7 @@ void loop(){
     }
     if(gb.buttons.pressed(BTN_C)){
       gb.sound.playCancel();
-      gb.startMenu(F("Sound demo"));
+      gb.titleScreen(F("Sound demo"));
     }
   }
 }

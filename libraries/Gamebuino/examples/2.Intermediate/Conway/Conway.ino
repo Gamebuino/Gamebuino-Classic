@@ -18,7 +18,7 @@ byte graphCursor = 0;
 
 void setup() {
   gb.begin();
-  gb.startMenu(F("Conway's game of life"));
+  gb.titleScreen(F("Conway's game of life"));
   gb.pickRandomSeed();
   reset();
 }
@@ -26,7 +26,7 @@ void setup() {
 void loop(){
   if(gb.update()){
     if(gb.buttons.pressed(BTN_C)){
-      gb.startMenu(F("Conway's game of life"));
+      gb.titleScreen(F("Conway's game of life"));
       reset();
     }
     //compute next gen
@@ -81,7 +81,7 @@ void loop(){
           gb.display.setColor(BLACK,WHITE);
           gb.display.setCursor(38,36);
           gb.display.print("Gimme");
-          gb.display.setCursor(38,36+FONTHEIGHT);
+          gb.display.setCursor(38,36+gb.display.fontHeight);
           gb.display.print("light!");
         }
       }
@@ -91,14 +91,14 @@ void loop(){
       prevPop = pop;
     }
 
-    gb.display.setCursor(LCDWIDTH-4*FONTWIDTH,0);
+    gb.display.setCursor(LCDWIDTH-4*gb.display.fontWidth,0);
     gb.display.print(F("Pop:"));
-    gb.display.setCursor(LCDWIDTH-4*FONTWIDTH,FONTHEIGHT*1);
+    gb.display.setCursor(LCDWIDTH-4*gb.display.fontWidth,gb.display.fontHeight*1);
     gb.display.print(pop);
     gb.display.print(" ");
-    gb.display.setCursor(LCDWIDTH-4*FONTWIDTH,FONTHEIGHT*2);
+    gb.display.setCursor(LCDWIDTH-4*gb.display.fontWidth,gb.display.fontHeight*2);
     gb.display.print(F("Gen:"));
-    gb.display.setCursor(LCDWIDTH-4*FONTWIDTH,FONTHEIGHT*3);
+    gb.display.setCursor(LCDWIDTH-4*gb.display.fontWidth,gb.display.fontHeight*3);
     gb.display.print(gen);
 
     gb.display.setColor(WHITE);

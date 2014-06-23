@@ -53,7 +53,7 @@ const char* const menu[MENULENGTH] PROGMEM = {
 ///////////////////////////////////// SETUP
 void setup() {
   gb.begin(); //initialize the Gamebuino
-  gb.startMenu(F("Pong Multiplayer")); //shows the main menu
+  gb.titleScreen(F("Pong Multiplayer")); //shows the main menu
   gb.battery.show = false; //hide the battery indicator
   //can be either master or slave:
   setupMaster();
@@ -80,6 +80,7 @@ void loop() {
     isMaster = false;
     break;
   default:
+    gb.titleScreen(F("Pong Multiplayer")); //shows the main menu
     break;
   }
 

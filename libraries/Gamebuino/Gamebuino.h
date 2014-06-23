@@ -30,10 +30,10 @@ public:
     Display display;
 
     void begin();
-	void startMenu(const __FlashStringHelper* name, const uint8_t *logo);
-	void startMenu(const __FlashStringHelper* name);
-	void startMenu(const uint8_t* logo);
-    void startMenu();
+	void titleScreen(const __FlashStringHelper* name, const uint8_t *logo);
+	void titleScreen(const __FlashStringHelper* name);
+	void titleScreen(const uint8_t* logo);
+    void titleScreen();
     boolean update();
 	boolean startMenuTimer;
     uint32_t frameCount;

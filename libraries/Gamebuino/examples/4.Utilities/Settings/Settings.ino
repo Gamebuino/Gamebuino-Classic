@@ -34,7 +34,7 @@ const char* const mainMenu[MAINMENU_LENGTH] PROGMEM = {
 
 void setup(){
   gb.begin();
-  gb.startMenu(logo);
+  gb.titleScreen(logo);
   if(!gb.settingsAvailable()){
     restoreSettings();
     saveSettings();
@@ -45,7 +45,7 @@ void setup(){
 void loop(){
   switch(gb.menu(mainMenu,MAINMENU_LENGTH)){
   case -1:
-    gb.startMenu(logo);
+    gb.titleScreen(logo);
     break;
   case 0: //change settings
     changeSettings();
@@ -69,7 +69,7 @@ void loop(){
 }
 
 void pressAtoContinue(){
-  gb.display.setCursor(LCDWIDTH-2*FONTWIDTH,LCDHEIGHT-FONTHEIGHT);
+  gb.display.setCursor(LCDWIDTH-2*gb.display.fontWidth,LCDHEIGHT-gb.display.fontHeight);
   gb.display.print(F("\25\20"));
   gb.display.update();
   while(1){

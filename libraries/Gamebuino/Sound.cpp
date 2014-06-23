@@ -42,6 +42,7 @@ void Sound::begin() {
 	prescaler = 1;
 	for(byte i=0; i<NUM_CHANNELS; i++){
 		chanVolumes[i] = VOLUME_CHANNEL_MAX;
+		setInstruments(defaultInstruments, i);
 	}
 	
 	analogWrite(3, 1); //lazy version to get the right register settings for PWM (hem)
@@ -62,11 +63,14 @@ void Sound::begin() {
 #endif
 }
 
-void Sound::playTrack(const uint16_t* track, const uint16_t* const* instruments, uint8_t channel){
+void Sound::setInstruments(const uint16_t* const* instruments, uint8_t channel){
+	trackInstruments[channel] = (uint16_t**)instruments;
+}
+
+void Sound::playTrack(const uint16_t* track, uint8_t channel){
 #if(NUM_CHANNELS > 0)
 	stopTrack(channel);
 	trackData[channel] = (uint16_t*)track;
-	trackInstruments[channel] = (uint16_t**)instruments;
 	trackCursor[channel] = 0;
 	trackPlaying[channel] = true;
 	noteVolume[channel] = 9;
@@ -75,12 +79,6 @@ void Sound::playTrack(const uint16_t* track, const uint16_t* const* instruments,
 	arpeggioStepDuration[channel] = 0;
 	tremoloStepDuration[channel] = 0;
 	//Serial.print("play track\n");
-#endif
-}
-
-void Sound::playTrack(const uint16_t* track, uint8_t channel){
-#if(NUM_CHANNELS > 0)
-	playTrack(track, defaultInstruments, channel);
 #endif
 }
 
@@ -120,7 +118,7 @@ void Sound::updateTrack(){
 						noteVolume[i] = data & 0x1F;
 						break;
 					case 1: //instrument
-						instrumentData[i] = (uint16_t*)pgm_read_word(&(trackInstruments[i][data]));
+						instrumentData[i] = (uint16_t*)pgm_read_word(&(trackInstruments[i][data&0x1F]));
 						instrumentLength[i] = pgm_read_word(&(instrumentData[i][0])) & 0x00FF; //8 LSB
 						instrumentLooping[i] = min((pgm_read_word(&(instrumentData[i][0])) >> 8), instrumentLength[i]); //8 MSB - check that the loop is shorter than the instrument length
 						break;
@@ -306,6 +304,10 @@ void Sound::updateNote() {
 				volume += ((commandsCounter[i]/tremoloStepDuration[i]) % 2) * tremoloStepSize[i];
 			}
 			volume = constrain(volume, 0, 9);
+			//muted note
+			if(notePitch[i] == 63){
+				volume = 0;
+			}
 			
 			noInterrupts();
 			_chanHalfPeriod[i] = pgm_read_byte(_halfPeriods + pitch);

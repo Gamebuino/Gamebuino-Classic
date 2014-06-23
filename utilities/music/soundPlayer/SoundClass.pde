@@ -6,6 +6,9 @@ class Sound {
   float frequencies[] = {
     116.5, 123.5, 130.8, 138.6, 146.8, 155.6, 164.8, 174.6, 185.0, 196.0, 207.7, 220.0, 233.1, 246.9, 261.6, 277.2, 293.7, 311.1, 329.6, 349.2, 370.0, 392.0, 415.3, 440.0, 466.2, 493.9, 523.3, 554.4, 587.3, 622.3, 659.3, 698.5, 740.0, 784.0, 830.6, 880.0, 932.3, 987.8, 1046.5, 1108.7, 1174.7, 1244.5, 1318.5, 1396.9, 1480.0, 1568.0, 1661.2, 1760.0, 1864.7, 1975.5, 2093.0, 2217.5, 2381.0, 2597.4, 2857.1, 3174.6, 3571.4, 4081.6, 4761.9, 5714.3, 7142.9, 9523.8, 14285.7, 28571.4
   };
+  int squareWaveInstrument[] = {0x0101, 0x03F7};
+  int noiseInstrument[] = {0x0101, 0x03FF};
+  int[][] defaultInstruments = {squareWaveInstrument,noiseInstrument};
 
   // track data
   int trackData[][] = new int[4][];
@@ -49,13 +52,17 @@ class Sound {
     for (int i=0; i < waves.length; i++) {
       waves[i] = new Oscil(0, 0, Waves.SQUARE );
       waves[i].patch( out );
+      setInstruments(defaultInstruments, i);
     }
   }
-
-  void playTrack(int[] track, int[][] instruments, int channel) {
-    println("--- new track ---");
-    trackData[channel] = track;
+  
+  void setInstruments(int[][] instruments, int channel){
     trackInstruments[channel] = instruments.clone();
+  }
+
+  void playTrack(int[] track, int channel) {
+    println(channel + " --- new track ---");
+    trackData[channel] = track;
     trackCursor[channel] = 0;
     trackPlaying[channel] = true;
     noteVolume[channel] = 9;
@@ -75,7 +82,7 @@ void updateTrack(){
         int data =  trackData[i][trackCursor[i]];
         
         if(data == 0){ //end of the track reached
-          println("Track end reached");
+          println(i + " Track end reached");
           if(trackLooping[i] == true){
             trackCursor[i] = 0;
             data = trackData[i][trackCursor[i]];
@@ -88,7 +95,7 @@ void updateTrack(){
         }
 
         while ((data & 0x0001) != 0){ //read all commands and instrument changes
-          print("Cmd:    ");
+          print(i + " Cmd:    ");
           data >>= 2;
           int command = data & 0x0F;
           data >>= 4;
@@ -98,10 +105,10 @@ void updateTrack(){
             noteVolume[i] = data & 0x1F;
             break;
           case 1: //instrument
-            print("Instr:" + data);
-            instrumentData[i] = trackInstruments[i][data].clone();
+            print("Instr:" + (data & 0x001F));
+            instrumentData[i] = trackInstruments[i][data & 0x001F].clone();
             println(" Length:" + instrumentData[i].length);
-            instrumentLength[i] = instrumentData[i][0] & 0x00FF; //8 LSB
+            instrumentLength[i] = instrumentData[i][0] & 0x001F; //8 LSB
             instrumentLooping[i] = instrumentData[i][0] >> 8; //8 MSB - check that the loop is shorter than the instrument length
             break;
           case 2: //volume slide
@@ -135,7 +142,7 @@ void updateTrack(){
         
         int duration = data;
         
-        println("Note:   " + "Pitch:" + pitch + " Dur:" + duration);
+        println(i + " Note:   " + "Pitch:" + pitch + " Dur:" + duration);
         //PLAY NOTE
         //set note
         notePitch[i] = pitch % frequencies.length; //limit to the number of available pitches
@@ -153,7 +160,7 @@ void updateTrack(){
 }
 
   void stopNote(int channel) {
-    println("Stopping channel");
+    println(channel + " Stopping channel");
     notePlaying[channel] = false;
     waves[0].setAmplitude(0);
   }
@@ -245,7 +252,7 @@ void updateTrack(){
         if(arpeggioStepDuration[i] > 0)
           pitch += commandsCounter[i] / arpeggioStepDuration[i] * arpeggioStepSize[i];
         pitch = (pitch + frequencies.length) % frequencies.length; //wrap
-        sound.waves[i].setFrequency( frequencies[pitch] );
+        waves[i].setFrequency( frequencies[pitch] );
         //volume
         int volume = noteVolume[i];
         if (volumeSlideStepDuration[i] > 0)
@@ -254,7 +261,9 @@ void updateTrack(){
           volume += tremoloStepSize[i] * ((commandsCounter[i]/tremoloStepDuration[i]) % 2);
         volume = constrain(volume, 0, 9);
         volume *= stepVolume[i];
-        sound.waves[i].setAmplitude((float)volume/64);
+        if(notePitch[i] != 63){
+          waves[i].setAmplitude((float)volume/64);
+        }
       }
     }
   }

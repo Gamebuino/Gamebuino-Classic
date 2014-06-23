@@ -4,6 +4,9 @@ Gamebuino gb;
 #include <EEPROM.h>
 #include <avr/pgmspace.h>
 
+extern const byte font3x5[];
+extern const byte font5x7[];
+
 #define WORLD_W 16
 #define WORLD_H 12
 uint8_t  byteWidth = (WORLD_H + 7) / 8;
@@ -78,23 +81,29 @@ byte    blast_bullet;
 #define NUMWEAPONS 5
 byte currentWeapon;
 byte nextShot;
+
+const char str357[] PROGMEM = ".357";
+const char strP90[] PROGMEM = "P90";
+const char strAK47[] PROGMEM = "AK47";
+const char strRPG[] PROGMEM = "RPG";
+const char strMG42[] PROGMEM = "MG42";
 const char*  const weapon_name[NUMWEAPONS] PROGMEM = {
-  ".357","P90", "AK47", "RPG", "MG42"};
-byte weapon_size[NUMWEAPONS] = {
+  str357,strP90, strAK47, strRPG, strMG42};
+const byte weapon_size[NUMWEAPONS] = {
   2, 1, 2, 3, 2};
-byte weapon_damage[NUMWEAPONS] = {
+const byte weapon_damage[NUMWEAPONS] = {
   10, 2, 3, 5, 4};
-byte weapon_rate[NUMWEAPONS] = {
+const byte weapon_rate[NUMWEAPONS] = {
   30, 1, 2, 30, 1};
-byte weapon_speed[NUMWEAPONS] = {
+const byte weapon_speed[NUMWEAPONS] = {
   4, 5, 3, 2, 5};
-byte weapon_spread[NUMWEAPONS] = {
+const byte weapon_spread[NUMWEAPONS] = {
   1, 2, 1, 0, 2};
-byte weapon_ennemyRecoil[NUMWEAPONS] = {
+const byte weapon_ennemyRecoil[NUMWEAPONS] = {
   3, 2, 3, 0, 3};
-byte weapon_playerRecoil[NUMWEAPONS] = {
+const byte weapon_playerRecoil[NUMWEAPONS] = {
   0, 0, 1, 3, 3};
-unsigned int weapon_ammo[NUMWEAPONS] = {
+const unsigned int weapon_ammo[NUMWEAPONS] = {
   9999, 500, 300, 20, 150};
 unsigned int ammo;
 
@@ -112,7 +121,7 @@ int crate_x, crate_y;
 const uint16_t power_up[] PROGMEM = {0x0005,0x140,0x150,0x15C,0x170,0x180,0x16C,0x154,0x160,0x174,0x184,0x14C,0x15C,0x168,0x17C,0x18C,0x0000};
 
 ///////////////////////////////////// SCORE
-#define RANKMAX 7 //store 5 high scores
+#define RANKMAX 5 //number of high scores to save
 int score = 0;
 //int lastScore = 0;
 int kills = 0;
@@ -124,7 +133,8 @@ char name[RANKMAX][NAMELENGTH+1];
 ///////////////////////////////////// SETUP
 void setup() {
   gb.begin();
-  gb.startMenu(logo);
+  gb.display.setFont(font5x7);
+  gb.titleScreen(logo);
   gb.pickRandomSeed();
   loadHighscore();
   initGame();
@@ -133,7 +143,7 @@ void setup() {
 ///////////////////////////////////// LOOP
 void loop() {
   pause();
-  gb.startMenu(logo);
+  gb.titleScreen(logo);
 }
 
 ///////////////////////////////////// SCREEN COORD

@@ -4,7 +4,7 @@ Gamebuino gb;
 
 void setup(){
   gb.begin();
-  gb.startMenu(F("Buttons example"));
+  gb.titleScreen(F("Buttons example"));
   gb.setFrameRate(10); //lower the FPS to have time to see what happens
 }
 
@@ -41,7 +41,7 @@ void loop(){
     gb.display.println();
 
     if(gb.buttons.pressed(BTN_C)){
-      gb.startMenu(F("Buttons example"));
+      gb.titleScreen(F("Buttons example"));
     }
   }
 }
