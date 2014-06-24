@@ -113,11 +113,11 @@ public:
     void drawChar(int8_t x, int8_t y, unsigned char c, uint8_t size);
 
     virtual size_t write(uint8_t);
-    void setCursor(int8_t x, int8_t y);
-    void setTextSize(uint8_t s);
-    void setTextWrap(boolean w);
 	
 	boolean persistence; //disable clean() at each frame if true
+    boolean textWrap; // If set, 'wrap' text at right edge of 
+    uint8_t fontScale;
+    int8_t cursorX, cursorY;
 	byte contrast;
 
 private:
@@ -126,10 +126,7 @@ private:
     uint8_t mosipinmask, clkpinmask, cspinmask, dcpinmask;
 	
 	uint8_t *font;
-    int8_t cursor_x, cursor_y;
 	uint8_t color, bgcolor;
-    uint8_t textsize;
-    boolean wrap; // If set, 'wrap' text at right edge of display
 };
 
 #endif	/* DISPLAY_H */

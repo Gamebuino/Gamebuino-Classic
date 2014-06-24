@@ -112,14 +112,16 @@ void Gamebuino::titleScreen(const __FlashStringHelper*  name, const uint8_t *log
 				if(logo){
 					display.drawBitmap(0, 12+logoOffset, logo);
 				}
-				display.setCursor(0,12); 
+				display.cursorX = 0;
+				display.cursorY = 12; 
 				#else
 				display.drawBitmap(7,0, gamebuinoLogo);
 				display.drawBitmap(-41,12,gamebuinoLogo);
 				if(logo){
 					display.drawBitmap(0, 24+logoOffset, logo);
 				}
-				display.setCursor(0,24); 
+				display.cursorX = 0;
+				display.cursorY = 24; 
 				#endif
 				display.print(name);
 				display.drawBitmap(LCDWIDTH-16, LCDHEIGHT-28, startMenuIcons);
@@ -237,7 +239,7 @@ int8_t Gamebuino::menu(const char* const* items, uint8_t length) {
 		if (update()) {
 			if (buttons.pressed(BTN_A) || buttons.pressed(BTN_B) || buttons.pressed(BTN_C)) {
 				exit = true; //time to exit menu !
-				targetY = -display.fontHeight * length - 2; //send the menu out of the screen
+				targetY = - display.fontHeight * length - 2; //send the menu out of the screen
 				if (buttons.pressed(BTN_A)) {
 					answer = activeItem;
 					sound.playOK();
@@ -265,12 +267,15 @@ int8_t Gamebuino::menu(const char* const* items, uint8_t length) {
 			}
 			//draw a fancy menu
 			currentY = (currentY + targetY) / 2;
-			display.setCursor(0, currentY);
-			display.setTextSize(1);
-			display.setTextWrap(false);
+			display.cursorX = 0;
+			display.cursorY = currentY;
+			display.fontScale = 1;
+			display.textWrap = false;
 			for (byte i = 0; i < length; i++) {
-				if (i == activeItem)
-				display.setCursor(3, currentY + display.fontHeight * activeItem);
+				if (i == activeItem){
+					display.cursorX = 3;
+					display.cursorY = currentY + display.fontHeight * activeItem;
+				}
 				display.println((const __FlashStringHelper*)pgm_read_word(items+i));
 			}
 
@@ -360,7 +365,7 @@ void Gamebuino::keyboard(char* text, uint8_t length) {
 				sound.playOK();
 				while (1) {
 					if (update()) {
-						display.setCursor(0,0);
+						//display.setCursor(0,0);
 						display.println(F("You entered\n"));
 						display.print(text);
 						display.println(F("\n\n\n\x15:okay \x16:edit"));
@@ -382,12 +387,18 @@ void Gamebuino::keyboard(char* text, uint8_t length) {
 				}
 			}
 			//draw instruction
-			display.setCursor(currentX-display.fontWidth*6-2, currentY+1*(display.fontHeight+1));
+			display.cursorX = currentX-display.fontWidth*6-2;
+			display.cursorY = currentY+1*(display.fontHeight+1);
 			display.print(F("\25type"));
-			display.setCursor(currentX-display.fontWidth*6-2, currentY+2*(display.fontHeight+1));
+			
+			display.cursorX = currentX-display.fontWidth*6-2;
+			display.cursorY = currentY+2*(display.fontHeight+1);
 			display.print(F("\26back"));
-			display.setCursor(currentX-display.fontWidth*6-2, currentY+3*(display.fontHeight+1));
+			
+			display.cursorX = currentX-display.fontWidth*6-2;
+			display.cursorY = currentY+3*(display.fontHeight+1);
 			display.print(F("\27save"));
+			
 			//erase some pixels around the selected character
 			display.setColor(WHITE);
 			display.drawFastHLine(currentX + activeX * (display.fontWidth+1) - 1, currentY + activeY * (display.fontHeight+1) - 2, 7);
@@ -401,7 +412,8 @@ void Gamebuino::keyboard(char* text, uint8_t length) {
 			display.setColor(WHITE);
 			display.fillRect(0, LCDHEIGHT-display.fontHeight-1, LCDWIDTH, display.fontHeight+1);
 			//typed text
-			display.setCursor(0, LCDHEIGHT-display.fontHeight);
+			display.cursorX = 0;
+			display.cursorY = LCDHEIGHT-display.fontHeight;
 			display.setColor(BLACK);
 			display.print(text);
 			//blinking cursor
@@ -426,12 +438,13 @@ void Gamebuino::updatePopup(){
 		if(popupTimeLeft<12){
 			yOffset = 12-popupTimeLeft;
 		}
-		display.setTextSize(1);
+		display.fontScale = 1;
 		display.setColor(WHITE);
 		display.fillRoundRect(0,LCDHEIGHT-display.fontHeight+yOffset-3,84,display.fontHeight+3,3);
 		display.setColor(BLACK);
 		display.drawRoundRect(0,LCDHEIGHT-display.fontHeight+yOffset-3,84,display.fontHeight+3,3);
-		display.setCursor(4, LCDHEIGHT-display.fontHeight+yOffset-1);
+		display.cursorX = 4;
+		display.cursorY = LCDHEIGHT-display.fontHeight+yOffset-1;
 		display.print(popupText);
 		popupTimeLeft--;
 	}
@@ -443,7 +456,7 @@ void Gamebuino::updatePopup(){
 while(1){
 	if(update()==true){
 	byte volume = sound.getVolume();
-	display.setTextSize(1);
+	display.fontScale = 1;
 	display.setColor(BLACK);
 	display.setCursor(24, 16);
 	display.println(F("VOLUME"));
@@ -469,7 +482,8 @@ while(1){
 void Gamebuino::displayBattery(){
 #if (ENABLE_BATTERY > 0)
 	display.setColor(BLACK, WHITE);
-	display.setCursor(LCDWIDTH-display.fontWidth+1,0);
+	display.cursorX = LCDWIDTH-display.fontWidth+1;
+	display.cursorY = 0;
 	switch(battery.level){
 	case 0://battery critic, power down
 		sound.stopTrack();

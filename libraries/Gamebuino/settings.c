@@ -8,7 +8,7 @@
 
 //SETTINGS YOU CAN EDIT
 
-#define NUM_CHANNELS 1 //number of sound channels, between 0 and 4
+#define NUM_CHANNELS 3 //number of sound channels, between 0 and 4
 #define ENABLE_GUI 1 //enable menu, keyboard, pop-up, volume adjust functions
 #define ENABLE_BITMAPS 1 //will replace bitmaps with rectangles if disabled
 #define DISPLAY_ROT NOROT //set to NOROT, ROTCCW, ROT180 or ROTCW

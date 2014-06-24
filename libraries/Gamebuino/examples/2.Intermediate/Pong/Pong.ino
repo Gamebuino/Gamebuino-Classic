@@ -104,10 +104,13 @@ void loop() {
   }
 
   //draw the score
-  gb.display.setTextSize(2);
-  gb.display.setCursor(15,16);
+  gb.display.fontScale = 2;
+  gb.display.cursorX = 15;
+  gb.display.cursorY = 16;
   gb.display.print(player_score);
-  gb.display.setCursor(57,16);
+  
+  gb.display.cursorX = 57;
+  gb.display.cursorY = 16;
   gb.display.print(oponent_score);
   //draw the ball
   gb.display.fillRect(ball_x, ball_y, ball_size, ball_size);

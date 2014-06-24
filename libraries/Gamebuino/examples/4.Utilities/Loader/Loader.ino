@@ -83,7 +83,7 @@ void setup(){
     numberOfFiles++;
   }
   numberOfPages = ((numberOfFiles-1)/PAGELENGTH) + 1;
-  gb.display.setTextWrap(false);
+  gb.display.textWrap = false;
   updateList();
 }
 
@@ -173,7 +173,8 @@ void loadSelectedFile(){
         gb.display.setColor(BLACK);
         gb.display.drawRoundRect(5,10,LCDWIDTH-10,gb.display.fontHeight*3, 3);
         //draw error message
-        gb.display.setCursor(0,10+3);
+        gb.display.cursorX = 0;
+        gb.display.cursorY = 10+3;
         gb.display.println("   Not an HEX file ");
         gb.display.println("   \25: OK ");
         //wait for A to be pressed

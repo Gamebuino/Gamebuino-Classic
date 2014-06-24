@@ -69,7 +69,8 @@ void loop(){
 }
 
 void pressAtoContinue(){
-  gb.display.setCursor(LCDWIDTH-2*gb.display.fontWidth,LCDHEIGHT-gb.display.fontHeight);
+  gb.display.cursorX = LCDWIDTH-2*gb.display.fontWidth;
+  gb.display.cursorY = LCDHEIGHT-gb.display.fontHeight;
   gb.display.print(F("\25\20"));
   gb.display.update();
   while(1){
@@ -86,7 +87,6 @@ void readSettings(){
   for(byte i=0; i<128; i++){
     buffer[i] = pgm_read_byte(SETTINGS_PAGE+i);
   }
-
   token = pgm_read_word(SETTINGS_PAGE);
   for(byte i=0; i<9; i++){
     currentGame[i] = (char)pgm_read_byte(SETTINGS_PAGE+OFFSET_CURRENTGAME+i);

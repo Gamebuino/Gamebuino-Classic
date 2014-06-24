@@ -20,11 +20,11 @@ void Display::begin(int8_t SCLK, int8_t DIN, int8_t DC, int8_t CS, int8_t RST) {
     rst = RST;
     cs = CS;
 
-    //cursor_y = cursor_x = 0;
-    textsize = 1;
+    //cursorY = cursorX = 0;
+    fontScale = 1;
     color = BLACK;
 	bgcolor = WHITE;
-    wrap = true;
+    textWrap = true;
 	setFont(font3x5);
 	//persistence = false;
 
@@ -119,7 +119,7 @@ void Display::setContrast(uint8_t val) {
 
 void Display::clear(void) {
     memset(_displayBuffer, 0, LCDWIDTH * LCDHEIGHT / 8);
-    cursor_y = cursor_x = 0;
+    cursorY = cursorX = 0;
 }
 
 void Display::fillScreen(uint8_t color) {
@@ -589,16 +589,16 @@ void Display::write(uint8_t c) {
 #endif
 
     if (c == '\n') {
-        cursor_y += textsize * fontHeight;
-        cursor_x = 0;
+        cursorY += fontScale * fontHeight;
+        cursorX = 0;
     } else if (c == '\r') {
         // skip em
     } else {
-        drawChar(cursor_x, cursor_y, c, textsize);
-        cursor_x += textsize * fontWidth;
-        if (wrap && (cursor_x > (LCDWIDTH - textsize * fontWidth))) {
-            cursor_y += textsize * fontHeight;
-            cursor_x = 0;
+        drawChar(cursorX, cursorY, c, fontScale);
+        cursorX += fontScale * fontWidth;
+        if (textWrap && (cursorX > (LCDWIDTH - fontScale * fontWidth))) {
+            cursorY += fontScale * fontHeight;
+            cursorX = 0;
         }
     }
 #if ARDUINO >= 100
@@ -649,17 +649,4 @@ void Display::drawChar(int8_t x, int8_t y, unsigned char c, uint8_t size) {
     }
 	//restore color to what it was previously
 	color = tempcolor;
-}
-
-void Display::setCursor(int8_t x, int8_t y) {
-    cursor_x = x;
-    cursor_y = y;
-}
-
-void Display::setTextSize(uint8_t s) {
-    textsize = (s > 0) ? s : 1;
-}
-
-void Display::setTextWrap(boolean w) {
-    wrap = w;
 }

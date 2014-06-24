@@ -5,7 +5,8 @@ void updateCursor(){
   gb.display.setColor(WHITE);
   gb.display.fillRect(0,0,gb.display.fontWidth,LCDHEIGHT);
   gb.display.setColor(BLACK, WHITE);
-  gb.display.setCursor(0,gb.display.fontHeight*(selectedFile%PAGELENGTH));
+  gb.display.cursorX = 0;
+  gb.display.cursorY = gb.display.fontHeight*(selectedFile%PAGELENGTH);
   gb.display.print("\x10");
 }
 

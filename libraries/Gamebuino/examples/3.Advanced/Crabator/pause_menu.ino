@@ -50,7 +50,7 @@ void pause(){
               gb.sound.playCancel();
               break;
             }
-            gb.display.setCursor(0, 0);
+            //gb.display.setCursor(0, 0);
             gb.display.print(F("Bat:"));
             gb.display.print(gb.battery.voltage);
             gb.display.println(F("mV"));
@@ -95,16 +95,19 @@ void pause(){
 void displayHighScores(){
   while(true){
     if(gb.update()){
-      gb.display.setCursor(9+random(0,2),0+random(0,2));
+      gb.display.cursorX = 9+random(0,2);
+      gb.display.cursorY = 0+random(0,2);
       gb.display.println(F("HIGH SCORES"));
-      gb.display.setTextWrap(false);
-      gb.display.setCursor(0,gb.display.fontHeight);
+      gb.display.textWrap = false;
+      gb.display.cursorX = 0;
+      gb.display.cursorY = gb.display.fontHeight;
       for(byte thisScore=0; thisScore<RANKMAX; thisScore++){
         if(highscore[thisScore]==0)
           gb.display.print('-');
         else
           gb.display.print(name[thisScore]);
-        gb.display.setCursor(LCDWIDTH-3*gb.display.fontWidth,gb.display.fontHeight+gb.display.fontHeight*thisScore);
+        gb.display.cursorX = LCDWIDTH-3*gb.display.fontWidth;
+        gb.display.cursorY = gb.display.fontHeight+gb.display.fontHeight*thisScore;
         gb.display.println(highscore[thisScore]);
       }
       if(gb.buttons.pressed(BTN_A) || gb.buttons.pressed(BTN_B) || gb.buttons.pressed(BTN_C)){

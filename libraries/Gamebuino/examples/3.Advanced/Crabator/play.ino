@@ -44,13 +44,14 @@ void play(){
   byte i = 0;
   while(i < 10){
     if(gb.update()){
-      gb.display.setTextSize(2);
-      gb.display.setCursor(6,16);
+      gb.display.fontScale = 2;
+      gb.display.cursorX = 6;
+      gb.display.cursorY = 16;
       gb.display.print(F("LET'S GO!"));
       i++;
     }
   }
-  gb.display.setTextSize(1);
+  gb.display.fontScale = 1;
   gb.popup(F("\x15:shoot \x16:run"), 60);
   
   while(true){
@@ -174,7 +175,8 @@ void play(){
                 gb.display.fillRect(0,0,timer*2,LCDHEIGHT);
                 gb.display.fillRect(LCDWIDTH-timer*2,0,timer*2,LCDHEIGHT);
                 gb.display.setColor(BLACK, WHITE);
-                gb.display.setCursor(12,1);
+                gb.display.cursorX = 12;
+                gb.display.cursorY = 1;
                 gb.display.print(F("GAME OVER!"));
                 timer++;
                 if(timer==((LCDWIDTH/4)+10))
@@ -184,20 +186,24 @@ void play(){
             while(1){
               if(gb.update()){
                 if(score > highscore[RANKMAX-1]){ //if the score is better than the worse high score
-                  gb.display.setCursor(2+random(0,2),0+random(0,2));
+                  gb.display.cursorX = 2+random(0,2);
+                  gb.display.cursorY = 0+random(0,2);
                   gb.display.print(F("NEW HIGHSCORE"));
                 }
                 else{ 
-                  gb.display.setCursor(12,1);
+                  gb.display.cursorX = 12;
+                  gb.display.cursorY = 1;
                   gb.display.print(F("GAME OVER!"));
                 }
-                gb.display.setCursor(0,12);
+                gb.display.cursorX = 0;
+                gb.display.cursorY = 12;
                 gb.display.print(F("You made $"));
                 gb.display.print(score);
                 gb.display.print(F("\nby killing\n"));
                 gb.display.print(kills);
                 gb.display.print(F(" crabs."));
-                gb.display.setCursor(0,40);
+                gb.display.cursorX = 0;
+                gb.display.cursorY = 40;
                 gb.display.print(F("\x15:accept"));
                 if(gb.buttons.pressed(BTN_A)){
                   gb.sound.playOK();
@@ -217,7 +223,8 @@ void play(){
 
 ///////////////////////////////////// DISPLAY SCORE
 void displayScore(){
-  gb.display.setCursor(0,0);
+  gb.display.cursorX = 0;
+  gb.display.cursorY = 0;
   gb.display.print('$');
   gb.display.println(score);
 }

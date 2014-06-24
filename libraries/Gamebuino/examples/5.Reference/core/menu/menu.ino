@@ -43,7 +43,6 @@ void displaySystemInfo(){
         gb.sound.playCancel();
         return;
       }
-      gb.display.setCursor(0, 0);
       gb.display.print(F("Bat:"));
       gb.display.print(gb.battery.voltage);
       gb.display.println(F("mV"));

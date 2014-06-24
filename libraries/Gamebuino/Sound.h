@@ -23,7 +23,6 @@ public:
 	void stopTrack(uint8_t channel);
 	void stopTrack();
 	
-	void playNote(uint8_t pitch, uint8_t duration, uint8_t channel);
 	void updateNote();
 	
 	boolean isPlaying(uint8_t channel);

@@ -1,3 +1,8 @@
+2014-06-24
+ - useless setters replaced by public variables:
+	gb.display.setCursor(x,y) is now gb.display.cursorX and gb.display.cursorY
+	gb.display.setTextWrap(wrap) is now gb.display.textWrap
+	gb.display.setTextSize(scale) is now gb.display.fontScale
 2014-06-23
  - back to work!
  - gb.startMenu() changed to gb.titleScreen()

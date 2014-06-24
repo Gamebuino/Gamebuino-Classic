@@ -140,7 +140,8 @@ void drawBullets(){
 ///////////////////////////////////// DRAW AMMO OVERLAY
 void drawAmmoOverlay(){
   if(ammo){
-    gb.display.setCursor(0,LCDHEIGHT-gb.display.fontHeight);
+    gb.display.cursorX = 0;
+    gb.display.cursorY = LCDHEIGHT-gb.display.fontHeight;
     gb.display.print((const __FlashStringHelper*)pgm_read_word(weapon_name+currentWeapon)); //some crazy casts
     if(nextShot>2)
       gb.display.fillRect(-2,LCDHEIGHT-2,nextShot,2);
@@ -150,11 +151,13 @@ void drawAmmoOverlay(){
         xOffset += gb.display.fontWidth;
       if (ammo < 10)
         xOffset += gb.display.fontWidth;
-      gb.display.setCursor(LCDWIDTH-3*gb.display.fontWidth+xOffset,LCDHEIGHT-gb.display.fontHeight);
+      gb.display.cursorX = LCDWIDTH-3*gb.display.fontWidth+xOffset;
+      gb.display.cursorY = LCDHEIGHT-gb.display.fontHeight;
       gb.display.print(ammo);
     } 
     else {
-      gb.display.setCursor(LCDWIDTH-3*gb.display.fontWidth,LCDHEIGHT-gb.display.fontHeight);
+      gb.display.cursorX = LCDWIDTH-3*gb.display.fontWidth;
+      gb.display.cursorY = LCDHEIGHT-gb.display.fontHeight;
       gb.display.print(F("inf"));
     }
   }

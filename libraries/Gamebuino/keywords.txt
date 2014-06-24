@@ -93,9 +93,10 @@ fillTriangle	KEYWORD1
 drawBitmap	KEYWORD1
 drawChar	KEYWORD1
 print	KEYWORD1
-setCursor	KEYWORD1
-setTextSize	KEYWORD1
-setTextWrap	KEYWORD1
+cursorX	KEYWORD1
+cursorY	KEYWORD1
+fontScale	KEYWORD1
+textWrap	KEYWORD1
 fontWidth	KEYWORD1
 fontHeight	KEYWORD1
 

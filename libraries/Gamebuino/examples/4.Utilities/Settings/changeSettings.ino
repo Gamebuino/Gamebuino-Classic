@@ -84,11 +84,15 @@ boolean changeValue(unsigned &val, unsigned minVal, unsigned maxVal, const __Fla
   }
   if (val > maxVal) val=minVal;
   if (val < minVal) val=maxVal;
-  gb.display.setCursor(0,LCDHEIGHT-gb.display.fontHeight);
+  
+  gb.display.cursorX = 0;
+  gb.display.cursorY = LCDHEIGHT-gb.display.fontHeight;
   gb.display.print(F("\21"));
   gb.display.print(val);
   gb.display.println(F("\20 \25:Accept"));
-  gb.display.setCursor(0,0);
+  
+  gb.display.cursorX = 0;
+  gb.display.cursorY = 0;
   gb.display.println(text);
   return(false);
 }
@@ -131,7 +135,8 @@ void displaySettings(){
         if(gb.update()){
           if(changeValue(contrast, 30, 80, F("Adjust constrast to\nsee \"GRAY\" correctly\n")))
             break;
-          gb.display.setCursor(0,20);
+          gb.display.cursorX = 0;
+          gb.display.cursorY = 20;
           gb.display.println("BLACK");
           if(gb.frameCount%2)
             gb.display.println("GRAY");

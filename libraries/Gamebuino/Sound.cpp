@@ -163,7 +163,7 @@ void Sound::updateTrack(){
 				
 				//PLAY NOTE
 				//set note
-				notePitch[i] = pitch % NUM_PITCH; //limit to the number of available pitches
+				notePitch[i] = pitch; //limit to the number of available pitches
 				noteDuration[i] = duration;
 				//reinit vars
 				instrumentNextChange[i] = 0;
@@ -216,13 +216,6 @@ void Sound::stopNote() {
 	for (uint8_t channel = 0; channel < NUM_CHANNELS; channel++) {
 		stopNote(channel);
 	}
-#endif
-}
-
-void Sound::playNote(uint8_t pitch, uint8_t duration, uint8_t channel) {
-#if(NUM_CHANNELS > 0)
-	if(channel>=NUM_CHANNELS)
-	return;
 #endif
 }
 
@@ -304,11 +297,9 @@ void Sound::updateNote() {
 				volume += ((commandsCounter[i]/tremoloStepDuration[i]) % 2) * tremoloStepSize[i];
 			}
 			volume = constrain(volume, 0, 9);
-			//muted note
 			if(notePitch[i] == 63){
 				volume = 0;
 			}
-			
 			noInterrupts();
 			_chanHalfPeriod[i] = pgm_read_byte(_halfPeriods + pitch);
 			_chanOutput[i] = _chanOutputVolume[i] = volume * globalVolume * chanVolumes[i] * stepVolume[i];

@@ -79,9 +79,11 @@ void loop(){
         resetCounter++;
         if (resetCounter > 4){
           gb.display.setColor(BLACK,WHITE);
-          gb.display.setCursor(38,36);
+          gb.display.cursorX = 38;
+          gb.display.cursorY = 36;
           gb.display.print("Gimme");
-          gb.display.setCursor(38,36+gb.display.fontHeight);
+          gb.display.cursorX = 38;
+          gb.display.cursorY = 36+gb.display.fontHeight;
           gb.display.print("light!");
         }
       }
@@ -91,14 +93,21 @@ void loop(){
       prevPop = pop;
     }
 
-    gb.display.setCursor(LCDWIDTH-4*gb.display.fontWidth,0);
+    gb.display.cursorX = LCDWIDTH-4*gb.display.fontWidth;
+    gb.display.cursorY = 0;
     gb.display.print(F("Pop:"));
-    gb.display.setCursor(LCDWIDTH-4*gb.display.fontWidth,gb.display.fontHeight*1);
+    
+    gb.display.cursorX = LCDWIDTH-4*gb.display.fontWidth;
+    gb.display.cursorY = gb.display.fontHeight*1;
     gb.display.print(pop);
     gb.display.print(" ");
-    gb.display.setCursor(LCDWIDTH-4*gb.display.fontWidth,gb.display.fontHeight*2);
+    
+    gb.display.cursorX = LCDWIDTH-4*gb.display.fontWidth;
+    gb.display.cursorY = gb.display.fontHeight*2;
     gb.display.print(F("Gen:"));
-    gb.display.setCursor(LCDWIDTH-4*gb.display.fontWidth,gb.display.fontHeight*3);
+    
+    gb.display.cursorX = LCDWIDTH-4*gb.display.fontWidth;
+    gb.display.cursorY = gb.display.fontHeight*3;
     gb.display.print(gen);
 
     gb.display.setColor(WHITE);
