@@ -44,14 +44,14 @@ void play(){
   byte i = 0;
   while(i < 10){
     if(gb.update()){
-      gb.display.fontScale = 2;
+      gb.display.fontSize = 2;
       gb.display.cursorX = 6;
       gb.display.cursorY = 16;
       gb.display.print(F("LET'S GO!"));
       i++;
     }
   }
-  gb.display.fontScale = 1;
+  gb.display.fontSize = 1;
   gb.popup(F("\x15:shoot \x16:run"), 60);
   
   while(true){

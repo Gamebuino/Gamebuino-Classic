@@ -95,7 +95,7 @@ drawChar	KEYWORD1
 print	KEYWORD1
 cursorX	KEYWORD1
 cursorY	KEYWORD1
-fontScale	KEYWORD1
+fontSize	KEYWORD1
 textWrap	KEYWORD1
 fontWidth	KEYWORD1
 fontHeight	KEYWORD1

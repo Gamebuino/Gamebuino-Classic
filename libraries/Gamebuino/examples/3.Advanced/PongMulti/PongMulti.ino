@@ -98,7 +98,7 @@ void loop() {
         }
       }
 
-      gb.display.fontScale = 1;
+      gb.display.fontSize = 1;
       if(isMaster){
         gb.display.print(F(" master "));
         updateMaster();

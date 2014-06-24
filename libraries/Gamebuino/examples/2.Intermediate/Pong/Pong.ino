@@ -104,7 +104,7 @@ void loop() {
   }
 
   //draw the score
-  gb.display.fontScale = 2;
+  gb.display.fontSize = 2;
   gb.display.cursorX = 15;
   gb.display.cursorY = 16;
   gb.display.print(player_score);

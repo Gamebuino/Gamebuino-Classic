@@ -12,16 +12,6 @@ boolean spawnMob(byte thisMob){
     //gb.popup("Boss spawned !", 30);
   }
   while(okay == false){ //do the following until it's okay
-    //check we are not stuck here because there is no space to spawn mobs
-    /*if(timout==255){
-     gb.display.setCursor(0,32);
-     gb.display.setTextColor(BLACK, WHITE);
-     gb.display.print("Timeout !");
-     gb.display.update();
-     delay(200);
-     return false;
-     }
-     timout++;*/
     //pick a random location
     mobs_x[thisMob] = random(0, WORLD_W*2) * 4;
     mobs_y[thisMob] = random(0, WORLD_H*2) * 4;

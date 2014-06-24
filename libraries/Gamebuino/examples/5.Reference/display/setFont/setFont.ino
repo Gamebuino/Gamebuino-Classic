@@ -18,14 +18,14 @@ void loop(){
   if(gb.update()){
       gb.display.setFont(font3x5);
     gb.display.print("3x5 font\n");
-    gb.display.fontScale = 2;
+    gb.display.fontSize = 2;
     gb.display.print("3x5 font\n");
-    gb.display.fontScale = 1;
+    gb.display.fontSize = 1;
       gb.display.setFont(font5x7);
     gb.display.print("\n5x7 font\n");
-    gb.display.fontScale = 2;
+    gb.display.fontSize = 2;
     gb.display.print("5x7 font\n");
-    gb.display.fontScale = 1;
+    gb.display.fontSize = 1;
     
     if(gb.buttons.pressed(BTN_C)){
       gb.titleScreen(F("Font size"));

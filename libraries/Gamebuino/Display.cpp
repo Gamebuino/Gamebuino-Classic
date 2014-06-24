@@ -21,7 +21,7 @@ void Display::begin(int8_t SCLK, int8_t DIN, int8_t DC, int8_t CS, int8_t RST) {
     cs = CS;
 
     //cursorY = cursorX = 0;
-    fontScale = 1;
+    fontSize = 1;
     color = BLACK;
 	bgcolor = WHITE;
     textWrap = true;
@@ -589,15 +589,15 @@ void Display::write(uint8_t c) {
 #endif
 
     if (c == '\n') {
-        cursorY += fontScale * fontHeight;
+        cursorY += fontSize * fontHeight;
         cursorX = 0;
     } else if (c == '\r') {
         // skip em
     } else {
-        drawChar(cursorX, cursorY, c, fontScale);
-        cursorX += fontScale * fontWidth;
-        if (textWrap && (cursorX > (LCDWIDTH - fontScale * fontWidth))) {
-            cursorY += fontScale * fontHeight;
+        drawChar(cursorX, cursorY, c, fontSize);
+        cursorX += fontSize * fontWidth;
+        if (textWrap && (cursorX > (LCDWIDTH - fontSize * fontWidth))) {
+            cursorY += fontSize * fontHeight;
             cursorX = 0;
         }
     }

@@ -116,7 +116,7 @@ public:
 	
 	boolean persistence; //disable clean() at each frame if true
     boolean textWrap; // If set, 'wrap' text at right edge of 
-    uint8_t fontScale;
+    uint8_t fontSize;
     int8_t cursorX, cursorY;
 	byte contrast;
 

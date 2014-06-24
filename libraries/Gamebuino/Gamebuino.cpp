@@ -269,7 +269,7 @@ int8_t Gamebuino::menu(const char* const* items, uint8_t length) {
 			currentY = (currentY + targetY) / 2;
 			display.cursorX = 0;
 			display.cursorY = currentY;
-			display.fontScale = 1;
+			display.fontSize = 1;
 			display.textWrap = false;
 			for (byte i = 0; i < length; i++) {
 				if (i == activeItem){
@@ -438,7 +438,7 @@ void Gamebuino::updatePopup(){
 		if(popupTimeLeft<12){
 			yOffset = 12-popupTimeLeft;
 		}
-		display.fontScale = 1;
+		display.fontSize = 1;
 		display.setColor(WHITE);
 		display.fillRoundRect(0,LCDHEIGHT-display.fontHeight+yOffset-3,84,display.fontHeight+3,3);
 		display.setColor(BLACK);
@@ -456,7 +456,7 @@ void Gamebuino::updatePopup(){
 while(1){
 	if(update()==true){
 	byte volume = sound.getVolume();
-	display.fontScale = 1;
+	display.fontSize = 1;
 	display.setColor(BLACK);
 	display.setCursor(24, 16);
 	display.println(F("VOLUME"));
