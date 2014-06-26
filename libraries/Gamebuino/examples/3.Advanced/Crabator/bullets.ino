@@ -21,11 +21,11 @@ void shoot(){
           {
           }
           else{
-            gb.sound.playTrack((uint16_t*)pgm_read_word(&(weapons_sounds[currentWeapon])), 0);
+            gb.sound.playPattern((uint16_t*)pgm_read_word(&(weapons_sounds[currentWeapon])), 0);
           }
           if(currentWeapon == 1){//with P90 cancel every two sounds to avoid continuous beep
             if(random()%2)
-              gb.sound.playTrack(p90_alternative_sound, 0);
+              gb.sound.playPattern(p90_alternative_sound, 0);
           }
           //player recoil
           byte recoil = weapon_playerRecoil[currentWeapon];
@@ -67,7 +67,7 @@ void moveBullets(){
           blast_x = bullets_x[thisBullet];
           blast_y = bullets_y[thisBullet];
           blast_lifespan = 8;
-          gb.sound.playTrack(blast_sound, 0);
+          gb.sound.playPattern(blast_sound, 0);
         }
         else{
         }
@@ -83,7 +83,7 @@ void moveBullets(){
             blast_x = bullets_x[thisBullet];
             blast_y = bullets_y[thisBullet];
             blast_lifespan = 8;
-            gb.sound.playTrack(blast_sound, 0);
+            gb.sound.playPattern(blast_sound, 0);
           } 
           else {
             damageMob(thisMob, thisBullet);

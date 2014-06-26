@@ -1,8 +1,15 @@
+2014-06-26
+ - new layer of abstraction in the sound library
+	"chains" are a succession of patterns + transpositions to apply to patterns
+	"tracks" are now named "patterns"
+	excel tracker updated to new sound system
+ - titleScreen simplified
+	
 2014-06-24
  - useless setters replaced by public variables:
 	gb.display.setCursor(x,y) is now gb.display.cursorX and gb.display.cursorY
 	gb.display.setTextWrap(wrap) is now gb.display.textWrap
-	gb.display.setTextSize(scale) is now gb.display.fontScale
+	gb.display.setTextSize(scale) is now gb.display.fontSize
 2014-06-23
  - back to work!
  - gb.startMenu() changed to gb.titleScreen()

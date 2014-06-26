@@ -27,7 +27,7 @@ void collideCrate(){
     }
     if(currentWeapon<(NUMWEAPONS-1)){
       gb.popup(F("Upgraded !"), 30);
-      gb.sound.playTrack(power_up,0);
+      gb.sound.playPattern(power_up,0);
     }
     else{
       gb.popup(F("Refilled !"), 30);

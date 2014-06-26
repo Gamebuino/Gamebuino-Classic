@@ -38,12 +38,12 @@ BTN_DOWN 	LITERAL1
 BTN_LEFT 	LITERAL1
 
 //sound
-setInstruments	KEYWORD1
-playTrack	KEYWORD1
-setTrackLooping	KEYWORD1
-stopTrack	KEYWORD1
+changeInstrumentSet	KEYWORD1
+playPattern	KEYWORD1
+setPatternLooping	KEYWORD1
+stopPattern	KEYWORD1
 playNote	KEYWORD1
-isPlaying	KEYWORD1
+patternIsPlaying	KEYWORD1
 stopNote	KEYWORD1
 setLooping	KEYWORD1
 prescaler	KEYWORD1

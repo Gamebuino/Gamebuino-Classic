@@ -11,9 +11,9 @@ void setup() {
   Serial.begin(115200);
   gb.begin();
   gb.titleScreen(F("Sound demo"));
-  gb.sound.playTrack(myTrack1,0);
-  gb.sound.playTrack(myTrack2,1);
-  gb.sound.playTrack(myTrack3,2);
+  gb.sound.playPattern(myTrack1,0);
+  gb.sound.playPattern(myTrack2,1);
+  gb.sound.playPattern(myTrack3,2);
 }
 
 void loop(){

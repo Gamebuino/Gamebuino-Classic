@@ -21,9 +21,9 @@ const uint16_t squareWaveInstrument[] PROGMEM = {0x0101, 0x03F7};
 const uint16_t noiseInstrument[] PROGMEM = {0x0101, 0x03FF};
 const uint16_t* const defaultInstruments[] PROGMEM = {squareWaveInstrument,noiseInstrument};
 
-const uint16_t playOKTrack[] PROGMEM = {0x0005,0x138,0x168,0x0000};
-const uint16_t playCancelTrack[] PROGMEM = {0x0005,0x168,0x138,0x0000};
-const uint16_t playTickTrack[] PROGMEM = {0x0045,0x168,0x0000};
+const uint16_t playOKPattern[] PROGMEM = {0x0005,0x138,0x168,0x0000};
+const uint16_t playCancelPattern[] PROGMEM = {0x0005,0x168,0x138,0x0000};
+const uint16_t playTickP[] PROGMEM = {0x0045,0x168,0x0000};
 
 #if(EXTENDED_NOTE_RANGE > 0)
 //extended note range
@@ -42,7 +42,8 @@ void Sound::begin() {
 	prescaler = 1;
 	for(byte i=0; i<NUM_CHANNELS; i++){
 		chanVolumes[i] = VOLUME_CHANNEL_MAX;
-		setInstruments(defaultInstruments, i);
+		changeInstrumentSet(defaultInstruments, i); //load default instruments. #0:square wave, #1: noise
+		command(CMD_INSTRUMENT, 0, 0, i); //set the default instrument to square wave
 	}
 	
 	analogWrite(3, 1); //lazy version to get the right register settings for PWM (hem)
@@ -63,134 +64,196 @@ void Sound::begin() {
 #endif
 }
 
-void Sound::setInstruments(const uint16_t* const* instruments, uint8_t channel){
-	trackInstruments[channel] = (uint16_t**)instruments;
+void Sound::playChain(const uint16_t* chain, uint8_t channel){
+#if(NUM_CHANNELS > 0)
+	chainCursor[channel] = 0;
+	chainData[channel] = (uint16_t*)chain;
+	chainIsPlaying[channel] = true;
+	//Serial.println("chain start");
+#endif
 }
 
-void Sound::playTrack(const uint16_t* track, uint8_t channel){
+void Sound::updateChain(uint8_t channel){
 #if(NUM_CHANNELS > 0)
-	stopTrack(channel);
-	trackData[channel] = (uint16_t*)track;
-	trackCursor[channel] = 0;
-	trackPlaying[channel] = true;
+	if(chainIsPlaying[channel] && !patternIsPlaying[channel]){
+		uint16_t data = pgm_read_word(chainData[channel] + chainCursor[channel]);
+		if(data == 0xFFFF){ //en of the chain
+			chainIsPlaying[channel] = false;
+			//Serial.println("chain end");
+			return;
+		}
+		uint8_t patternID = data & 0xFF;
+		//Serial.print("Chain\t");
+		//Serial.println(patternID, HEX);
+		data >>= 8;
+		patternPitch[channel] = data;
+		playPattern((const uint16_t*)pgm_read_word(&(patternSet[channel][patternID])), channel);
+		chainCursor[channel] ++;
+	}
+#endif
+}
+
+void Sound::updateChain(){
+#if(NUM_CHANNELS > 0)
+	for (uint8_t i=0; i<NUM_CHANNELS; i++){
+		updateChain(i);
+	}
+#endif
+}
+
+void Sound::changePatternSet(const uint16_t* const* patterns, uint8_t channel){
+#if(NUM_CHANNELS > 0)
+	patternSet[channel] = (uint16_t**)patterns;
+#endif
+}
+
+void Sound::playPattern(const uint16_t* pattern, uint8_t channel){
+#if(NUM_CHANNELS > 0)
+	stopPattern(channel);
+	patternData[channel] = (uint16_t*)pattern;
+	patternCursor[channel] = 0;
+	patternIsPlaying[channel] = true;
 	noteVolume[channel] = 9;
 	//reinit commands
 	volumeSlideStepDuration[channel] = 0;
 	arpeggioStepDuration[channel] = 0;
 	tremoloStepDuration[channel] = 0;
-	//Serial.print("play track\n");
+	//Serial.print("play pattern\n");
 #endif
 }
 
-void Sound::updateTrack(){
+void Sound::updatePattern(){
 #if(NUM_CHANNELS > 0)
 	for (uint8_t i=0; i<NUM_CHANNELS; i++){
-		if(trackPlaying[i]){
-			if(noteDuration[i]==0){//if the end of the previous note is reached
-				
-				uint16_t data = pgm_read_word(trackCursor[i] + trackData[i]);
-				
-				if(data == 0){ //end of the track reached
-					if(trackLooping[i] == true){
-						trackCursor[i] = 0;
-						data = pgm_read_word(trackCursor[i] + trackData[i]);
-					}
-					else{
-						trackPlaying[i] = false;
+		updatePattern(i);
+	}
+#endif
+}
+
+void Sound::changeInstrumentSet(const uint16_t* const* instruments, uint8_t channel){
+	instrumentSet[channel] = (uint16_t**)instruments;
+}
+
+void Sound::updatePattern(uint8_t i){
+#if(NUM_CHANNELS > 0)
+	if(patternIsPlaying[i]){
+		if(noteDuration[i]==0){//if the end of the previous note is reached
+			
+			uint16_t data = pgm_read_word(patternCursor[i] + patternData[i]);
+			
+			if(data == 0){ //end of the pattern reached
+				if(patternLooping[i] == true){
+					patternCursor[i] = 0;
+					data = pgm_read_word(patternCursor[i] + patternData[i]);
+				}
+				else{
+					patternIsPlaying[i] = false;
+					if(chainIsPlaying[i]){ //if this pattern is part of a chain, get the next pattern
+						updateChain(i);
+						data = pgm_read_word(patternCursor[i] + patternData[i]);
+					} else {
 						stopNote(i);
-						//Serial.print("\ntrack end\n");
-						continue;
+						//Serial.print("pattern end\n");
+						return;
 					}
 				}
-
-				while (data & 0x0001){ //read all commands and instrument changes
-					data >>= 2;
-					//Serial.print("\ncmd\t");
-					uint8_t command = data & 0x0F;
-					data >>= 4;
-					//Serial.print(command);
-					//Serial.print("\t");
-					//Serial.print(data & 0x1F);
-					//Serial.print("\t");
-					//Serial.println(int8_t(data >> 5) - 16);
-					switch(command){
-					case 0: //volume
-						noteVolume[i] = data & 0x1F;
-						break;
-					case 1: //instrument
-						instrumentData[i] = (uint16_t*)pgm_read_word(&(trackInstruments[i][data&0x1F]));
-						instrumentLength[i] = pgm_read_word(&(instrumentData[i][0])) & 0x00FF; //8 LSB
-						instrumentLooping[i] = min((pgm_read_word(&(instrumentData[i][0])) >> 8), instrumentLength[i]); //8 MSB - check that the loop is shorter than the instrument length
-						break;
-					case 2: //volume slide
-						volumeSlideStepDuration[i] = data & 0x1F;
-						data >>= 5;
-						volumeSlideStepSize[i] = data - 16;
-						break;
-					case 3:
-						arpeggioStepDuration[i] = data & 0x1F;
-						data >>= 5;
-						arpeggioStepSize[i] = data - 16;
-						break;
-					case 4:
-						tremoloStepDuration[i] = data & 0x1F;
-						data >>= 5;
-						tremoloStepSize[i] = data - 16;
-						break;
-					default:
-						break;
-					}
-					trackCursor[i]++;
-					data = pgm_read_word(trackCursor[i] + trackData[i]);
-				}
-				data >>= 2;
-
-				uint8_t pitch = data & 0x003F;
-				data >>= 6;
-				
-				uint8_t duration = data;
-				
-				//Serial.print("\ntrack update");
-				//Serial.print("\t");
-				//Serial.print(duration);
-				//Serial.print("\t");
-				//Serial.print(volume);
-				//Serial.print("\t");
-				//Serial.print(pitch);
-				//Serial.print("\t");
-				//Serial.print(instrumentID);
-				//Serial.print("\n");
-				
-				//PLAY NOTE
-				//set note
-				notePitch[i] = pitch; //limit to the number of available pitches
-				noteDuration[i] = duration;
-				//reinit vars
-				instrumentNextChange[i] = 0;
-				instrumentCursor[i] = 0;
-				notePlaying[i] = true;
-				_chanState[i] = true;
-				commandsCounter[i] = 0;
-				
-				trackCursor[i]++;
 			}
+
+			while (data & 0x0001){ //read all commands and instrument changes
+				data >>= 2;
+				//Serial.print("\ncmd\t");
+				uint8_t cmd = data & 0x0F;
+				data >>= 4;
+				uint8_t X = data & 0x1F;
+				data >>= 5;
+				int8_t Y = data - 16;
+				command(cmd,X,Y,i);
+				//Serial.print(cmd);
+				//Serial.print("\t");
+				//Serial.print(data & 0x1F);
+				//Serial.print("\t");
+				//Serial.println(int8_t(data >> 5) - 16);
+				patternCursor[i]++;
+				data = pgm_read_word(patternCursor[i] + patternData[i]);
+			}
+			data >>= 2;
+
+			uint8_t pitch = data & 0x003F;
+			data >>= 6;
+			
+			uint8_t duration = data;
+			//Serial.print("pattern update");
+			//Serial.print("\t");
+			//Serial.print(duration);
+			//Serial.print("\t");
+			//Serial.print(volume);
+			//Serial.print("\t");
+			//Serial.print(pitch);
+			//Serial.print("\t");
+			//Serial.print(instrumentID);
+			//Serial.print("\n");
+			
+			playNote(pitch, duration, i);
+			
+			patternCursor[i]++;
 		}
 	}
 #endif
 }
 
-void Sound::stopTrack(uint8_t channel){
+void Sound::stopPattern(uint8_t channel){
 #if(NUM_CHANNELS > 0)
 	stopNote(channel);
-	trackPlaying[channel] = false;
+	patternIsPlaying[channel] = false;
 #endif
 }
 
-void Sound::stopTrack(){
+void Sound::stopPattern(){
 #if(NUM_CHANNELS > 0)
 	for(uint8_t i=0; i<NUM_CHANNELS; i++){
-		stopTrack(i);
+		stopPattern(i);
 	}
+#endif
+}
+
+void Sound::command(uint8_t cmd, uint8_t X, int8_t Y, uint8_t i){
+	switch(cmd){
+	case CMD_VOLUME: //volume
+		noteVolume[i] = X;
+		break;
+	case CMD_INSTRUMENT: //instrument
+		instrumentData[i] = (uint16_t*)pgm_read_word(&(instrumentSet[i][X]));
+		instrumentLength[i] = pgm_read_word(&(instrumentData[i][0])) & 0x00FF; //8 LSB
+		instrumentLooping[i] = min((pgm_read_word(&(instrumentData[i][0])) >> 8), instrumentLength[i]); //8 MSB - check that the loop is shorter than the instrument length
+		break;
+	case CMD_SLIDE: //volume slide
+		volumeSlideStepDuration[i] = X;
+		volumeSlideStepSize[i] = Y;
+		break;
+	case CMD_ARPEGGIO:
+		arpeggioStepDuration[i] = X;
+		arpeggioStepSize[i] = Y;
+		break;
+	case CMD_TREMOLO:
+		tremoloStepDuration[i] = X;
+		tremoloStepSize[i] = Y;
+		break;
+	default:
+		break;
+	}
+}
+
+void Sound::playNote(uint8_t pitch, uint8_t duration, uint8_t channel){
+#if(NUM_CHANNELS > 0)
+	//set note
+	notePitch[channel] = pitch;
+	noteDuration[channel] = duration;
+	//reinit vars
+	instrumentNextChange[channel] = 0;
+	instrumentCursor[channel] = 0;
+	notePlaying[channel] = true;
+	_chanState[channel] = true;
+	commandsCounter[channel] = 0;
 #endif
 }
 
@@ -222,92 +285,96 @@ void Sound::stopNote() {
 void Sound::updateNote() {
 #if(NUM_CHANNELS > 0)
 	for (uint8_t i = 0; i < NUM_CHANNELS; i++) {
-		if (notePlaying[i]) {
-			
-			if(noteDuration[i] == 0){
-				stopNote(i);
-				//Serial.println("note end");
-				continue;
-			} else {
-				noteDuration[i]--;
-			}
-			
-			if (instrumentNextChange[i] == 0) {
-				//Serial.print("instr update:");
-				//Serial.print("\t");
-				
-				//read the step data from the progmem and decode it
-				uint16_t thisStep = pgm_read_word(&(instrumentData[i][1 + instrumentCursor[i]]));
-				//Serial.print(thisStep, HEX);
-				//Serial.print("\t");
-				
-				stepVolume[i] = thisStep & 0x0007;
-				thisStep >>= 3;
-				
-				uint8_t stepNoise = thisStep & 0x0001;
-				thisStep >>= 1;
-				
-				uint8_t stepDuration = thisStep & 0x003F;
-				thisStep >>= 6;
-				
-				stepPitch[i] = thisStep;
-				
-				//apply the step settings
-				instrumentNextChange[i] = stepDuration * prescaler;
-				
-				_chanNoise[i] = stepNoise;
-
-				//Serial.print(stepPitch);
-				//Serial.print("\t");
-				//Serial.print(stepDuration);
-				//Serial.print("\t");
-				//Serial.print(stepNoise);
-				//Serial.print("\t");
-				//Serial.print(stepVolume);
-				//Serial.print("\n");
-				//Serial.print(_chanOutput[i]);
-				//Serial.print("\n");
-				
-				instrumentCursor[i]++;
-				
-				if (instrumentCursor[i] >= instrumentLength[i]) {
-					if (instrumentLooping[i]) {
-						instrumentCursor[i] = instrumentLength[i] - instrumentLooping[i];
-					} else {
-						stopNote(i);
-						//Serial.println("instrument end");
-					}
-				}
-			}
-			instrumentNextChange[i]--;
-			
-			commandsCounter[i]++;
-			
-			//UPDATE VALUES	
-			//pitch
-			int8_t pitch = notePitch[i] + stepPitch[i];
-			if(arpeggioStepDuration[i])
-			pitch += commandsCounter[i] / arpeggioStepDuration[i] * arpeggioStepSize[i];
-			pitch = (pitch + NUM_PITCH) % NUM_PITCH; //wrap
-			//volume
-			int8_t volume = noteVolume[i];
-			if(volumeSlideStepDuration[i])
-			volume += commandsCounter[i] / volumeSlideStepDuration[i] * volumeSlideStepSize[i];
-			if(tremoloStepDuration[i]){
-				volume += ((commandsCounter[i]/tremoloStepDuration[i]) % 2) * tremoloStepSize[i];
-			}
-			volume = constrain(volume, 0, 9);
-			if(notePitch[i] == 63){
-				volume = 0;
-			}
-			noInterrupts();
-			_chanHalfPeriod[i] = pgm_read_byte(_halfPeriods + pitch);
-			_chanOutput[i] = _chanOutputVolume[i] = volume * globalVolume * chanVolumes[i] * stepVolume[i];
-			//Serial.println(volume);
-			interrupts();
-		}
+		updateNote(i);
 	}
 #endif
+}
+
+void Sound::updateNote(uint8_t i) {
+	if (notePlaying[i]) {
+		
+		if(noteDuration[i] == 0){
+			stopNote(i);
+			//Serial.println("note end");
+			return;
+		} else {
+			noteDuration[i]--;
+		}
+		
+		if (instrumentNextChange[i] == 0) {
+			//Serial.print("instr update:");
+			//Serial.print("\t");
+			
+			//read the step data from the progmem and decode it
+			uint16_t thisStep = pgm_read_word(&(instrumentData[i][1 + instrumentCursor[i]]));
+			//Serial.print(thisStep, HEX);
+			//Serial.print("\t");
+			
+			stepVolume[i] = thisStep & 0x0007;
+			thisStep >>= 3;
+			
+			uint8_t stepNoise = thisStep & 0x0001;
+			thisStep >>= 1;
+			
+			uint8_t stepDuration = thisStep & 0x003F;
+			thisStep >>= 6;
+			
+			stepPitch[i] = thisStep;
+			
+			//apply the step settings
+			instrumentNextChange[i] = stepDuration * prescaler;
+			
+			_chanNoise[i] = stepNoise;
+
+			//Serial.print(stepPitch);
+			//Serial.print("\t");
+			//Serial.print(stepDuration);
+			//Serial.print("\t");
+			//Serial.print(stepNoise);
+			//Serial.print("\t");
+			//Serial.print(stepVolume);
+			//Serial.print("\n");
+			//Serial.print(_chanOutput[i]);
+			//Serial.print("\n");
+			
+			instrumentCursor[i]++;
+			
+			if (instrumentCursor[i] >= instrumentLength[i]) {
+				if (instrumentLooping[i]) {
+					instrumentCursor[i] = instrumentLength[i] - instrumentLooping[i];
+				} else {
+					stopNote(i);
+					//Serial.println("instrument end");
+				}
+			}
+		}
+		instrumentNextChange[i]--;
+		
+		commandsCounter[i]++;
+		
+		//UPDATE VALUES	
+		//pitch
+		int8_t pitch = notePitch[i] + stepPitch[i] + patternPitch[i];
+		if(arpeggioStepDuration[i])
+		pitch += commandsCounter[i] / arpeggioStepDuration[i] * arpeggioStepSize[i];
+		pitch = (pitch + NUM_PITCH) % NUM_PITCH; //wrap
+		//volume
+		int8_t volume = noteVolume[i];
+		if(volumeSlideStepDuration[i])
+		volume += commandsCounter[i] / volumeSlideStepDuration[i] * volumeSlideStepSize[i];
+		if(tremoloStepDuration[i]){
+			volume += ((commandsCounter[i]/tremoloStepDuration[i]) % 2) * tremoloStepSize[i];
+		}
+		volume = constrain(volume, 0, 9);
+		if(notePitch[i] == 63){
+			volume = 0;
+		}
+		noInterrupts();
+		_chanHalfPeriod[i] = pgm_read_byte(_halfPeriods + pitch);
+		_chanOutput[i] = _chanOutputVolume[i] = volume * globalVolume * chanVolumes[i] * stepVolume[i];
+		//Serial.println(volume);
+		interrupts();
+	}
 }
 
 void Sound::setChannelHalfPeriod(uint8_t channel, uint8_t halfPeriod) {
@@ -431,42 +498,29 @@ void Sound::updateOutput() {
 #endif
 }
 
-boolean Sound::isPlaying(uint8_t channel) {
-#if(NUM_CHANNELS > 0)
-	if(channel>=NUM_CHANNELS)
-	return false;
-	if (notePlaying[channel] == true)
-	return true;
-	else
-	return false;
-#else
-	return false;
-#endif
-}
-
-void Sound::setTrackLooping(uint8_t channel, boolean loop) {
+void Sound::setPatternLooping(uint8_t channel, boolean loop) {
 #if(NUM_CHANNELS > 0)
 	if(channel>=NUM_CHANNELS)
 	return;
-	trackLooping[channel] = loop;
+	patternLooping[channel] = loop;
 #endif
 }
 
 void Sound::playOK(){
 #if(NUM_CHANNELS > 0)
-	playTrack(playOKTrack,0);
+	playPattern(playOKPattern,0);
 #endif
 }
 
 void Sound::playCancel(){
 #if(NUM_CHANNELS > 0)
-	playTrack(playCancelTrack,0);
+	playPattern(playCancelPattern,0);
 #endif
 }
 
 void Sound::playTick(){
 #if(NUM_CHANNELS > 0)
-	playTrack(playTickTrack,0);
+	playPattern(playTickP,0);
 #endif
 }
 

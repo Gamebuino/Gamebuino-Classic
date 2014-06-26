@@ -24,42 +24,6 @@ const uint8_t gamebuinoLogo[] PROGMEM =
 	B00001111, B10110000, B01111000, B11000110, B11111111, B01111110, B00011111, B00011011, B00000110, B00011110, B00001111, 
 };
 
-const uint8_t startMenuIcons[] PROGMEM =
-{
-	16,28, //width and height
-	B00111100, B00000000, 
-	B01000010, B00001110, 
-	B10010001, B00011011, 
-	B10011001, B00010101, 
-	B10011101, B00010001, 
-	B10011001, B00010101, 
-	B10010001, B00011111, 
-	B01000010, B00001110, 
-
-	B00111100, B00000000, 
-	B00000000, B00000000, 
-	B00000000, B00000000, 
-	B00000000, B00001110, 
-	B00000000, B00010111, 
-	B00000000, B00010001, 
-	B00000000, B00010101, 
-	B00000000, B00010001, 
-
-	B00000000, B00011111, 
-	B00000000, B00001110, 
-	B00000000, B00000000, 
-	B00000000, B00000000, 
-	B01111000, B00000000, 
-	B10000100, B00001110, 
-	B11111111, B11011111, 
-	B11000000, B01010001, 
-
-	B11000000, B01010111, 
-	B10000000, B10010001, 
-	B10000000, B10011111, 
-	B11111111, B10001110, 
-};
-
 void Gamebuino::begin() {
 	timePerFrame = 50;
 	//nextFrameMillis = 0;
@@ -82,7 +46,7 @@ void Gamebuino::begin() {
 		sound.setVolume(0);
 	}
 	else{
-		sound.playTrack(startupSound, 0);
+		sound.playPattern(startupSound, 0);
 	}
 }
 
@@ -100,6 +64,7 @@ void Gamebuino::titleScreen(){
 
 void Gamebuino::titleScreen(const __FlashStringHelper*  name, const uint8_t *logo){
 	if(startMenuTimer){
+		display.textWrap = false;
 		display.persistence = false;
 		battery.show = false;
 		display.setColor(BLACK);
@@ -124,38 +89,41 @@ void Gamebuino::titleScreen(const __FlashStringHelper*  name, const uint8_t *log
 				display.cursorY = 24; 
 				#endif
 				display.print(name);
-				display.drawBitmap(LCDWIDTH-16, LCDHEIGHT-28, startMenuIcons);
-				//blinking "play" logo:
-				display.setColor(WHITE);
-				if(frameCount/4%2){
-					display.fillRect(LCDWIDTH-13, LCDHEIGHT-26, 3, 5);
-				}
-				display.setColor(BLACK);
+				
+				//A button
+				display.cursorX = LCDWIDTH - display.fontWidth*3 -1;
+				display.cursorY = LCDHEIGHT - display.fontHeight*3 - 3;
+				if((frameCount/16)%2)
+				  display.println(F("\25 \20"));
+				else
+				  display.println(F("\25\20 "));
+				//B button
+				display.cursorX = LCDWIDTH - display.fontWidth*3 - 1;
+				display.cursorY++;
+				if(sound.globalVolume)
+					display.println(F("\26\23\24"));
+				else
+					display.println(F("\26\23x"));
+				//C button
+				display.cursorX = LCDWIDTH - display.fontWidth*3 - 1;
+				display.cursorY++;
+				display.println(F("\27SD"));
+				
 				//toggle volume when B is pressed
 				if(buttons.pressed(BTN_B)){
 					sound.setVolume(sound.globalVolume+1);
 					sound.playTick();
 				}
-				//draw the speaker depending on the volume
-				if (display.fontWidth < 5){
-					display.drawChar(LCDWIDTH-7-2*display.fontWidth,LCDHEIGHT-16,'\23', 1); //speaker logo
-					if(sound.getVolume()) display.drawChar(LCDWIDTH-7-display.fontWidth,LCDHEIGHT-16,'\24', 1); //sound wave
-					else display.drawChar(LCDWIDTH-7-display.fontWidth,LCDHEIGHT-16,'x', 1);
-				} else {
-					display.drawChar(LCDWIDTH-5-2*display.fontWidth,LCDHEIGHT-17,'\23', 1); //speaker logo
-					if(sound.getVolume()) display.drawChar(LCDWIDTH-5-display.fontWidth,LCDHEIGHT-17,'\24', 1); //sound wave
-					else display.drawChar(LCDWIDTH-5-display.fontWidth,LCDHEIGHT-17,'x', 1);
-				}
 				//leave the menu
 				if(buttons.pressed(BTN_A) || ((frameCount>=startMenuTimer)&&(startMenuTimer != 255))){
 					startMenuTimer = 255; //don't automatically skip the title screen next time it's displayed
-					sound.stopTrack(0);
+					sound.stopPattern(0);
 					sound.playOK();
 					break;
 				}
 				//flash the loader
 				if(buttons.pressed(BTN_C))
-				changeGame();
+					changeGame();
 			}
 		}
 		battery.show = true;
@@ -173,7 +141,8 @@ boolean Gamebuino::update() {
 		backlight.update();
 		buttons.update();
 		battery.update();
-		sound.updateTrack();
+		sound.updateChain();
+		sound.updatePattern();
 		sound.updateNote();
 
 		return true;
@@ -451,34 +420,6 @@ void Gamebuino::updatePopup(){
 #endif
 }
 
-/*void Gamebuino::adjustVolume(){
-#if (ENABLE_GUI > 0) || (NUM_CHANNELS > 0)
-while(1){
-	if(update()==true){
-	byte volume = sound.getVolume();
-	display.fontSize = 1;
-	display.setColor(BLACK);
-	display.setCursor(24, 16);
-	display.println(F("VOLUME"));
-	display.drawRoundRect(24,28,36,7,3);
-	if(volume)
-		display.fillRoundRect(24,28,12*volume,7,3);
-	if(buttons.pressed(BTN_RIGHT) || buttons.pressed(BTN_UP)){
-		sound.setVolume(volume + 1);
-		sound.playOK();
-	}
-	if(buttons.pressed(BTN_LEFT) || buttons.pressed(BTN_DOWN)){
-		sound.setVolume(volume - 1);
-		sound.playCancel();
-	}
-	if(buttons.pressed(BTN_C)){
-		break;
-	}
-	}
-}
-#endif
-}*/
-
 void Gamebuino::displayBattery(){
 #if (ENABLE_BATTERY > 0)
 	display.setColor(BLACK, WHITE);
@@ -486,7 +427,7 @@ void Gamebuino::displayBattery(){
 	display.cursorY = 0;
 	switch(battery.level){
 	case 0://battery critic, power down
-		sound.stopTrack();
+		sound.stopPattern();
 		backlight.set(0);
 		display.clear();
 		display.print(F("NO BATTERY\n\nPLEASE\nTURN OFF"));
@@ -518,7 +459,7 @@ void Gamebuino::displayBattery(){
 
 void Gamebuino::changeGame(){
 	display.clear();
-	display.print(F("Loading...\n\nDON'T TURN OFF!"));
+	display.print(F("\35 Loading...\n\nDON'T TURN OFF!"));
 	display.update();
 	//SPSR &= ~(1 << SPI2X); //clear SPI speed x2 for compatibility issues
 	SPI.setClockDivider(SPI_CLOCK_DIV128);

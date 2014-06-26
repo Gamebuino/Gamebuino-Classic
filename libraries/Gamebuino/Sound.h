@@ -12,20 +12,36 @@
 #include <avr/pgmspace.h>
 #include "settings.c"
 
+//commands
+#define CMD_VOLUME 0
+#define CMD_INSTRUMENT 1
+#define CMD_SLIDE 2
+#define CMD_ARPEGGIO 3
+#define CMD_TREMOLO 4
+
 class Sound {
 public:
 	void begin();
 	
-	void setInstruments(const uint16_t* const* instruments, uint8_t channel);
-	void playTrack(const uint16_t* track, uint8_t channel);
-	void updateTrack();
-	void setTrackLooping(uint8_t channel, boolean loop);
-	void stopTrack(uint8_t channel);
-	void stopTrack();
+	void playChain(const uint16_t* chain, uint8_t channel);
+	void updateChain(uint8_t channel);
+	void updateChain();
+	void changePatternSet(const uint16_t* const* patterns, uint8_t channel);
+	boolean chainIsPlaying[NUM_CHANNELS];
 	
+	void playPattern(const uint16_t* pattern, uint8_t channel);
+	void changeInstrumentSet(const uint16_t* const* instruments, uint8_t channel);
+	void updatePattern(uint8_t i);
+	void updatePattern();
+	void setPatternLooping(uint8_t channel, boolean loop);
+	void stopPattern(uint8_t channel);
+	void stopPattern();
+	boolean patternIsPlaying[NUM_CHANNELS];
+	
+	void command(uint8_t cmd, uint8_t X, int8_t Y, uint8_t i);
+	void playNote(uint8_t pitch, uint8_t duration, uint8_t channel);
 	void updateNote();
-	
-	boolean isPlaying(uint8_t channel);
+	void updateNote(uint8_t i);
 	void stopNote(uint8_t channel);
 	void stopNote();
 
@@ -47,12 +63,17 @@ public:
 	uint8_t volumeMax;
 private:
 #if (NUM_CHANNELS > 0)
-	// track data
-	uint16_t *trackData[NUM_CHANNELS];
-	uint16_t **trackInstruments[NUM_CHANNELS];
-	boolean trackLooping[NUM_CHANNELS];
-	uint16_t trackCursor[NUM_CHANNELS];
-	boolean trackPlaying[NUM_CHANNELS];
+	//chains data
+	uint16_t *chainData[NUM_CHANNELS];
+	uint8_t chainCursor[NUM_CHANNELS];
+	uint16_t **patternSet[NUM_CHANNELS];
+	int8_t patternPitch[NUM_CHANNELS];
+
+	// pattern data
+	uint16_t *patternData[NUM_CHANNELS];
+	uint16_t **instrumentSet[NUM_CHANNELS];
+	boolean patternLooping[NUM_CHANNELS];
+	uint16_t patternCursor[NUM_CHANNELS];
 
 	// note data
 	uint8_t notePitch[NUM_CHANNELS];

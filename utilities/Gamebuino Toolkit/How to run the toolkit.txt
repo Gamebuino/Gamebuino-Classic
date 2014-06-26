@@ -1,0 +1,3 @@
+For now the only feature in the toolkit is the bitmap encoder.
+
+If you don't know how to run /dist/toolkit.jar visit http://www.wikihow.com/Run-a-.Jar-Java-File

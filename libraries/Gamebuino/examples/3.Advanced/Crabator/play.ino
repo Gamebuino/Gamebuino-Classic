@@ -157,7 +157,7 @@ void play(){
             shake_magnitude = 3;
             shake_timeLeft = 4;
           }
-          gb.sound.playTrack(player_damage_sound, 0);
+          gb.sound.playPattern(player_damage_sound, 0);
           spawnMob(thisMob);
           if(playerLife < 0){ 
             byte timer=0;

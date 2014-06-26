@@ -155,7 +155,7 @@ void damageMob(byte thisMob, byte thisBullet){
     kills++;
     boss_nextSpawn--;
     if(bullets_weapon[thisBullet]!=3){ //if it's no the RPG
-      gb.sound.playTrack(mob_death_sound,0);
+      gb.sound.playPattern(mob_death_sound,0);
     }
     if(mobs_size[thisMob] == boss_size)
       score += 4;

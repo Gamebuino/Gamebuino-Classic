@@ -160,7 +160,7 @@ void loadSelectedFile(){
          if(gb.buttons.pressed(BTN_A)) break;
          delay(50);
          }*/
-        gb.display.print(F("\nLoading game...\nDo NOT turn off!"));
+        gb.display.print(F("\n\35 Loading game\nDON'T TURN OFF!"));
         gb.display.update();
         load_game(nextGameName);
       }
