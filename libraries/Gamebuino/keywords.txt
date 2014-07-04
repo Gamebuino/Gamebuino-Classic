@@ -6,7 +6,7 @@ battery	KEYWORD1
 sound	KEYWORD1
 buttons	KEYWORD1
 
-//core
+////////////////////////core
 begin	KEYWORD1
 titleScreen	KEYWORD1
 update	KEYWORD1
@@ -23,7 +23,7 @@ getCpuLoad	KEYWORD1
 freeRam	KEYWORD1
 frameDurationMicros	KEYWORD1
 
-//buttons
+////////////////////////buttons
 pressed	KEYWORD1
 released	KEYWORD1
 held	KEYWORD1
@@ -37,28 +37,46 @@ BTN_RIGHT 	LITERAL1
 BTN_DOWN 	LITERAL1
 BTN_LEFT 	LITERAL1
 
-//sound
-changeInstrumentSet	KEYWORD1
-playPattern	KEYWORD1
-setPatternLooping	KEYWORD1
-stopPattern	KEYWORD1
-playNote	KEYWORD1
-patternIsPlaying	KEYWORD1
-stopNote	KEYWORD1
-setLooping	KEYWORD1
-prescaler	KEYWORD1
-setVolume	KEYWORD1
-getVolume	KEYWORD1
-playOK	KEYWORD1
-playCancel	KEYWORD1
-playTick	KEYWORD1
+////////////////////////sound
+playTrack	 KEYWORD1
+updateTrack	 KEYWORD1
+updateTrack	 KEYWORD1
+changePatternSet	 KEYWORD1
+boolean trackIsPlaying	 KEYWORD1
 
-//battery
+playPattern	 KEYWORD1
+changeInstrumentSet	 KEYWORD1
+updatePattern	 KEYWORD1
+updatePattern	 KEYWORD1
+setPatternLooping	 KEYWORD1
+stopPattern	 KEYWORD1
+stopPattern	 KEYWORD1
+patternIsPlaying	 KEYWORD1
+
+command	 KEYWORD1
+playNote	 KEYWORD1
+updateNote	 KEYWORD1
+updateNote	 KEYWORD1
+stopNote	 KEYWORD1
+stopNote	 KEYWORD1
+
+setVolume	 KEYWORD1
+getVolume	 KEYWORD1
+setVolume	 KEYWORD1
+getVolume	 KEYWORD1
+
+playOK	 KEYWORD1
+playCancel	 KEYWORD1
+playTick	 KEYWORD1
+
+prescaler	 KEYWORD1
+
+////////////////////////battery
 voltage	KEYWORD1
 level	KEYWORD1
 show	KEYWORD1
 
-//backlight
+////////////////////////backlight
 set	KEYWORD1
 automatic	KEYWORD1
 backlightValue	KEYWORD1
@@ -68,7 +86,7 @@ backlightMax	KEYWORD1
 ambientLightMin	KEYWORD1
 ambientLightMax	KEYWORD1
 
-//Display
+////////////////////////Display
 setContrast	KEYWORD1
 clear	KEYWORD1
 update	KEYWORD1
@@ -99,6 +117,7 @@ fontSize	KEYWORD1
 textWrap	KEYWORD1
 fontWidth	KEYWORD1
 fontHeight	KEYWORD1
+setFont	KEYWORD1
 
 LCDWIDTH 	LITERAL1
 LCDHEIGHT 	LITERAL1

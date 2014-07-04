@@ -141,7 +141,7 @@ boolean Gamebuino::update() {
 		backlight.update();
 		buttons.update();
 		battery.update();
-		sound.updateChain();
+		sound.updateTrack();
 		sound.updatePattern();
 		sound.updateNote();
 
@@ -459,7 +459,7 @@ void Gamebuino::displayBattery(){
 
 void Gamebuino::changeGame(){
 	display.clear();
-	display.print(F("\35 Loading...\n\nDON'T TURN OFF!"));
+	display.print(F("\35 Flashing\n  loader...\n\nDON'T TURN OFF!"));
 	display.update();
 	//SPSR &= ~(1 << SPI2X); //clear SPI speed x2 for compatibility issues
 	SPI.setClockDivider(SPI_CLOCK_DIV128);

@@ -124,16 +124,13 @@ void saveSettings(){
   *(unsigned*)(&buffer[OFFSET_BATTERY_MED]) = batteryMed;
   *(unsigned*)(&buffer[OFFSET_BATTERY_FULL]) = batteryFull;
 
-  write_flash_page (SETTINGS_PAGE, buffer);
-  while(1){
-    if(gb.update()){
-      gb.display.println("Settings saved\n\n\25: OK");
-      if(gb.buttons.pressed(BTN_A)){
-        gb.sound.playOK();
-        return;
-      }
-    }
-  }
+  write_flash_page (SETTINGS_PAGE, buffer);  
+  
+  gb.display.clear();
+  gb.display.update();
+  gb.display.persistence = true;
+  gb.display.println(F("Settings saved"));
+  pressAtoContinue();
 }
 
 void eraseSettings(){

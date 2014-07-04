@@ -23,17 +23,17 @@ class Sound {
 public:
 	void begin();
 	
-	void playChain(const uint16_t* chain, uint8_t channel);
-	void updateChain(uint8_t channel);
-	void updateChain();
+	void playTrack(const uint16_t* track, uint8_t channel);
+	void updateTrack(uint8_t channel);
+	void updateTrack();
 	void changePatternSet(const uint16_t* const* patterns, uint8_t channel);
-	boolean chainIsPlaying[NUM_CHANNELS];
+	boolean trackIsPlaying[NUM_CHANNELS];
 	
 	void playPattern(const uint16_t* pattern, uint8_t channel);
 	void changeInstrumentSet(const uint16_t* const* instruments, uint8_t channel);
 	void updatePattern(uint8_t i);
 	void updatePattern();
-	void setPatternLooping(uint8_t channel, boolean loop);
+	void setPatternLooping(boolean loop, uint8_t channel);
 	void stopPattern(uint8_t channel);
 	void stopPattern();
 	boolean patternIsPlaying[NUM_CHANNELS];
@@ -61,11 +61,15 @@ public:
 	static void generateOutput(); //!\\ DO NOT USE
 	uint8_t globalVolume;
 	uint8_t volumeMax;
-private:
+	
+//the following is no longer private, but...
+//with great powers comes great responsibility.
+//it up to you to burn your speaker
+//private:
 #if (NUM_CHANNELS > 0)
-	//chains data
-	uint16_t *chainData[NUM_CHANNELS];
-	uint8_t chainCursor[NUM_CHANNELS];
+	//tracks data
+	uint16_t *trackData[NUM_CHANNELS];
+	uint8_t trackCursor[NUM_CHANNELS];
 	uint16_t **patternSet[NUM_CHANNELS];
 	int8_t patternPitch[NUM_CHANNELS];
 

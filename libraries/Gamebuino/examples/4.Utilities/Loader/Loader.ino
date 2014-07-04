@@ -35,7 +35,7 @@ void setup(){
   if (initres!=NO_ERROR)
   {
     gb.display.clear();
-    gb.display.print(F("Insert SD card and restart."));
+    gb.display.print(F("Insert SD card\nand restart."));
     gb.display.update();
     while(1);
   }
@@ -160,7 +160,7 @@ void loadSelectedFile(){
          if(gb.buttons.pressed(BTN_A)) break;
          delay(50);
          }*/
-        gb.display.print(F("\n\35 Loading game\nDON'T TURN OFF!"));
+        gb.display.print(F("\n\35 Flashing game...\n\nDON'T TURN OFF!"));
         gb.display.update();
         load_game(nextGameName);
       }

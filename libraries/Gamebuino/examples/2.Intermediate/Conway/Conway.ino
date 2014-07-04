@@ -59,10 +59,16 @@ void loop(){
             gb.display.drawPixel(x+1,y+1);
             pop++;
           }
-          else {
-            if ((count==2) && (gb.backlight.ambientLight > 960) && !(random()%64)){
+          else { //randomly add new cells if there is enough light
+            if ((count==2) && (gb.backlight.ambientLight > 950) && !(random()%64)){
               gb.display.drawPixel(x+1,y+1);
               pop++;
+            }
+            else{
+              if ((count==2) && (gb.backlight.ambientLight > 900) && !(random()%128)){
+                gb.display.drawPixel(x+1,y+1);
+                pop++;
+              }
             }
           }
         }
@@ -92,23 +98,39 @@ void loop(){
       }
       prevPop = pop;
     }
+    gb.display.textWrap = false;
 
     gb.display.cursorX = LCDWIDTH-4*gb.display.fontWidth;
-    gb.display.cursorY = 0;
-    gb.display.print(F("Pop:"));
+    gb.display.cursorY = 2;
+    gb.display.println(F("Pop"));
     
     gb.display.cursorX = LCDWIDTH-4*gb.display.fontWidth;
-    gb.display.cursorY = gb.display.fontHeight*1;
     gb.display.print(pop);
-    gb.display.print(" ");
+    gb.display.println(" ");
     
     gb.display.cursorX = LCDWIDTH-4*gb.display.fontWidth;
-    gb.display.cursorY = gb.display.fontHeight*2;
-    gb.display.print(F("Gen:"));
+    gb.display.cursorY += 2;
+    gb.display.println(F("Gen"));
     
     gb.display.cursorX = LCDWIDTH-4*gb.display.fontWidth;
-    gb.display.cursorY = gb.display.fontHeight*3;
-    gb.display.print(gen);
+    gb.display.println(gen);
+    
+    gb.display.cursorX = LCDWIDTH-4*gb.display.fontWidth;
+    gb.display.cursorY += 2;
+    gb.display.println(F("Sun"));
+    
+    gb.display.cursorX = LCDWIDTH-4*gb.display.fontWidth;
+    gb.display.print(F("\17")); //sun logo
+    
+    if(gb.backlight.ambientLight > 900)
+      gb.display.print(F("\17"));
+    else 
+      gb.display.print(F(" "));
+      
+    if(gb.backlight.ambientLight > 950)
+      gb.display.print(F("\17"));
+    else 
+      gb.display.print(F(" "));
 
     gb.display.setColor(WHITE);
     gb.display.drawFastVLine(graphCursor,34,14);

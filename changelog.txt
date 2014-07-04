@@ -1,3 +1,9 @@
+2014-07-04
+ - "chains" renamed to "tracks"
+ - font3x3 added
+ - misc improvements here and there
+ - "community" category added in examples
+
 2014-06-26
  - new layer of abstraction in the sound library
 	"chains" are a succession of patterns + transpositions to apply to patterns

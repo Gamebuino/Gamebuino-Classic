@@ -64,39 +64,40 @@ void Sound::begin() {
 #endif
 }
 
-void Sound::playChain(const uint16_t* chain, uint8_t channel){
+void Sound::playTrack(const uint16_t* track, uint8_t channel){
 #if(NUM_CHANNELS > 0)
-	chainCursor[channel] = 0;
-	chainData[channel] = (uint16_t*)chain;
-	chainIsPlaying[channel] = true;
-	//Serial.println("chain start");
+	trackCursor[channel] = 0;
+	trackData[channel] = (uint16_t*)track;
+	trackIsPlaying[channel] = true;
+	//Serial.println("track start");
 #endif
 }
 
-void Sound::updateChain(uint8_t channel){
+void Sound::updateTrack(uint8_t channel){
 #if(NUM_CHANNELS > 0)
-	if(chainIsPlaying[channel] && !patternIsPlaying[channel]){
-		uint16_t data = pgm_read_word(chainData[channel] + chainCursor[channel]);
-		if(data == 0xFFFF){ //en of the chain
-			chainIsPlaying[channel] = false;
-			//Serial.println("chain end");
+	if(trackIsPlaying[channel] && !patternIsPlaying[channel]){
+		uint16_t data = pgm_read_word(trackData[channel] + trackCursor[channel]);
+		if(data == 0xFFFF){ //en of the track
+			trackIsPlaying[channel] = false;
+			//Serial.println("track end");
 			return;
 		}
 		uint8_t patternID = data & 0xFF;
-		//Serial.print("Chain\t");
+		//Serial.print(channel);
+		//Serial.print(" pattern # ");
 		//Serial.println(patternID, HEX);
 		data >>= 8;
 		patternPitch[channel] = data;
 		playPattern((const uint16_t*)pgm_read_word(&(patternSet[channel][patternID])), channel);
-		chainCursor[channel] ++;
+		trackCursor[channel] ++;
 	}
 #endif
 }
 
-void Sound::updateChain(){
+void Sound::updateTrack(){
 #if(NUM_CHANNELS > 0)
 	for (uint8_t i=0; i<NUM_CHANNELS; i++){
-		updateChain(i);
+		updateTrack(i);
 	}
 #endif
 }
@@ -148,8 +149,8 @@ void Sound::updatePattern(uint8_t i){
 				}
 				else{
 					patternIsPlaying[i] = false;
-					if(chainIsPlaying[i]){ //if this pattern is part of a chain, get the next pattern
-						updateChain(i);
+					if(trackIsPlaying[i]){ //if this pattern is part of a track, get the next pattern
+						updateTrack(i);
 						data = pgm_read_word(patternCursor[i] + patternData[i]);
 					} else {
 						stopNote(i);
@@ -182,7 +183,9 @@ void Sound::updatePattern(uint8_t i){
 			data >>= 6;
 			
 			uint8_t duration = data;
-			//Serial.print("pattern update");
+			if(pitch != 63){
+			//Serial.print(i);
+			//Serial.print("\tnote");
 			//Serial.print("\t");
 			//Serial.print(duration);
 			//Serial.print("\t");
@@ -192,6 +195,7 @@ void Sound::updatePattern(uint8_t i){
 			//Serial.print("\t");
 			//Serial.print(instrumentID);
 			//Serial.print("\n");
+			}
 			
 			playNote(pitch, duration, i);
 			
@@ -498,7 +502,7 @@ void Sound::updateOutput() {
 #endif
 }
 
-void Sound::setPatternLooping(uint8_t channel, boolean loop) {
+void Sound::setPatternLooping(boolean loop, uint8_t channel) {
 #if(NUM_CHANNELS > 0)
 	if(channel>=NUM_CHANNELS)
 	return;

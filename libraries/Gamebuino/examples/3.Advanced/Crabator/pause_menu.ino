@@ -1,8 +1,7 @@
-#define PAUSEMENULENGTH 6
+#define PAUSEMENULENGTH 5
 const char strPlay[] PROGMEM = "Play";
 const char strRestart[] PROGMEM = "Restart";
 const char strHighScores[] PROGMEM = "High scores";
-const char strVolume[] PROGMEM = "Volume";
 const char strSystemInfo[] PROGMEM = "System Info";
 const char strMainMenu[] PROGMEM = "Main Menu";
 
@@ -11,7 +10,6 @@ const char* const pauseMenu[PAUSEMENULENGTH] PROGMEM = {
   strPlay,
   strRestart,
   strHighScores,
-  strVolume,
   strSystemInfo,
   strMainMenu
 };
@@ -38,10 +36,7 @@ void pause(){
       case 2: //high scores
         displayHighScores();
         break;
-      case 3: //Volume
-        //gb.adjustVolume();
-        break;
-      case 4: //System info
+      case 3: //System info
         gb.display.setFont(font3x5);
         while (1) {
           if (gb.update()) {
@@ -80,7 +75,7 @@ void pause(){
           }
         }
         break;
-      case 5: //change game
+      case 4: //change game
         //gb.changeGame();
         gb.titleScreen(logo);
         break;
