@@ -1,0 +1,36 @@
+#######################################
+# Syntax Coloring Map For Petit FatFs
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+FILINFO	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+open_file	KEYWORD2
+read_file	KEYWORD2
+open_dir	KEYWORD2
+open	KEYWORD2
+read_dir	KEYWORD2
+lseek_file	KEYWORD2
+stream_file	KEYWORD2
+setup_stream	KEYWORD2
+rewind_dir	KEYWORD2
+up_dir	KEYWORD2
+cur_dir	KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+PFFS	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
