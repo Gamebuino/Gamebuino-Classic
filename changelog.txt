@@ -1,3 +1,10 @@
+2014-07-24
+ - toolkit .jar added
+ - LOADER.HEX now shows the logo for 2 seconds before asking for saving EEPROM
+ - improvements and bug fixes in the sound library
+ - music example visualisation added
+ - petit_fatfs library added
+
 2014-07-04
  - "chains" renamed to "tracks"
  - font3x3 added
