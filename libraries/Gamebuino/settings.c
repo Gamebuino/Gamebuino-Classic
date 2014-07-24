@@ -12,7 +12,7 @@
 #define DISPLAY_ROT NOROT //set to NOROT, ROTCCW, ROT180 or ROTCW
 #define ENABLE_GUI 1 //enable menu, keyboard, pop-up, volume adjust functions
 #define ENABLE_BITMAPS 1 //will replace bitmaps with rectangles if disabled
-#define EXTENDED_NOTE_RANGE 0 //allows the use of notes above A 5... please avoid that they sound really bad
+#define EXTENDED_NOTE_RANGE 1 //allows the use of notes above A 5... please avoid that they sound really bad
 
 //not really useful
 #define ENABLE_BATTERY 1 //disable battery monitoring

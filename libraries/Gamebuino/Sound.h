@@ -26,6 +26,8 @@ public:
 	void playTrack(const uint16_t* track, uint8_t channel);
 	void updateTrack(uint8_t channel);
 	void updateTrack();
+	void stopTrack(uint8_t channel);
+	void stopTrack();
 	void changePatternSet(const uint16_t* const* patterns, uint8_t channel);
 	boolean trackIsPlaying[NUM_CHANNELS];
 	
@@ -44,6 +46,9 @@ public:
 	void updateNote(uint8_t i);
 	void stopNote(uint8_t channel);
 	void stopNote();
+	
+	uint8_t outputPitch[NUM_CHANNELS];
+	int8_t outputVolume[NUM_CHANNELS];
 
 	void setVolume(int8_t volume);
 	uint8_t getVolume();
@@ -64,7 +69,7 @@ public:
 	
 //the following is no longer private, but...
 //with great powers comes great responsibility.
-//it up to you to burn your speaker
+//it up to you to mess everything up and burn your speaker
 //private:
 #if (NUM_CHANNELS > 0)
 	//tracks data

@@ -27,8 +27,8 @@ const uint16_t playTickP[] PROGMEM = {0x0045,0x168,0x0000};
 
 #if(EXTENDED_NOTE_RANGE > 0)
 //extended note range
-#define NUM_PITCH 64
-const uint8_t _halfPeriods[NUM_PITCH] PROGMEM= {246,232,219,207,195,184,174,164,155,146,138,130,123,116,110,104,98,92,87,82,78,73,69,65,62,58,55,52,49,46,44,41,39,37,35,33,31,29,28,26,25,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1};
+#define NUM_PITCH 59
+const uint8_t _halfPeriods[NUM_PITCH] PROGMEM= {246,232,219,207,195,184,174,164,155,146,138,130,123,116,110,104,98,92,87,82,78,73,69,65,62,58,55,52,49,46,44,41,39,37,35,33,31,29,28,26,25,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6};
 #else
 //regular note range
 #define NUM_PITCH 36
@@ -60,12 +60,14 @@ void Sound::begin() {
 	TCCR1B |= (1 << CS10); // 1 prescaler
 	TIMSK1 |= (1 << OCIE1A); // enable timer compare interrupt
 	interrupts(); // enable all interrupts
-
 #endif
 }
 
 void Sound::playTrack(const uint16_t* track, uint8_t channel){
 #if(NUM_CHANNELS > 0)
+	if(channel>=NUM_CHANNELS)
+		return;
+	stopTrack(channel);
 	trackCursor[channel] = 0;
 	trackData[channel] = (uint16_t*)track;
 	trackIsPlaying[channel] = true;
@@ -73,8 +75,27 @@ void Sound::playTrack(const uint16_t* track, uint8_t channel){
 #endif
 }
 
+void Sound::stopTrack(uint8_t channel){
+#if(NUM_CHANNELS > 0)
+	if(channel>=NUM_CHANNELS)
+		return;
+	trackIsPlaying[channel] = false;
+	stopPattern(channel);
+#endif
+}
+
+void Sound::stopTrack(){
+#if(NUM_CHANNELS > 0)
+	for(uint8_t i=0; i<NUM_CHANNELS; i++){
+		stopTrack(i);
+	}
+#endif
+}
+
 void Sound::updateTrack(uint8_t channel){
 #if(NUM_CHANNELS > 0)
+	if(channel>=NUM_CHANNELS)
+		return;
 	if(trackIsPlaying[channel] && !patternIsPlaying[channel]){
 		uint16_t data = pgm_read_word(trackData[channel] + trackCursor[channel]);
 		if(data == 0xFFFF){ //en of the track
@@ -104,12 +125,16 @@ void Sound::updateTrack(){
 
 void Sound::changePatternSet(const uint16_t* const* patterns, uint8_t channel){
 #if(NUM_CHANNELS > 0)
+	if(channel>=NUM_CHANNELS)
+		return;
 	patternSet[channel] = (uint16_t**)patterns;
 #endif
 }
 
 void Sound::playPattern(const uint16_t* pattern, uint8_t channel){
 #if(NUM_CHANNELS > 0)
+	if(channel>=NUM_CHANNELS)
+		return;
 	stopPattern(channel);
 	patternData[channel] = (uint16_t*)pattern;
 	patternCursor[channel] = 0;
@@ -132,11 +157,15 @@ void Sound::updatePattern(){
 }
 
 void Sound::changeInstrumentSet(const uint16_t* const* instruments, uint8_t channel){
+	if(channel>=NUM_CHANNELS)
+		return;
 	instrumentSet[channel] = (uint16_t**)instruments;
 }
 
 void Sound::updatePattern(uint8_t i){
 #if(NUM_CHANNELS > 0)
+	if(i>=NUM_CHANNELS)
+		return;
 	if(patternIsPlaying[i]){
 		if(noteDuration[i]==0){//if the end of the previous note is reached
 			
@@ -207,6 +236,8 @@ void Sound::updatePattern(uint8_t i){
 
 void Sound::stopPattern(uint8_t channel){
 #if(NUM_CHANNELS > 0)
+	if(channel>=NUM_CHANNELS)
+		return;
 	stopNote(channel);
 	patternIsPlaying[channel] = false;
 #endif
@@ -221,6 +252,9 @@ void Sound::stopPattern(){
 }
 
 void Sound::command(uint8_t cmd, uint8_t X, int8_t Y, uint8_t i){
+#if(NUM_CHANNELS > 0)
+	if(i>=NUM_CHANNELS)
+		return;
 	switch(cmd){
 	case CMD_VOLUME: //volume
 		noteVolume[i] = X;
@@ -245,10 +279,13 @@ void Sound::command(uint8_t cmd, uint8_t X, int8_t Y, uint8_t i){
 	default:
 		break;
 	}
+#endif
 }
 
 void Sound::playNote(uint8_t pitch, uint8_t duration, uint8_t channel){
 #if(NUM_CHANNELS > 0)
+	if(channel>=NUM_CHANNELS)
+		return;
 	//set note
 	notePitch[channel] = pitch;
 	noteDuration[channel] = duration;
@@ -264,7 +301,7 @@ void Sound::playNote(uint8_t pitch, uint8_t duration, uint8_t channel){
 void Sound::stopNote(uint8_t channel) {
 #if(NUM_CHANNELS > 0)
 	if(channel>=NUM_CHANNELS)
-	return;
+		return;
 	notePlaying[channel] = false;
 	//counters
 	noteDuration[channel] = 0;
@@ -295,6 +332,9 @@ void Sound::updateNote() {
 }
 
 void Sound::updateNote(uint8_t i) {
+#if(NUM_CHANNELS > 0)
+	if(i>=NUM_CHANNELS)
+		return;
 	if (notePlaying[i]) {
 		
 		if(noteDuration[i] == 0){
@@ -358,31 +398,34 @@ void Sound::updateNote(uint8_t i) {
 		
 		//UPDATE VALUES	
 		//pitch
-		int8_t pitch = notePitch[i] + stepPitch[i] + patternPitch[i];
+		outputPitch[i] = notePitch[i] + stepPitch[i] + patternPitch[i];
 		if(arpeggioStepDuration[i])
-		pitch += commandsCounter[i] / arpeggioStepDuration[i] * arpeggioStepSize[i];
-		pitch = (pitch + NUM_PITCH) % NUM_PITCH; //wrap
+		outputPitch[i] += commandsCounter[i] / arpeggioStepDuration[i] * arpeggioStepSize[i];
+		outputPitch[i] = (outputPitch[i] + NUM_PITCH) % NUM_PITCH; //wrap
 		//volume
-		int8_t volume = noteVolume[i];
+		outputVolume[i] = noteVolume[i];
 		if(volumeSlideStepDuration[i])
-		volume += commandsCounter[i] / volumeSlideStepDuration[i] * volumeSlideStepSize[i];
+		outputVolume[i] += commandsCounter[i] / volumeSlideStepDuration[i] * volumeSlideStepSize[i];
 		if(tremoloStepDuration[i]){
-			volume += ((commandsCounter[i]/tremoloStepDuration[i]) % 2) * tremoloStepSize[i];
+			outputVolume[i] += ((commandsCounter[i]/tremoloStepDuration[i]) % 2) * tremoloStepSize[i];
 		}
-		volume = constrain(volume, 0, 9);
+		outputVolume[i] = constrain(outputVolume[i], 0, 9);
 		if(notePitch[i] == 63){
-			volume = 0;
+			outputVolume[i] = 0;
 		}
 		noInterrupts();
-		_chanHalfPeriod[i] = pgm_read_byte(_halfPeriods + pitch);
-		_chanOutput[i] = _chanOutputVolume[i] = volume * globalVolume * chanVolumes[i] * stepVolume[i];
-		//Serial.println(volume);
+		_chanHalfPeriod[i] = pgm_read_byte(_halfPeriods + outputPitch[i]);
+		_chanOutput[i] = _chanOutputVolume[i] = outputVolume[i] * globalVolume * chanVolumes[i] * stepVolume[i];
+		//Serial.println(outputVolume[i]);
 		interrupts();
 	}
+#endif
 }
 
 void Sound::setChannelHalfPeriod(uint8_t channel, uint8_t halfPeriod) {
 #if(NUM_CHANNELS > 0)
+	if(channel>=NUM_CHANNELS)
+		return;
 	_chanHalfPeriod[channel] = halfPeriod;
 	_chanState[channel] = false;
 	_chanCount[channel] = 0;
@@ -505,7 +548,7 @@ void Sound::updateOutput() {
 void Sound::setPatternLooping(boolean loop, uint8_t channel) {
 #if(NUM_CHANNELS > 0)
 	if(channel>=NUM_CHANNELS)
-	return;
+		return;
 	patternLooping[channel] = loop;
 #endif
 }
@@ -545,7 +588,7 @@ uint8_t Sound::getVolume() {
 void Sound::setVolume(int8_t volume, uint8_t channel) {
 #if(NUM_CHANNELS > 0)
 	if(channel>=NUM_CHANNELS)
-	return;
+		return;
 	volume = (volume > VOLUME_CHANNEL_MAX) ? VOLUME_CHANNEL_MAX : volume;
 	volume = (volume < 0) ? 0 : volume;
 	chanVolumes[channel] = volume;
@@ -555,7 +598,7 @@ void Sound::setVolume(int8_t volume, uint8_t channel) {
 uint8_t Sound::getVolume(uint8_t channel) {
 #if(NUM_CHANNELS > 0)
 	if(channel>=NUM_CHANNELS)
-	return 255;
+		return 255;
 	return (chanVolumes[channel]);
 #else
 	return 0;
