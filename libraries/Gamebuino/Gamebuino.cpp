@@ -19,7 +19,6 @@ const uint8_t gamebuinoLogo[] PROGMEM =
 	B00110000, B00001100, B11000110, B11110110, B01100000, B00110011, B00110000, B11011001, B10110110, B01100000, B11001111, 
 	B00110011, B11001111, B11001100, B11110110, B01100000, B01100001, B10110000, B11011011, B00011110, B01100000, B11001111, 
 	B00110000, B11011000, B01101100, B11100110, B11000000, B01100001, B10110000, B11011011, B00011110, B01100001, B10001111, 
-
 	B00011001, B10011000, B01101100, B11000110, B11000000, B01100011, B10110001, B10011011, B00001110, B00110011, B00001111, 
 	B00001111, B10110000, B01111000, B11000110, B11111111, B01111110, B00011111, B00011011, B00000110, B00011110, B00001111, 
 };
@@ -45,8 +44,19 @@ void Gamebuino::begin() {
 	if(buttons.pressed(BTN_B)){
 		sound.setVolume(0);
 	}
-	else{
-		sound.playPattern(startupSound, 0);
+	else{ //play the startup sound on each channel for it to be louder
+		#if(NUM_CHANNELS > 0)
+			sound.playPattern(startupSound, 0);
+		#endif
+		#if(NUM_CHANNELS > 1)
+			sound.playPattern(startupSound, 1);
+		#endif
+		#if(NUM_CHANNELS > 2)
+			sound.playPattern(startupSound, 2);
+		#endif
+		#if(NUM_CHANNELS > 3)
+			sound.playPattern(startupSound, 3);
+		#endif
 	}
 }
 

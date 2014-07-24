@@ -35,7 +35,7 @@ public:
 	void titleScreen(const uint8_t* logo);
     void titleScreen();
     boolean update();
-	boolean startMenuTimer;
+	uint8_t startMenuTimer;
     uint32_t frameCount;
     void setFrameRate(uint8_t fps);
 	void pickRandomSeed();
