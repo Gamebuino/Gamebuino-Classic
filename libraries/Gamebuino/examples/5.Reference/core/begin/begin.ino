@@ -25,7 +25,7 @@ void loop(){
   if(gb.update()){
     gb.display.println("Hello world");
     if(gb.buttons.pressed(BTN_C)){
-      gb.startMenu(F("Example game"), logo);
+      gb.titleScreen(F("Example game"), logo);
     }
   }
 }
