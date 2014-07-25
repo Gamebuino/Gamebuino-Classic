@@ -37,6 +37,8 @@ void loop() {
     //pause the game if C is pressed
     if(gb.buttons.pressed(BTN_C)){
       gb.titleScreen(F("Pong Solo"));
+      gb.battery.show = false;
+      gb.display.fontSize = 2;
     }
     //move the player
     if(gb.buttons.repeat(BTN_UP, 1)){
