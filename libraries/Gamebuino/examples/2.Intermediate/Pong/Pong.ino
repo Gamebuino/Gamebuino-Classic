@@ -24,10 +24,14 @@ int ball_y = (LCDHEIGHT-ball_size)/2;
 int ball_vx = 3;
 int ball_vy = 3;
 
+extern const byte font5x7[]; //get the default large font
+
 ///////////////////////////////////// SETUP
 void setup() {
   gb.begin();
+  gb.display.setFont(font5x7); //change the font to the large one
   gb.titleScreen(F("Pong Solo"));
+  gb.pickRandomSeed(); //pick a different random seed each time for games to be different
   gb.battery.show = false; //hide the battery indicator
 }
 
@@ -37,6 +41,8 @@ void loop() {
     //pause the game if C is pressed
     if(gb.buttons.pressed(BTN_C)){
       gb.titleScreen(F("Pong Solo"));
+      gb.battery.show = false;
+      gb.display.fontSize = 2;
     }
     //move the player
     if(gb.buttons.repeat(BTN_UP, 1)){
@@ -86,10 +92,16 @@ void loop() {
     //collision with the right side
     if((ball_x + ball_size) > LCDWIDTH){
       player_score = player_score + 1;
-      gb.sound.playCancel();
+      gb.sound.playOK();
       ball_x = LCDWIDTH - ball_size - oponent_w - 16; //place the ball on the oponent side
       ball_vx = -abs(ball_vx);
       ball_y = random(0,LCDHEIGHT-ball_size);
+
+    }
+    //reset score when 10 is reached
+    if((player_score == 10) || (oponent_score == 10)){
+      player_score = 0;
+      oponent_score = 0;
     }
 
     //move the oponent
