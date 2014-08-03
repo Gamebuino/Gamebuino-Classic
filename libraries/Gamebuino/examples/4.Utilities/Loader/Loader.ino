@@ -26,10 +26,16 @@ char buffer[BUFFER_SIZE+4];
 void setup(){
   //Serial.begin(115200);
   gb.begin();
-  gb.battery.show = false;
+  gb.startMenuTimer = 12;
+  gb.titleScreen(logo);
   gb.display.clear();
   gb.display.persistence=true;
+  gb.battery.show = false;
+  
+  gb.display.print(F("\35 Reading SD card...\n\n"));
+  gb.display.update();
 
+  SPI.setClockDivider(SPI_CLOCK_DIV128); //lower the SPI speed for better compatibility
   initres=file.initFAT();
 
   if (initres!=NO_ERROR)
@@ -70,10 +76,6 @@ void setup(){
    if(gb.buttons.pressed(BTN_A)) break;
    delay(50);
    }*/
-
-  gb.titleScreen(logo);
-  gb.display.clear();
-  gb.display.persistence=true;
 
   //count the number of files
   file.findFirstFile(&file.DE);
