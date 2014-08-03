@@ -1,4 +1,4 @@
-simply drag and drop the .elf file on gbsim.exe !
+simply drag and drop the .elf file on gbsim.exe. You can also select "open with" then select gbsim.exe so it automaticly opens .elf with the emulator.
 
 Key binding:
 UP:		Z
