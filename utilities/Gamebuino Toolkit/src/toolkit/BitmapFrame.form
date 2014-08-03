@@ -108,10 +108,8 @@
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="thresholdSlider" pref="120" max="32767" attributes="0"/>
-                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="originalPanel" alignment="0" max="32767" attributes="0"/>
-                          <Component id="previewPanel" alignment="0" max="32767" attributes="0"/>
-                      </Group>
+                      <Component id="originalPanel" alignment="0" max="32767" attributes="0"/>
+                      <Component id="previewPanel" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
               </Group>
@@ -217,7 +215,7 @@
             <Property name="toolTipText" type="java.lang.String" value="Use to adjust the thresold between black and white."/>
             <Property name="value" type="int" value="384"/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-              <Color id="Standardcursor"/>
+              <Color id="Default Cursor"/>
             </Property>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[20, 32767]"/>
@@ -283,6 +281,9 @@
             <Component class="javax.swing.JTextArea" name="outputText">
               <Properties>
                 <Property name="columns" type="int" value="20"/>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Consolas" size="10" style="0"/>
+                </Property>
                 <Property name="rows" type="int" value="5"/>
                 <Property name="autoscrolls" type="boolean" value="false"/>
               </Properties>

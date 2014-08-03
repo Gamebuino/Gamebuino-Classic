@@ -69,11 +69,12 @@ public class BitmapEncoder {
         }
         output = "";
         output = output.concat(header);
+        int width = ((inputImage.getWidth()-1)/8+1)*8; //round to the closest larger multiple of 8
+        output = output.concat(width + "," + inputImage.getHeight() + ",");
         if (wrapping) {
             output = output.concat("\n");
         }
         for (int y = 0; y < inputImage.getHeight(); y++) {
-            output = output.concat(" ");
             for (int x = 0; x < inputImage.getWidth(); x += 8) {
                 if (hexFormatting) {
                     output = output.concat("0x");
@@ -91,10 +92,10 @@ public class BitmapEncoder {
                         value = red + green + blue;
                     }
                     if (hexFormatting) {
+                        thisByte *= 2;
                         if (value < thres) {
                             thisByte++;
                         }
-                        thisByte *= 2;
                     } else {//binary formattning
                         if (value < thres) {
                             output = output.concat("1");
@@ -105,16 +106,12 @@ public class BitmapEncoder {
                     }
                 }
                 if (hexFormatting) {
-                    thisByte /= 2;
-                    output = output.concat(Integer.toString(thisByte));
+                    output = output.concat(Integer.toString(thisByte, 16));
                 }
                 output = output.concat(",");
             }
             if (wrapping) {
                 output = output.concat("\n");
-                if ((y % 8) == 7) {
-                    output = output.concat("\n");
-                }
             }
         }
         output = output.concat(footer);
