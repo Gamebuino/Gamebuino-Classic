@@ -74,6 +74,7 @@ void Gamebuino::titleScreen(){
 
 void Gamebuino::titleScreen(const __FlashStringHelper*  name, const uint8_t *logo){
 	if(startMenuTimer){
+		display.fontSize = 1;
 		display.textWrap = false;
 		display.persistence = false;
 		battery.show = false;
@@ -151,16 +152,17 @@ boolean Gamebuino::update() {
 		backlight.update();
 		buttons.update();
 		battery.update();
-		sound.updateTrack();
-		sound.updatePattern();
-		sound.updateNote();
 
 		return true;
 
 	} else {
 		if (!frameEndMicros) { //runs once at the end of the frame
+			sound.updateTrack();
+			sound.updatePattern();
+			sound.updateNote();
 			updatePopup();
 			displayBattery();
+			
 			display.update(); //send the buffer to the screen
 			if(!display.persistence)
 			display.clear(); //clear the buffer
@@ -440,6 +442,7 @@ void Gamebuino::displayBattery(){
 		sound.stopPattern();
 		backlight.set(0);
 		display.clear();
+		display.fontSize = 1;
 		display.print(F("NO BATTERY\n\nPLEASE\nTURN OFF"));
 		display.update();
 		set_sleep_mode(SLEEP_MODE_PWR_DOWN);
@@ -545,13 +548,8 @@ boolean Gamebuino::collidePointRect(int16_t x1, int16_t y1 ,int16_t x2 ,int16_t 
 }
 
 boolean Gamebuino::collideRectRect(int16_t x1, int16_t y1, int16_t w1, int16_t h1 ,int16_t x2 ,int16_t y2, int16_t w2, int16_t h2){
-	if(collidePointRect(x1, y1, x2, y2, w2, h2))
-	return true;
-	if(collidePointRect(x1+w1-1, y1, x2, y2, w2, h2))
-	return true;
-	if(collidePointRect(x1, y1+h1-1, x2, y2, w2, h2))
-	return true;
-	if(collidePointRect(x1+w1-1, y1+h1-1, x2, y2, w2, h2))
-	return true;
-	return false;
+  return !( x2     >  x1+w1  || 
+            x2+w2  <  x1     || 
+            y2     >  y1+h1  ||
+            y2+h2  <  y1     );
 }
