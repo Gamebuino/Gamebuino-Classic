@@ -65,7 +65,7 @@ const char* const batteryMenu[BATTERYMENU_LENGTH] PROGMEM = {
   strSave
 };
 
-boolean changeValue(unsigned &val, unsigned minVal, unsigned maxVal, const __FlashStringHelper* text){
+boolean changeValue(int &val, int minVal, int maxVal, const __FlashStringHelper* text){
   if(gb.buttons.pressed(BTN_A)||gb.buttons.pressed(BTN_B)){
     gb.sound.playOK();
     return true;
@@ -188,7 +188,7 @@ void displaySettings(){
         if(gb.update()){
           gb.backlight.automatic = false;
           gb.backlight.set(backlightMin);
-          if(changeValue(lightMin, 0, 1024, F("Max ambient light \n(when it's bright)\nassociated with\nmax backlight")))
+          if(changeValue(lightMax, 0, 1024, F("Max ambient light \n(when it's bright)\nassociated with\nmax backlight")))
             break;
           gb.display.print(F("\nCurrent ambient:"));
           gb.display.print(gb.backlight.ambientLight);
