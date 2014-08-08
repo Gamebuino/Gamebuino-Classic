@@ -21,6 +21,8 @@
 #define load_game (*((void(*)(const char* filename))(0x7ffc/2)))
 #define write_flash_page (*((void(*)(const char * page, unsigned char * buffer))(0x7ffa/2)))
 
+#define wrap(i, imax) ((imax+i)%(imax))
+
 class Gamebuino {
 public:
     Backlight backlight;
