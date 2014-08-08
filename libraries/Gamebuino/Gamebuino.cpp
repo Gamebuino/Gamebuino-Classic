@@ -194,7 +194,7 @@ void Gamebuino::setFrameRate(uint8_t fps) {
 }
 
 void Gamebuino::pickRandomSeed(){
-	randomSeed(battery.voltage * ~micros() + backlight.ambientLight + micros());
+	randomSeed(~battery.voltage * ~micros() * ~micros() + backlight.ambientLight + micros());
 }
 
 uint8_t Gamebuino::getCpuLoad(){
