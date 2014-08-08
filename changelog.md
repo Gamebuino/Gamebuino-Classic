@@ -25,13 +25,13 @@
   * excel tracker updated to new sound system
 * titleScreen simplified
   *
-2014-06-24
+# 2014-06-24
 * useless setters replaced by public variables:
   * gb.display.setCursor(x,y) is now gb.display.cursorX and gb.display.cursorY
   * gb.display.setTextWrap(wrap) is now gb.display.textWrap
   * gb.display.setTextSize(scale) is now gb.display.fontSize
 
-2014-06-23
+# 2014-06-23
 * back to work!
 * gb.startMenu() changed to gb.titleScreen()
   * startMenuTimer now only skip it the first time it's called
@@ -48,17 +48,18 @@
   * use "Silence" instead of a note name to mute it
 * bugs solved in the Processing sound player
 
-2014-06-13
+# 2014-06-13
 * a few more "const" added and "prog_char" changed to "const char". Now actually compiles with avr-gcc > 4.6.1
 
-2014-06-12
+# 2014-06-12
 * added "const" to the "font" variable for the library to compile with the latest version of avr-gcc but you can no longer switch between different font sizes because of conflicting var name
 * default contrast changed from 50 to 60
 * default backlight changed from 128 to 255 (new batch of Gamebuinos has dimmer LEDs)
 * bootloader updated with the last version of settings.hex
 * crabator show battery in menu fixed
 * crabator: added backlight effects when hit
-2014-06-10
+
+# 2014-06-10
 * zero initilizers removed (unecessary use of flash memory)
 * loader 
   * can't load non-hex files
@@ -75,7 +76,8 @@
   * speaker icon placement improved, adapts depending on the font size
 * sound.setVolume now applies a modulo instead of a min-max constrain
 * updated HEX and ELF files
-2014-06-09
+
+# 2014-06-09
 * changelog created! \o/
 * "const" added to all PROGMEM variables for compatibity with the last avr-cc update
   * It will require you to add "const" before the variables which use PROGMEM or you'll get compilation errors
