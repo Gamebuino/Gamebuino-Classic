@@ -1,3 +1,12 @@
+#2014-08-09
+* settings.hex values wrap around fixed
+* improved pickRandomSeed (even more random!)
+* wrap(i, imax) macro added to core library
+* .HEX files updated
+** Sokoban no longer overwrites settings
+** 3D demo updated to latest version (works on every screen now)
+** Invaders, Minsweeper, Asterocks added
+
 # 2014-08-03
 * toolkit's bitmap encoder bug fixes (hex encoding, size bytes missing in array)
 * sound library bug fixes
