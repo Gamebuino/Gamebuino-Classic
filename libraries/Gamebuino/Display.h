@@ -72,6 +72,8 @@
 #define PCD8544_SETBIAS 0x10
 #define PCD8544_SETVOP 0x80
 
+extern uint8_t _displayBuffer[];
+
 class Display : public Print {
 public:
     void begin(int8_t SCLK, int8_t DIN, int8_t DC, int8_t CS, int8_t RST);
@@ -85,8 +87,8 @@ public:
 
 	void setColor(int8_t c);
 	void setColor(int8_t c, int8_t bg);
-    void drawPixel(int8_t x, int8_t y);
-    uint8_t getPixel(int8_t x, int8_t y);
+    inline void drawPixel(int8_t x, int8_t y);
+    inline uint8_t getPixel(int8_t x, int8_t y);
 
     void drawLine(int8_t x0, int8_t y0, int8_t x1, int8_t y1);
     void drawFastVLine(int8_t x, int8_t y, int8_t h);
@@ -128,6 +130,41 @@ private:
 	uint8_t *font;
 	uint8_t color, bgcolor;
 };
+
+inline void Display::drawPixel(int8_t x, int8_t y) {
+    if ((x < 0) || (x >= LCDWIDTH) || (y < 0) || (y >= LCDHEIGHT))
+        return;
+
+#if DISPLAY_ROT == NOROT
+    if (color)
+        _displayBuffer[x + (y / 8) * LCDWIDTH_NOROT] |= _BV(y % 8);
+    else
+        _displayBuffer[x + (y / 8) * LCDWIDTH_NOROT] &= ~_BV(y % 8);
+#elif DISPLAY_ROT == ROTCCW
+	if (color)
+        _displayBuffer[LCDHEIGHT - y - 1 + (x / 8) * LCDWIDTH_NOROT] |= _BV(x % 8);
+    else
+        _displayBuffer[LCDHEIGHT - y - 1 + (x / 8) * LCDWIDTH_NOROT] &= ~_BV(x % 8);
+#elif DISPLAY_ROT == ROT180
+	if (color)
+        _displayBuffer[LCDWIDTH - x - 1 + ((LCDHEIGHT - y - 1) / 8) * LCDWIDTH_NOROT] |= _BV((LCDHEIGHT - y - 1) % 8);
+    else
+        _displayBuffer[LCDWIDTH - x - 1 + ((LCDHEIGHT - y - 1) / 8) * LCDWIDTH_NOROT] &= ~_BV((LCDHEIGHT - y - 1) % 8);
+#elif DISPLAY_ROT == ROTCW
+	if (color)
+        _displayBuffer[y + ((LCDWIDTH - x - 1) / 8) * LCDWIDTH_NOROT] |= _BV((LCDWIDTH - x -1) % 8);
+    else
+        _displayBuffer[y + ((LCDWIDTH - x - 1) / 8) * LCDWIDTH_NOROT] &= ~_BV((LCDWIDTH - x - 1) % 8);
+#endif
+}
+
+inline uint8_t Display::getPixel(int8_t x, int8_t y) {
+    if ((x < 0) || (x >= LCDWIDTH) || (y < 0) || (y >= LCDHEIGHT))
+        return 0;
+
+    return (_displayBuffer[x + (y / 8) * LCDWIDTH] >> (y % 8)) & 0x1;
+}
+
 
 #endif	/* DISPLAY_H */
 
