@@ -25,7 +25,7 @@
 #define START_MENU_TIMER 255 //40 = 40 frames (2sec) before start menu is skipped, 0 = no start menu, 255 = start menu until you press A
 
 //addresses of settings stored in the program memory
-#define SETTINGS_PAGE ((const char *)(0x7000-128))
+#define SETTINGS_PAGE ((const char *)(0x7800-128))
 #define SETTINGS_TOKEN 			0xC001
 #define OFFSET_CURRENTGAME		2
 #define OFFSET_USERNAME			11
