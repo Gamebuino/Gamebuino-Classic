@@ -1,3 +1,7 @@
+* drawPixel and getPixel are now inline for an overall 2.9x speed-up of graphic functions (by Myndale)
+* SETTINGS_PAGE moved from 0x7000-128 to 0x7800-128. You will have to set your settings again using SETTINGS.HEX an to re-compile your games for them to be able to read the new settings.
+* gb.sound.prescaler changes the sound playback speed (1=normal speed, 2=two times slower). Automatically adjusted when you use gb.setFrameRate().
+
 #2014-08-09
 * settings.hex values wrap around fixed
 * improved pickRandomSeed (even more random!)
