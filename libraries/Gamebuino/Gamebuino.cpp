@@ -191,6 +191,7 @@ boolean Gamebuino::update() {
 void Gamebuino::setFrameRate(uint8_t fps) {
 	timePerFrame = 1000 / fps;
 	sound.prescaler = fps / 20;
+	sound.prescaler = max(1, sound.prescaler);
 }
 
 void Gamebuino::pickRandomSeed(){

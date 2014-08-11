@@ -262,18 +262,20 @@ void Sound::command(uint8_t cmd, uint8_t X, int8_t Y, uint8_t i){
 	case CMD_INSTRUMENT: //instrument
 		instrumentData[i] = (uint16_t*)pgm_read_word(&(instrumentSet[i][X]));
 		instrumentLength[i] = pgm_read_word(&(instrumentData[i][0])) & 0x00FF; //8 LSB
+		instrumentLength[i] *= prescaler;
 		instrumentLooping[i] = min((pgm_read_word(&(instrumentData[i][0])) >> 8), instrumentLength[i]); //8 MSB - check that the loop is shorter than the instrument length
+		instrumentLooping[i] *= prescaler;
 		break;
 	case CMD_SLIDE: //volume slide
-		volumeSlideStepDuration[i] = X;
+		volumeSlideStepDuration[i] = X * prescaler;
 		volumeSlideStepSize[i] = Y;
 		break;
 	case CMD_ARPEGGIO:
-		arpeggioStepDuration[i] = X;
+		arpeggioStepDuration[i] = X * prescaler;
 		arpeggioStepSize[i] = Y;
 		break;
 	case CMD_TREMOLO:
-		tremoloStepDuration[i] = X;
+		tremoloStepDuration[i] = X * prescaler;
 		tremoloStepSize[i] = Y;
 		break;
 	default:
@@ -288,7 +290,7 @@ void Sound::playNote(uint8_t pitch, uint8_t duration, uint8_t channel){
 		return;
 	//set note
 	notePitch[channel] = pitch;
-	noteDuration[channel] = duration;
+	noteDuration[channel] = duration * prescaler;
 	//reinit vars
 	instrumentNextChange[channel] = 0;
 	instrumentCursor[channel] = 0;
