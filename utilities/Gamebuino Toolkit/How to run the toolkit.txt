@@ -1,3 +1,0 @@
-The toolkit is programmed using Java, so you have to install the Java JRE if you don't already have it.
-You can download it here: https://www.java.com/en/download/help/download_options.xml
-Once Java is installed, simply double click on toolkit.jar to run it.
