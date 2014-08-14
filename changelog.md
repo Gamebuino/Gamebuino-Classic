@@ -1,6 +1,14 @@
-* drawPixel and getPixel are now inline for an overall 2.9x speed-up of graphic functions (by Myndale)
-* SETTINGS_PAGE moved from 0x7000-128 to 0x7800-128. You will have to set your settings again using SETTINGS.HEX an to re-compile your games for them to be able to read the new settings.
-* gb.sound.prescaler changes the sound playback speed (1=normal speed, 2=two times slower). Automatically adjusted when you use gb.setFrameRate().
+#2014-08-14
+* hardware folder added for easier installation. You only have to copy and paste it to you sketch folder, you no longer have to manually install the bootloader and edit boards.txt
+* SETTINGS.HEX updated to reflect the change of the last update
+* bootloader updated to the experimental bootloader v2.0 by Jonnection. gamebuino_boot_only.hex only includes the bootlaoder and gamebuino_boot.hex (default one) includes SETTINGS.HEX
+* all utilities removed to be moved to different repos (font editor, emulator)
+* .HEX files of all the games removed
+
+#2014-08-11
+* drawPixel and getPixel are now inline for an overall 2.9x speed-up of graphic functions (suggestion by Myndale)
+* SETTINGS_PAGE moved from 0x7000-128 to 0x7800-128 to avoid overwritting settings when flashing too large games. You will have to set your settings again using SETTINGS.HEX an to re-compile your games for them to be able to read the new settings.
+* gb.sound.prescaler changes the sound playback speed (1=normal speed, 2=two times slower, etc.). Automatically adjusted when you use gb.setFrameRate() for a constant playback speed.
 
 #2014-08-09
 * settings.hex values wrap around fixed
