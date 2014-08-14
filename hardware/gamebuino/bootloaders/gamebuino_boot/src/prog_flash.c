@@ -46,17 +46,20 @@ void write_flash_page(uint16_t addr, uint8_t * data)
 
 	eeprom_busy_wait();
 
-	__boot_page_erase_short(addr);
+	//__boot_page_erase_short(addr);
+	__boot_page_erase_normal(addr); // try to improve stability of flash - JV2014
 	boot_spm_busy_wait ();      // Wait until the memory is erased.
 
 	for (i=0; i<SPM_PAGESIZE; i+=2)
 	{
 		// Set up little-endian word.
 		uint16_t w = *((uint16_t*)(data + i));
-		__boot_page_fill_short(addr + i, w);
+		//__boot_page_fill_short(addr + i, w); // try to improve stability of flash - JV2014
+		__boot_page_fill_normal(addr + i, w);
 	}
 
-	__boot_page_write_short(addr);     // Store buffer in flash page.
+	//__boot_page_write_short(addr);     // Store buffer in flash page.
+	__boot_page_write_normal(addr);     // try to improve stability of flash - JV2014
 	boot_spm_busy_wait();            // Wait until the memory is written.
 
 	boot_rww_enable ();

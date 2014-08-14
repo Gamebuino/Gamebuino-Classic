@@ -196,8 +196,10 @@ static unsigned char mmc_start_read_block(unsigned long adr)
 	cmd[2] = (adr & 0x0000FF00) >> 0x08;
 	cmd[3] = (adr & 0x000000FF);
 	cmd[4] = 0;
-
-	SPCR = 1<<SPE | 1<<MSTR | SPI_READ_CLOCK; //SPI Enable, SPI Master Mode
+	
+	// There is something odd about how this behaves, so I'll disable it - Jonne
+	// testing proves theory correct
+	//SPCR = 1<<SPE | 1<<MSTR | SPI_READ_CLOCK; //SPI Enable, SPI Master Mode
 	
 	if (send_cmd() != 0x00 || wait_start_byte()) {
 		MMC_PORT |= 1<<MMC_CS; //MMC Chip Select -> High (deactivate mmc);
@@ -222,7 +224,6 @@ static unsigned char mmc_start_read_block(unsigned long adr)
 	spi_send_byte(0xFF);
 	spi_send_byte(0xFF);
 	MMC_PORT |= 1<<MMC_CS; //MMC Chip Select -> High (deactivate mmc);
-	
 	return(MMC_OK);
 }
 

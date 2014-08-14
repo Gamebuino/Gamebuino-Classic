@@ -228,6 +228,7 @@ asm(	".section .jumps,\"ax\",@progbits\n"
 /* generate any entry or exit code itself. */
 int main(void) __attribute__ ((naked)) __attribute__ ((section (".init9")));
 void putch(char);
+void mydelay(unsigned long);
 //void putstring(char * str);
 uint8_t getch(void);
 static inline void getNch(uint8_t); /* "static inline" is a compiler hint to reduce code size */
@@ -301,15 +302,32 @@ int main(void) {
   SP=RAMEND;  // This is done by hardware reset
 #endif
 
+  // Adaboot no-wait mod, part 1
+  // I split this up to use the same functionality to prevent
+  // loader app being reflashed unnecessarily
+  // Jonne Valola 2014
+  ch = MCUSR;
+  MCUSR = 0;
+
   // if the C button is currently pressed then try to run the loader app
   DDRC &= ~(1 << PC3);
   PORTC |= (1 << PC3);
-  if (!(PINC & (1<<PC3)))
-	  load_loader();
-
-  // Adaboot no-wait mod
-  ch = MCUSR;
-  MCUSR = 0;
+  /* This is original Gamebuino code
+  if (!(PINC & (1<<PC3))) 
+  	  load_loader(); */ 
+  if (!(PINC & (1<<PC3)) && !(ch & _BV(EXTRF)) ) {
+	  // Use MCUSR to determine whether its a hard or soft boot.
+	  // Only boot to loader if it is a hard boot - JV2014
+	  watchdogConfig(WATCHDOG_OFF); // turn off watchdog so we do not reset
+	  mydelay(25000); // for debouncing
+	   if (!(PINC & (1<<PC3))) {
+		   mydelay(25000); // for debouncing
+				if (!(PINC & (1<<PC3))) load_loader(); // ok, now sure it is wanted
+	  } 
+	  // perform normal boot otherwise
+	  watchdogConfig(WATCHDOG_250MS); 
+  }
+  // Adaboot no-wait mod, part 2
   if (!(ch & _BV(EXTRF))) appStart();
 
 #if LED_START_FLASHES > 0
@@ -475,6 +493,14 @@ int main(void) {
       verifySpace();
     }
     putch(STK_OK);
+  }
+}
+
+void mydelay(unsigned long delay) {
+  // added by Jonne Valola 2014
+  volatile unsigned long i = 0;
+  for (i = 0; i < delay; i++) {
+      __asm__ __volatile__ ("nop");
   }
 }
 
