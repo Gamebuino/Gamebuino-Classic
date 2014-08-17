@@ -1,3 +1,22 @@
+/*
+ * (C) Copyright 2014 Aurélien Rodot. All rights reserved.
+ *
+ * This file is part of the Gamebuino Library (http://gamebuino.com)
+ *
+ * The Gamebuino Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ */
+
 #ifndef FONT3X5_C
 #define FONT3X5_C
 
@@ -8,8 +27,8 @@
 const uint8_t font3x5[] PROGMEM = {
 	3,5, //width and height
     0x3F, 0x21, 0x3F, // 0
-    0x0A, 0x10, 0x0A, // 1
-    0x12, 0x08, 0x12, // 2
+    0x12, 0x08, 0x12, // 1
+    0x0A, 0x10, 0x0A, // 2
     0x0E, 0x1C, 0x0E, // 3
     0x0C, 0x1E, 0x0C, // 4
     0x14, 0x1A, 0x14, // 5

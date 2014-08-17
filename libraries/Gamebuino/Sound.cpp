@@ -1,9 +1,21 @@
-/* 
-* File:   Sound.cpp
-* Author: Rodot
-* 
-* Created on October 2, 2013, 5:11 PM
-*/
+/*
+ * (C) Copyright 2014 Aurélien Rodot. All rights reserved.
+ *
+ * This file is part of the Gamebuino Library (http://gamebuino.com)
+ *
+ * The Gamebuino Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ */
 
 #include "Sound.h"
 #if(NUM_CHANNELS > 0)
@@ -257,6 +269,7 @@ void Sound::command(uint8_t cmd, uint8_t X, int8_t Y, uint8_t i){
 		return;
 	switch(cmd){
 	case CMD_VOLUME: //volume
+	    X = constrain(X, 0, 10);
 		noteVolume[i] = X;
 		break;
 	case CMD_INSTRUMENT: //instrument
@@ -401,13 +414,15 @@ void Sound::updateNote(uint8_t i) {
 		//UPDATE VALUES	
 		//pitch
 		outputPitch[i] = notePitch[i] + stepPitch[i] + patternPitch[i];
-		if(arpeggioStepDuration[i])
-		outputPitch[i] += commandsCounter[i] / arpeggioStepDuration[i] * arpeggioStepSize[i];
+		if(arpeggioStepDuration[i]){
+		  outputPitch[i] += commandsCounter[i] / arpeggioStepDuration[i] * arpeggioStepSize[i];
+		}
 		outputPitch[i] = (outputPitch[i] + NUM_PITCH) % NUM_PITCH; //wrap
 		//volume
 		outputVolume[i] = noteVolume[i];
-		if(volumeSlideStepDuration[i])
-		outputVolume[i] += commandsCounter[i] / volumeSlideStepDuration[i] * volumeSlideStepSize[i];
+		if(volumeSlideStepDuration[i]){
+		  outputVolume[i] += commandsCounter[i] / volumeSlideStepDuration[i] * volumeSlideStepSize[i];
+		}
 		if(tremoloStepDuration[i]){
 			outputVolume[i] += ((commandsCounter[i]/tremoloStepDuration[i]) % 2) * tremoloStepSize[i];
 		}
