@@ -5,7 +5,7 @@ Gamebuino gb;
 ////declare all the variables needed to make a menu
 //number of items in the menu
 #define MENULENGTH 2
-//The differents strings to put in the menu
+//The different strings to put in the menu
 //each string can be used in different menus
 const char strSystemInfo[] PROGMEM = "Stystem info";
 const char strChangeGame[] PROGMEM = "Change game";
