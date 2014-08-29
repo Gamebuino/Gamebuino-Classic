@@ -1,3 +1,11 @@
+#2014-08-29
+* compilation error when NUM_CHANNEL is set to 0 fixed
+* crabator, ufo-race and 3D demo hex files added
+* gb.display.getBuffer() added
+
+#2014-08-07
+* License LGPL 3 added
+
 #2014-08-14
 * hardware folder added for easier installation. You only have to copy and paste it to you sketch folder, you no longer have to manually install the bootloader and edit boards.txt
 * SETTINGS.HEX updated to reflect the change of the last update
