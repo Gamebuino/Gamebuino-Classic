@@ -169,9 +169,11 @@ void Sound::updatePattern(){
 }
 
 void Sound::changeInstrumentSet(const uint16_t* const* instruments, uint8_t channel){
+#if(NUM_CHANNELS > 0)
 	if(channel>=NUM_CHANNELS)
 		return;
 	instrumentSet[channel] = (uint16_t**)instruments;
+#endif
 }
 
 void Sound::updatePattern(uint8_t i){
