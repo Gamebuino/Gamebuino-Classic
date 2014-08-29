@@ -91,6 +91,7 @@ public:
 
     void command(uint8_t c);
     void data(uint8_t c);
+	uint8_t* getBuffer();
 
     void setContrast(uint8_t val);
     void clear(void);
@@ -141,6 +142,10 @@ private:
 	uint8_t *font;
 	uint8_t color, bgcolor;
 };
+
+inline uint8_t* Display::getBuffer(){
+	return _displayBuffer;
+}
 
 inline void Display::drawPixel(int8_t x, int8_t y) {
     if ((x < 0) || (x >= LCDWIDTH) || (y < 0) || (y >= LCDHEIGHT))
