@@ -41,6 +41,9 @@ adjustVolume	KEYWORD1
 getCpuLoad	KEYWORD1
 freeRam	KEYWORD1
 frameDurationMicros	KEYWORD1
+collideRectRect	KEYWORD1
+collidepointRect	KEYWORD1
+collideBitampBitmap	KEYWORD1
 
 ////////////////////////buttons
 pressed	KEYWORD1

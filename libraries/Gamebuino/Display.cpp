@@ -503,6 +503,10 @@ void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap) {
 #endif
 }
 
+boolean Display::getBitmapPixel(const uint8_t* bitmap, uint8_t x, uint8_t y){
+  return pgm_read_byte(bitmap+2 + y * ((pgm_read_byte(bitmap)+7)/8) + x / 8) & (B10000000 >> (x % 8));
+}
+
 void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap,
         uint8_t rotation, uint8_t flip) {
 	if((rotation == NOROT) && (flip == NOFLIP)){

@@ -1,3 +1,9 @@
+#2014-09-05
+* collideBitmapBitmap() added
+* collideRectRect() only returns true when there there it's overlapping (not just when it's only touching)
+* collidePointRect(), collideRectRect() and collideBitmapBitmap() examples added
+* getBitmapPixel() added
+
 #2014-08-29
 * compilation error when NUM_CHANNEL is set to 0 fixed
 * crabator, ufo-race and 3D demo hex files added

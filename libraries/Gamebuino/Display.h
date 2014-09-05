@@ -121,6 +121,7 @@ public:
     
     void drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap);
     void drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap, uint8_t rotation, uint8_t flip);
+	boolean getBitmapPixel(const uint8_t* bitmap, uint8_t x, uint8_t y);
 	
 	void setFont(const uint8_t* f);
 	uint8_t fontWidth, fontHeight;
