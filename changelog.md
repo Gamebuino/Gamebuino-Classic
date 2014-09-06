@@ -1,3 +1,6 @@
+#2014-10-05
+* Displays the battery voltage when turning off because of low battery
+
 #2014-09-05
 * collideBitmapBitmap() added
 * collideRectRect() only returns true when there there it's overlapping (not just when it's only touching)

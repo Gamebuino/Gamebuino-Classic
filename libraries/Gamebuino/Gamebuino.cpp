@@ -456,7 +456,9 @@ void Gamebuino::displayBattery(){
 		backlight.set(0);
 		display.clear();
 		display.fontSize = 1;
-		display.print(F("NO BATTERY\n\nPLEASE\nTURN OFF"));
+		display.print(F("LOW BATTERY\n"));
+		display.print(battery.voltage);
+		display.print(F("mV\n\nPLEASE\nTURN OFF"));
 		display.update();
 		set_sleep_mode(SLEEP_MODE_PWR_DOWN);
 		sleep_enable();
