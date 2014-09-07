@@ -1,4 +1,9 @@
-#2014-10-05
+#2014-09-07
+* INVERT color added
+* collideBitmapBitmap fixes
+* collide examples use the new INVERT color
+
+#2014-09-06
 * Displays the battery voltage when turning off because of low battery
 
 #2014-09-05

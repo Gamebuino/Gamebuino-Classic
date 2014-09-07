@@ -570,17 +570,22 @@ boolean Gamebuino::collideRectRect(int16_t x1, int16_t y1, int16_t w1, int16_t h
 }
 
 boolean Gamebuino::collideBitmapBitmap(int16_t x1, int16_t y1, const uint8_t* b1, int16_t x2, int16_t y2, const uint8_t* b2){
-  uint8_t w1 = pgm_read_byte(b1);
-  uint8_t h1 = pgm_read_byte(b1 + 1);
-  uint8_t w2 = pgm_read_byte(b2);
-  uint8_t h2 = pgm_read_byte(b2 + 1);
+  int16_t w1 = pgm_read_byte(b1);
+  int16_t h1 = pgm_read_byte(b1 + 1);
+  int16_t w2 = pgm_read_byte(b2);
+  int16_t h2 = pgm_read_byte(b2 + 1);
 
-  if(collideRectRect(x1, y1, w1, h1, x2, y2, w1, h2) == false){
+  if(collideRectRect(x1, y1, w1, h1, x2, y2, w2, h2) == false){
     return false;
   }
-  for(uint8_t y = max(0, y2-y1); y < min(h1, max(0, y2+h2-y1)); y++){
-    for(uint8_t x = max(0, x2-x1); x < min(w2, max(0, x2+w2-x1)); x++){
-      if(display.getBitmapPixel(b1, x, y) && display.getBitmapPixel(b2, x1-x2+x, y1-y2+y)){
+  
+  int16_t xmin = (x1>=x2)? 0 : x2-x1;
+  int16_t ymin = (y1>=y2)? 0 : y2-y1;
+  int16_t xmax = (x1+w1>=x2+w2)? x2+w2-x1 : w1;
+  int16_t ymax = (y1+h1>=y2+h2)? y2+h2-y1 : h1;
+  for(uint8_t y = ymin; y < ymax; y++){
+    for(uint8_t x = xmin; x < xmax; x++){
+      if(display.getBitmapPixel(b1, x, y) && display.getBitmapPixel(b2, x1+x-x2, y1+y-y2)){
         return true;
       }
     }

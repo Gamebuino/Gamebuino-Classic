@@ -43,17 +43,19 @@ void loop(){
       gb.display.print(F("  Colliding"));
     }
 
+    //draw oponent
+    gb.display.fillRect(oponent_x, oponent_y, oponent_w, oponent_h);
+    
     //draw player
+    gb.display.setColor(INVERT);
     gb.display.drawPixel(player_x, player_y);
+    gb.display.setColor(BLACK);
     
     //draw a few lines to help seeing the pixel:
     gb.display.drawLine(0, player_y, 3, player_y);
     gb.display.drawLine(player_x, 0, player_x, 3);
     gb.display.drawLine(player_x,LCDHEIGHT-3, player_x, LCDHEIGHT);
     gb.display.drawLine(LCDWIDTH - 3, player_y, LCDWIDTH, player_y);
-
-    //draw oponent
-    gb.display. drawRect(oponent_x, oponent_y, oponent_w, oponent_h);
   }
 }
 

@@ -49,8 +49,10 @@ void loop(){
     }
 
     //draw rectangles
+    gb.display.setColor(INVERT);
     gb.display.fillRect(player_x, player_y, player_w, player_h);
-    gb.display. drawRect(oponent_x, oponent_y, oponent_w, oponent_h);
+    gb.display.fillRect(oponent_x, oponent_y, oponent_w, oponent_h);
+    gb.display.setColor(BLACK);
   }
 }
 
