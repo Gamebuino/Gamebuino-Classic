@@ -1,6 +1,6 @@
 #include <SPI.h>
 #include <Gamebuino.h>
-Gamebuino gb = Gamebuino();
+Gamebuino gb;
 
 #include <Wire.h>
 

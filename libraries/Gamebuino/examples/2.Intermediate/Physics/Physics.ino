@@ -1,6 +1,6 @@
 #include <SPI.h>
 #include <Gamebuino.h>
-Gamebuino gb = Gamebuino();
+Gamebuino gb;
 
 //define de Box structure for obstacles
 typedef struct {

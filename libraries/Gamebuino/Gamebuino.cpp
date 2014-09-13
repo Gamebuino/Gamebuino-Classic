@@ -1,9 +1,21 @@
-/* 
-* File:   Gamebuino.cpp
-* Author: Rodot
-* 
-* Created on October 1, 2013, 5:39 PM
-*/
+/*
+ * (C) Copyright 2014 Aurélien Rodot. All rights reserved.
+ *
+ * This file is part of the Gamebuino Library (http://gamebuino.com)
+ *
+ * The Gamebuino Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ */
 
 #include "Gamebuino.h"
 const uint16_t startupSound[] PROGMEM = {0x0005,0x3089,0x208,0x238,0x7849,0x1468,0x0000};
@@ -191,6 +203,7 @@ boolean Gamebuino::update() {
 void Gamebuino::setFrameRate(uint8_t fps) {
 	timePerFrame = 1000 / fps;
 	sound.prescaler = fps / 20;
+	sound.prescaler = max(1, sound.prescaler);
 }
 
 void Gamebuino::pickRandomSeed(){
@@ -443,7 +456,9 @@ void Gamebuino::displayBattery(){
 		backlight.set(0);
 		display.clear();
 		display.fontSize = 1;
-		display.print(F("NO BATTERY\n\nPLEASE\nTURN OFF"));
+		display.print(F("LOW BATTERY\n"));
+		display.print(battery.voltage);
+		display.print(F("mV\n\nPLEASE\nTURN OFF"));
 		display.update();
 		set_sleep_mode(SLEEP_MODE_PWR_DOWN);
 		sleep_enable();
@@ -548,8 +563,32 @@ boolean Gamebuino::collidePointRect(int16_t x1, int16_t y1 ,int16_t x2 ,int16_t 
 }
 
 boolean Gamebuino::collideRectRect(int16_t x1, int16_t y1, int16_t w1, int16_t h1 ,int16_t x2 ,int16_t y2, int16_t w2, int16_t h2){
-  return !( x2     >  x1+w1  || 
-            x2+w2  <  x1     || 
-            y2     >  y1+h1  ||
-            y2+h2  <  y1     );
+  return !( x2     >=  x1+w1  || 
+            x2+w2  <=  x1     || 
+            y2     >=  y1+h1  ||
+            y2+h2  <=  y1     );
+}
+
+boolean Gamebuino::collideBitmapBitmap(int16_t x1, int16_t y1, const uint8_t* b1, int16_t x2, int16_t y2, const uint8_t* b2){
+  int16_t w1 = pgm_read_byte(b1);
+  int16_t h1 = pgm_read_byte(b1 + 1);
+  int16_t w2 = pgm_read_byte(b2);
+  int16_t h2 = pgm_read_byte(b2 + 1);
+
+  if(collideRectRect(x1, y1, w1, h1, x2, y2, w2, h2) == false){
+    return false;
+  }
+  
+  int16_t xmin = (x1>=x2)? 0 : x2-x1;
+  int16_t ymin = (y1>=y2)? 0 : y2-y1;
+  int16_t xmax = (x1+w1>=x2+w2)? x2+w2-x1 : w1;
+  int16_t ymax = (y1+h1>=y2+h2)? y2+h2-y1 : h1;
+  for(uint8_t y = ymin; y < ymax; y++){
+    for(uint8_t x = xmin; x < xmax; x++){
+      if(display.getBitmapPixel(b1, x, y) && display.getBitmapPixel(b2, x1+x-x2, y1+y-y2)){
+        return true;
+      }
+    }
+  }
+  return false;
 }

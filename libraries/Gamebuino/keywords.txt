@@ -1,3 +1,22 @@
+/*
+ * (C) Copyright 2014 Aurélien Rodot. All rights reserved.
+ *
+ * This file is part of the Gamebuino Library (http://gamebuino.com)
+ *
+ * The Gamebuino Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ */
+
 Gamebuino 	KEYWORD3
 gb 	KEYWORD3
 display	KEYWORD1
@@ -22,6 +41,9 @@ adjustVolume	KEYWORD1
 getCpuLoad	KEYWORD1
 freeRam	KEYWORD1
 frameDurationMicros	KEYWORD1
+collideRectRect	KEYWORD1
+collidepointRect	KEYWORD1
+collideBitampBitmap	KEYWORD1
 
 ////////////////////////buttons
 pressed	KEYWORD1
@@ -81,6 +103,7 @@ ambientLightMin	KEYWORD1
 ambientLightMax	KEYWORD1
 
 ////////////////////////Display
+getBuffer	KEYWORD1
 setContrast	KEYWORD1
 clear	KEYWORD1
 update	KEYWORD1
@@ -113,8 +136,9 @@ fontWidth	KEYWORD1
 fontHeight	KEYWORD1
 setFont	KEYWORD1
 
-LCDWIDTH 	LITERAL1
-LCDHEIGHT 	LITERAL1
+WHITE 	LITERAL1
+BLACK 	LITERAL1
+INVERT 	LITERAL1
 NOROT 	LITERAL1
 ROTCCW 	LITERAL1
 ROT180 	LITERAL1

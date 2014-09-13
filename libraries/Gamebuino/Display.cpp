@@ -1,8 +1,20 @@
-/* 
- * File:   Display.cpp
- * Author: Rodot
- * 
- * Created on October 7, 2013, 12:05 PM
+/*
+ * (C) Copyright 2014 Aurélien Rodot. All rights reserved.
+ *
+ * This file is part of the Gamebuino Library (http://gamebuino.com)
+ *
+ * The Gamebuino Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
 #include "Display.h"
@@ -162,40 +174,6 @@ void Display::setColor(int8_t c){
 void Display::setColor(int8_t c, int8_t bg){
 	color = c;
 	bgcolor = bg;
-}
-
-void Display::drawPixel(int8_t x, int8_t y) {
-    if ((x < 0) || (x >= LCDWIDTH) || (y < 0) || (y >= LCDHEIGHT))
-        return;
-
-#if DISPLAY_ROT == NOROT
-    if (color)
-        _displayBuffer[x + (y / 8) * LCDWIDTH_NOROT] |= _BV(y % 8);
-    else
-        _displayBuffer[x + (y / 8) * LCDWIDTH_NOROT] &= ~_BV(y % 8);
-#elif DISPLAY_ROT == ROTCCW
-	if (color)
-        _displayBuffer[LCDHEIGHT - y - 1 + (x / 8) * LCDWIDTH_NOROT] |= _BV(x % 8);
-    else
-        _displayBuffer[LCDHEIGHT - y - 1 + (x / 8) * LCDWIDTH_NOROT] &= ~_BV(x % 8);
-#elif DISPLAY_ROT == ROT180
-	if (color)
-        _displayBuffer[LCDWIDTH - x - 1 + ((LCDHEIGHT - y - 1) / 8) * LCDWIDTH_NOROT] |= _BV((LCDHEIGHT - y - 1) % 8);
-    else
-        _displayBuffer[LCDWIDTH - x - 1 + ((LCDHEIGHT - y - 1) / 8) * LCDWIDTH_NOROT] &= ~_BV((LCDHEIGHT - y - 1) % 8);
-#elif DISPLAY_ROT == ROTCW
-	if (color)
-        _displayBuffer[y + ((LCDWIDTH - x - 1) / 8) * LCDWIDTH_NOROT] |= _BV((LCDWIDTH - x -1) % 8);
-    else
-        _displayBuffer[y + ((LCDWIDTH - x - 1) / 8) * LCDWIDTH_NOROT] &= ~_BV((LCDWIDTH - x - 1) % 8);
-#endif
-}
-
-uint8_t Display::getPixel(int8_t x, int8_t y) {
-    if ((x < 0) || (x >= LCDWIDTH) || (y < 0) || (y >= LCDHEIGHT))
-        return 0;
-
-    return (_displayBuffer[x + (y / 8) * LCDWIDTH] >> (y % 8)) & 0x1;
 }
 
 void Display::drawFastVLine(int8_t x, int8_t y, int8_t h) {
@@ -523,6 +501,10 @@ void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap) {
 #else
 	drawRect(x, y, w, h);
 #endif
+}
+
+boolean Display::getBitmapPixel(const uint8_t* bitmap, uint8_t x, uint8_t y){
+  return pgm_read_byte(bitmap+2 + y * ((pgm_read_byte(bitmap)+7)/8) + x / 8) & (B10000000 >> (x % 8));
 }
 
 void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap,
