@@ -4,6 +4,9 @@ The [Getting Started](http://gamebuino.com/wiki/index.php?title=Getting_started)
 
 ![](http://gamebuino.com/wp-content/uploads/2013/11/gamebuino_light.gif)
 
+Gamebuino Library License
+-------------------------
+
 (C) Copyright 2014 Aurélien Rodot. All rights reserved.
 
 The Gamebuino Library is free software: you can redistribute it and/or modify
@@ -18,3 +21,8 @@ GNU Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
+
+Included Libraries License
+--------------------------
+
+Some libraries other than the Gamebuino Library are included in the sub-folder Libraries for the sake of convenience. You will find the corresponding licence in their respective folders.
