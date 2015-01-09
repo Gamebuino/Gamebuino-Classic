@@ -1,53 +1,52 @@
 /*
-* (C) Copyright 2014 Aurélien Rodot. All rights reserved.
-*
-* This file is part of the Gamebuino Library (http://gamebuino.com)
-*
-* The Gamebuino Library is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser General Public License for more details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>
-*
-
-Parts of the graphical library come from the great library provided by Adafruit for their Nokia 5110 module which can be found [here](https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library).
-Here is their license :
-
-
-This is the core graphics library for all our displays, providing a common
-set of graphics primitives (points, lines, circles, etc.). It needs to be
-paired with a hardware-specific library for each display device we carry
-(to handle the lower-level functions).
-Adafruit invests time and resources providing this open source code, please
-support Adafruit & open-source hardware by purchasing products from Adafruit!
-Copyright (c) 2013 Adafruit Industries. All rights reserved.
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-- Redistributions of source code must retain the above copyright notice,
-this list of conditions and the following disclaimer.
-- Redistributions in binary form must reproduce the above copyright notice,
-this list of conditions and the following disclaimer in the documentation
-and/or other materials provided with the distribution.
-
-This is a library for our Monochrome Nokia 5110 LCD Displays
-Pick one up today in the adafruit shop!
-------> http://www.adafruit.com/products/338
-These displays use SPI to communicate, 4 or 5 pins are required to
-interface
-Adafruit invests time and resources providing this open source code,
-please support Adafruit and open-source hardware by purchasing
-products from Adafruit!
-Written by Limor Fried/Ladyada for Adafruit Industries.
-BSD license, check license.txt for more information
-All text above, and the splash screen below must be included in any redistribution
-*/
+ * (C) Copyright 2014 Aurélien Rodot. All rights reserved.
+ *
+ * This file is part of the Gamebuino Library (http://gamebuino.com)
+ *
+ * The Gamebuino Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *  
+ * Parts of the graphical library come from the great library provided by Adafruit
+ * for their Nokia 5110 module which can be found here :
+ * https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library
+ * Here is their license :
+ * 
+ * This is the core graphics library for all our displays, providing a common
+ * set of graphics primitives (points, lines, circles, etc.). It needs to be
+ * paired with a hardware-specific library for each display device we carry
+ * (to handle the lower-level functions).
+ * Adafruit invests time and resources providing this open source code, please
+ * support Adafruit & open-source hardware by purchasing products from Adafruit!
+ * Copyright (c) 2013 Adafruit Industries. All rights reserved.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * - Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * 
+ * This is a library for our Monochrome Nokia 5110 LCD Displays
+ * Pick one up today in the Adafruit shop!
+ * ------> http://www.adafruit.com/products/338
+ * These displays use SPI to communicate, 4 or 5 pins are required to
+ * interface
+ * Adafruit invests time and resources providing this open source code,
+ * please support Adafruit and open-source hardware by purchasing
+ * products from Adafruit!
+ * Written by Limor Fried/Ladyada for Adafruit Industries.
+ * BSD license, check license.txt for more information
+ */
 
 #ifndef DISPLAY_H
 #define	DISPLAY_H
@@ -82,16 +81,6 @@ All text above, and the splash screen below must be included in any redistributi
 #endif
 #define LCDHEIGHT_NOROT 48
 #define LCDWIDTH_NOROT 84
-
-/*#if TINY_FONT == 0
-	#include "font5x7.c"
-	#define FONTWIDTH 6
-	#define FONTHEIGHT 8
-#else
-	#include "font3x5.c"
-	#define FONTWIDTH 4
-	#define FONTHEIGHT 6
-#endif*/
 
 #define swap(a, b) { int8_t t = a; a = b; b = t; }
 

@@ -1,3 +1,8 @@
+#2014-01-09
+* Circle collision example added
+* Adafruit license added to the display part of the library
+* Display buffer size increased to 512B so it can be used as a buffer for the SD card (or whatever)
+
 #2014-09-07
 * INVERT color added
 * collideBitmapBitmap fixes
