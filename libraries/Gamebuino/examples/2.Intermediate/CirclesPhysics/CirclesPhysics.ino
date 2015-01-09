@@ -3,8 +3,7 @@
 Gamebuino gb;
 
 typedef struct{
-  float x, y, vx, vy;
-  int r;
+  float x, y, r, vx, vy;
 } Circle;
 
 void setup()
@@ -20,8 +19,8 @@ void loop()
     if(gb.buttons.pressed(BTN_C)){
       initGame();
     }
-    drawCircles();
     updateCircles();
+    drawCircles();
     
   }
 }
