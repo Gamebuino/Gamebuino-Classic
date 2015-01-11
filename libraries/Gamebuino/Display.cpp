@@ -517,14 +517,16 @@ void Display::fillTriangle(int8_t x0, int8_t y0,
 }
 
 void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap) {
-	int8_t w = pgm_read_byte(bitmap);
-	int8_t h = pgm_read_byte(bitmap + 1);
+	uint8_t w = pgm_read_byte(bitmap);
+	uint8_t h = pgm_read_byte(bitmap + 1);
 	bitmap = bitmap + 2; //add an offset to the pointer to start after the width and height
 #if (ENABLE_BITMAPS > 0)
-    int8_t i, j, byteWidth = (w + 7) / 8;
-    for (j = 0; j < h; j++) {
-        for (i = 0; i < w; i++) {
-            if (pgm_read_byte(bitmap + j * byteWidth + i / 8) & (B10000000 >> (i % 8))) {
+    int8_t i, j, byteNum, bitNum, byteWidth = (w + 7) >> 3;
+    for (i = 0; i < w; i++) {
+        byteNum = i / 8;
+        bitNum = i % 8;
+        for (j = 0; j < h; j++) {
+            if (pgm_read_byte(bitmap + j * byteWidth + byteNum) & (B10000000 >> bitNum)) {
                 drawPixel(x + i, y + j);
             }
         }
@@ -535,7 +537,7 @@ void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap) {
 }
 
 boolean Display::getBitmapPixel(const uint8_t* bitmap, uint8_t x, uint8_t y){
-  return pgm_read_byte(bitmap+2 + y * ((pgm_read_byte(bitmap)+7)/8) + x / 8) & (B10000000 >> (x % 8));
+  return pgm_read_byte(bitmap+2 + y * ((pgm_read_byte(bitmap)+7)/8) + (x >> 3)) & (B10000000 >> (x % 8));
 }
 
 void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap,
@@ -544,19 +546,21 @@ void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap,
 		drawBitmap(x,y,bitmap); //use the faster algorithm
 		return;
 	}
-	int8_t w = pgm_read_byte(bitmap);
-	int8_t h = pgm_read_byte(bitmap + 1);
+	uint8_t w = pgm_read_byte(bitmap);
+	uint8_t h = pgm_read_byte(bitmap + 1);
 	bitmap = bitmap + 2; //add an offset to the pointer to start after the width and height
 #if (ENABLE_BITMAPS > 0)
     int8_t i, j, //coordinates in the raw bitmap
             k, l, //coordinates in the rotated/flipped bitmap
-            byteWidth = (w + 7) / 8;
+            byteNum, bitNum, byteWidth = (w + 7) >> 3;
 
     rotation %= 4;
 
-    for (j = 0; j < h; j++) {
-        for (i = 0; i < w; i++) {
-            if (pgm_read_byte(bitmap + j * byteWidth + i / 8) & (B10000000 >> (i % 8))) {
+    for (i = 0; i < w; i++) {
+        byteNum = i / 8;
+        bitNum = i % 8;
+        for (j = 0; j < h; j++) {
+            if (pgm_read_byte(bitmap + j * byteWidth + byteNum) & (B10000000 >> bitNum)) {
                 switch (rotation) {
                     case NOROT: //no rotation
                         k = i;
