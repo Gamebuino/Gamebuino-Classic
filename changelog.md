@@ -1,4 +1,8 @@
-#2014-01-09
+#2015-01-11
+* drawBitmap optimization by Jamish
+* Minor fixes
+
+#2015-01-09
 * Circle collision example added
 * Adafruit license added to the display part of the library
 * Display buffer size increased to 512B so it can be used as a buffer for the SD card (or whatever)
