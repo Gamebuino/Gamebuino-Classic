@@ -212,47 +212,18 @@ void Display::setColor(int8_t c, int8_t bg){
 }
 
 void Display::drawFastVLine(int8_t x, int8_t y, int8_t h) {
-    // stupidest/slowest version :
-    drawLine(x, y, x, y + h - 1);
-    /*if ((x < 0) || (x >= LCDWIDTH) || ((y + h) < 0) || (y >= LCDHEIGHT))
-        return;
-    if(y < 0){
-        h += y;
-        y = 0;
-    }
-    h = (y + h > LCDHEIGHT) ? LCDHEIGHT - y : h;
-    
-    for (uint8_t y2 = y; y2 < y + h; y2++) {
-        if (color)
-            _displayBuffer[x + (y2 / 8) * LCDWIDTH] |= _BV(y2 % 8);
-        else
-            _displayBuffer[x + (y2 / 8) * LCDWIDTH] &= ~_BV(y2 % 8);
-    }*/
+	for(int8_t i=0; i<h; i++){
+		drawPixel(x,y+i);
+	}
 }
 
 void Display::drawFastHLine(int8_t x, int8_t y, int8_t w) {
-    // stupidest/slowest version :
-    drawLine(x, y, x + w - 1, y);
-    /*if (((x+w) < 0) || (x >= LCDWIDTH) || (y < 0) || (y >= LCDHEIGHT))
-        return;
-    if(x < 0){
-        w += x;
-        x = 0;
-    }
-    w = (x + w > LCDWIDTH) ? LCDWIDTH - x : w;
-
-    for (uint8_t x2 = x; x2 < x + w; x2++) {
-        if (color)
-            _displayBuffer[x2 + (y / 8) * LCDWIDTH] |= _BV(y % 8);
-        else
-            _displayBuffer[x2 + (y / 8) * LCDWIDTH] &= ~_BV(y % 8);
-    }*/
-    //should be faster but behaves weirdly
-    //memset(&_displayBuffer[x + (y / 8) * LCDWIDTH], color, w);
+    for(int8_t i=0; i<w; i++){
+		drawPixel(x+i,y);
+	}
 }
 
 void Display::drawRect(int8_t x, int8_t y, int8_t w, int8_t h) {
-
     drawFastHLine(x, y, w);
     drawFastHLine(x, y + h - 1, w);
     drawFastVLine(x, y, h);
@@ -261,8 +232,8 @@ void Display::drawRect(int8_t x, int8_t y, int8_t w, int8_t h) {
 
 void Display::fillRect(int8_t x, int8_t y, int8_t w, int8_t h) {
     // stupidest version - update in subclasses if desired!
-    for (int8_t i = x; i < x + w; i++) {
-        drawFastVLine(i, y, h);
+    for (int8_t i = y; i < y + h; i++) {
+        drawFastHLine(x, i, w);
     }
 }
 
