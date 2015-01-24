@@ -130,19 +130,21 @@ void displaySettings(){
   while(1){
     switch(gb.menu(displayMenu, DISPLAYMENU_LENGTH)){
     case 0: //contrast
-      gb.setFrameRate(41);
+      gb.setFrameRate(42);
       while(1){
         if(gb.update()){
-          if(changeValue(contrast, 30, 80, F("Adjust constrast to\nsee \"GRAY\" correctly\n")))
+          if(changeValue(contrast, 30, 80, F("Adjust constrasts")))
             break;
           gb.display.cursorX = 0;
           gb.display.cursorY = 20;
-          gb.display.println("BLACK");
-          if(gb.frameCount%2)
-            gb.display.println("GRAY");
-          gb.display.drawRect(gb.frameCount%LCDWIDTH,16,6,6);
-          gb.display.drawRect((gb.frameCount/2)%LCDWIDTH,16+7,6,6);
-          gb.display.drawRect((gb.frameCount/4)%LCDWIDTH,16+2*7,6,6);
+          gb.display.fillRect((gb.frameCount*2)%LCDWIDTH,8,3,3);
+          gb.display.fillRect((gb.frameCount)%LCDWIDTH,8+4,3,3);
+          gb.display.fillRect((gb.frameCount/4)%LCDWIDTH,8+2*4,3,3);
+          gb.display.fillRect(0,24,16,16);
+          gb.display.setColor(GRAY);
+          gb.display.fillRect(17,24,16,16);
+          gb.display.setColor(BLACK);
+          gb.display.drawRect(34,24,16,16);
           gb.display.setContrast(contrast);
         }
       }

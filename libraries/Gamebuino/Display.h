@@ -180,6 +180,12 @@ inline void Display::drawPixel(int8_t x, int8_t y) {
 	byte c = color;
 	if(color == INVERT){
 	 c = !getPixel(x, y);
+	} else if(color == GRAY){
+		if((frameCount & 0x01) ^ ((x & 0x01) ^ (y & 0x01))){ //alternative checkers pattern
+			c = WHITE;
+		} else {
+			c= BLACK;
+		}
 	}
 	
 	if(c == WHITE){ //white
@@ -193,28 +199,6 @@ inline void Display::drawPixel(int8_t x, int8_t y) {
 		_displayBuffer[y + ((LCDWIDTH - x - 1) / 8) * LCDWIDTH_NOROT] &= ~_BV((LCDWIDTH - x - 1) % 8);
 #endif
 		return;
-	} else if(c == GRAY){
-		if((frameCount & 0x01) ^ ((x & 0x01) ^ (y & 0x01))){ //alternative checkers pattern
-#if DISPLAY_ROT == NOROT
-			_displayBuffer[x + (y / 8) * LCDWIDTH_NOROT] &= ~_BV(y % 8);
-#elif DISPLAY_ROT == ROTCCW
-			_displayBuffer[LCDHEIGHT - y - 1 + (x / 8) * LCDWIDTH_NOROT] &= ~_BV(x % 8);
-#elif DISPLAY_ROT == ROT180
-			_displayBuffer[LCDWIDTH - x - 1 + ((LCDHEIGHT - y - 1) / 8) * LCDWIDTH_NOROT] &= ~_BV((LCDHEIGHT - y - 1) % 8);
-#elif DISPLAY_ROT == ROTCW
-			_displayBuffer[y + ((LCDWIDTH - x - 1) / 8) * LCDWIDTH_NOROT] &= ~_BV((LCDWIDTH - x - 1) % 8);
-#endif
-		} else {
-#if DISPLAY_ROT == NOROT
-			_displayBuffer[x + (y / 8) * LCDWIDTH_NOROT] |= _BV(y % 8);
-#elif DISPLAY_ROT == ROTCCW
-			_displayBuffer[LCDHEIGHT - y - 1 + (x / 8) * LCDWIDTH_NOROT] |= _BV(x % 8);
-#elif DISPLAY_ROT == ROT180
-			_displayBuffer[LCDWIDTH - x - 1 + ((LCDHEIGHT - y - 1) / 8) * LCDWIDTH_NOROT] |= _BV((LCDHEIGHT - y - 1) % 8);
-#elif DISPLAY_ROT == ROTCW
-			_displayBuffer[y + ((LCDWIDTH - x - 1) / 8) * LCDWIDTH_NOROT] |= _BV((LCDWIDTH - x -1) % 8);
-#endif
-		}
 	}
 	else { //black
 #if DISPLAY_ROT == NOROT
