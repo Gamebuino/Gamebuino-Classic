@@ -1,3 +1,8 @@
+#2015-01-24
+* minor graphic optimizations
+* GRAY color added, using alternating checker pattern suggested by Drakker (see http://gamebuino.com/forum/viewtopic.php?f=12&t=2058)
+* SETTINGS.HEX updated for better contrast adjustment
+
 #2015-01-11
 * drawBitmap optimization by Jamish
 * Minor fixes

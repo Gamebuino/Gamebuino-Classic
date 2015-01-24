@@ -174,6 +174,7 @@ void Display::fillScreen(uint8_t color) {
 }
 
 void Display::update(void) {
+	frameCount ++;
     uint8_t col, maxcol, p;
 
     for (p = 0; p < 6; p++) {
@@ -492,10 +493,10 @@ void Display::fillTriangle(int8_t x0, int8_t y0,
 }
 
 void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap) {
+#if (ENABLE_BITMAPS > 0)
 	uint8_t w = pgm_read_byte(bitmap);
 	uint8_t h = pgm_read_byte(bitmap + 1);
 	bitmap = bitmap + 2; //add an offset to the pointer to start after the width and height
-#if (ENABLE_BITMAPS > 0)
     int8_t i, j, byteNum, bitNum, byteWidth = (w + 7) >> 3;
     for (i = 0; i < w; i++) {
         byteNum = i / 8;

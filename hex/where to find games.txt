@@ -1,0 +1,4 @@
+Please keep LOADER.HEX and SETTINGS.HEX of your gamebuino updated.
+To see how to put .HEX files on your micro SD card, visit http://gamebuino.com/wiki/index.php?title=Getting_started
+Gallery of games created by the community : http://gamebuino.com/wiki/index.php?title=Games
+Compilation of up to date games by the community : https://github.com/Rodot/Gamebuino-Games-Compilation
