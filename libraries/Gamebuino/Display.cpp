@@ -493,22 +493,128 @@ void Display::fillTriangle(int8_t x0, int8_t y0,
 }
 
 void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap) {
+   int8_t w = pgm_read_byte(bitmap);
+   int8_t h = pgm_read_byte(bitmap + 1);
+   bitmap = bitmap + 2; //add an offset to the pointer to start after the width and height
 #if (ENABLE_BITMAPS > 0)
-	uint8_t w = pgm_read_byte(bitmap);
-	uint8_t h = pgm_read_byte(bitmap + 1);
-	bitmap = bitmap + 2; //add an offset to the pointer to start after the width and height
-    int8_t i, j, byteNum, bitNum, byteWidth = (w + 7) >> 3;
-    for (i = 0; i < w; i++) {
-        byteNum = i / 8;
-        bitNum = i % 8;
-        for (j = 0; j < h; j++) {
-            if (pgm_read_byte(bitmap + j * byteWidth + byteNum) & (B10000000 >> bitNum)) {
+/*   original code
+    int8_t i, j, byteWidth = (w + 7) / 8;
+    for (j = 0; j < h; j++) {
+        for (i = 0; i < w; i++) {
+            if (pgm_read_byte(bitmap + j * byteWidth + i / 8) & (B10000000 >> (i % 8))) {
                 drawPixel(x + i, y + j);
             }
         }
     }
+  */
+  uint8_t * buffer = getBuffer();
+  const uint8_t col = color;
+  const uint8_t bw = (w+7) / 8;
+  
+  // clip
+  if (x >= LCDWIDTH)
+    return;
+  if (x + w <= 0)
+    return;
+  if (y >= LCDHEIGHT)
+    return;
+  if (y + h <= 0)
+    return;
+  if (y < 0)
+    h += y, bitmap -= bw * y, y = 0;
+  if (y + h > LCDHEIGHT)
+    h = LCDHEIGHT - y;  
+  uint8_t x1 = max(0, x);
+  uint8_t x2 = min(LCDWIDTH, x + w);
+  
+#ifdef ENABLE_GRAYSCALE
+   uint8_t g = y ^ frameCount;
+#endif  
+
+  // draw
+  uint8_t first_bitmap_mask = 0x80 >> ((x1 - x) & 7);
+  const uint8_t * bitmap_line = bitmap + (x1 - x) / 8;
+  uint8_t screen_mask = 0x01 << (y % 8);
+  uint8_t * screen_row = buffer + (y / 8) * LCDWIDTH + x1;  
+  for (uint8_t dy=0; dy<h; dy++, bitmap_line+=bw)
+  {
+    const uint8_t * bitmap_ptr = bitmap_line;    
+    uint8_t bitmap_mask = first_bitmap_mask;    
+    uint8_t pixels = pgm_read_byte(bitmap_ptr);
+    uint8_t * dst = screen_row;
+    
+    if (col == BLACK)
+      for (uint8_t sx=x1; sx<x2; sx++, dst++)
+      {
+        if (pixels & bitmap_mask)
+          *dst |= screen_mask;
+        bitmap_mask >>= 1;
+        if (!bitmap_mask)
+        {
+          bitmap_mask = 0x80;
+          pixels = pgm_read_byte(++bitmap_ptr);
+        }
+      }
+    else if (col == WHITE)
+    {
+      uint8_t inv_screen_mask = ~screen_mask;
+      for (uint8_t sx=x1; sx<x2; sx++, dst++)
+      {
+        if (pixels & bitmap_mask)
+          *dst &= inv_screen_mask;
+        bitmap_mask >>= 1;
+        if (!bitmap_mask)
+        {
+          bitmap_mask = 0x80;
+          pixels = pgm_read_byte(++bitmap_ptr);
+        }
+      }
+    }
+#ifdef ENABLE_GRAYSCALE
+    else if (col == GRAY)
+    {
+      uint8_t inv_screen_mask = ~screen_mask;
+      for (uint8_t sx=x1; sx<x2; sx++, dst++)
+      {
+        if (pixels & bitmap_mask)
+        {
+         if ((sx^g) & 1)
+            *dst |= screen_mask;
+          else
+           *dst &= inv_screen_mask;
+        }
+        bitmap_mask >>= 1;
+        if (!bitmap_mask)
+        {
+          bitmap_mask = 0x80;
+          pixels = pgm_read_byte(++bitmap_ptr);
+        }
+      }
+       g ^= 1;
+    }
+#endif
+   else // invert
+      for (uint8_t sx=x1; sx<x2; sx++, dst++)
+      {
+        if (pixels & bitmap_mask)
+          *dst ^= screen_mask;
+        bitmap_mask >>= 1;
+        if (!bitmap_mask)
+        {
+          bitmap_mask = 0x80;
+          pixels = pgm_read_byte(++bitmap_ptr);
+        }
+      }
+    
+    screen_mask <<= 1;
+    if (!screen_mask)
+    {
+      screen_mask = 1;
+      screen_row += LCDWIDTH;
+    }
+  }
 #else
-	drawRect(x, y, w, h);
+   drawRect(x, y, w, h);
 #endif
 }
 
@@ -558,7 +664,7 @@ void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap,
                 if (flip) {
                     flip %= 4;
                     if (flip & B00000001) { //horizontal flip
-                        k = w - k;
+                        k = w - k - 1;
                     }
                     if (flip & B00000010) { //vertical flip
                         l = h - l;
