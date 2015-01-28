@@ -181,7 +181,7 @@ inline void Display::drawPixel(int8_t x, int8_t y) {
 	if(color == INVERT){
 	 c = !getPixel(x, y);
 	} else if(color == GRAY){
-		if((frameCount & 0x01) ^ ((x & 0x01) ^ (y & 0x01))){ //alternative checkers pattern
+		if(((frameCount & 0x01) ^ ((x & 0x01) ^ (y & 0x01)) == 0)){ //alternative checkers pattern
 			c = WHITE;
 		} else {
 			c= BLACK;
