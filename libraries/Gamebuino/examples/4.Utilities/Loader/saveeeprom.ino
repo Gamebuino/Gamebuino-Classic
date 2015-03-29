@@ -28,7 +28,8 @@ void saveeeprom(){
 
   strcpy(completeName, prevGameName);
   strcat(completeName, ".SAV");
-  if(file.exists(completeName)){
+  //to ask confirmation before overwriting existing saves
+  /*if(file.exists(completeName)){
     gb.display.println(F("Overwrite existing?"));
     gb.display.println(F("\25:yes \26:no"));
     gb.display.update();
@@ -41,6 +42,9 @@ void saveeeprom(){
       if(gb.buttons.pressed(BTN_B)) return;
       delay(50);
     }
+  }*/
+  if(file.exists(completeName)){
+    file.delFile(completeName);
   }
   file.create(completeName);
   res=file.openFile(completeName, FILEMODE_TEXT_WRITE);

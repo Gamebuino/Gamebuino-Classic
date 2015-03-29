@@ -5,6 +5,9 @@ Gamebuino gb;
 
 extern const byte logo[] PROGMEM;
 
+extern const byte font3x5[]; //a small but efficient font (default)
+extern const byte font5x7[]; //a large, comfy font
+
 byte buffer[128];
 unsigned token;
 char currentGame[9];
@@ -19,17 +22,21 @@ int volumeDefault;
 int startMenuTimer;
 int batteryCritic, batteryLow, batteryMed, batteryFull;
 
+const char strWizard[] PROGMEM = "Checkup Wizard";
 const char strChangeSettings[] PROGMEM =  "Change settings";
 const char strSeeAllSettings[] PROGMEM =  "See all settings";
 const char strDefaultSettings[] PROGMEM = "Default settings";
-const char strEraseSettings[] PROGMEM =   "Erase settings";
+const char strEraseSettings[] PROGMEM =   "Erase settings page";
+const char strSaveSettings[] PROGMEM =   "Save changes";
 
-#define MAINMENU_LENGTH 4
+#define MAINMENU_LENGTH 6
 const char* const mainMenu[MAINMENU_LENGTH] PROGMEM = {
+  strWizard,
   strChangeSettings,
   strSeeAllSettings,
   strDefaultSettings,
   strEraseSettings,
+  strSaveSettings
 };
 
 void setup(){
@@ -37,6 +44,7 @@ void setup(){
   gb.titleScreen(logo);
   if(!gb.settingsAvailable()){
     restoreSettings();
+    Wizard();
     saveSettings();
   }
   readSettings();
@@ -47,21 +55,25 @@ void loop(){
   case -1:
     gb.titleScreen(logo);
     break;
-  case 0: //change settings
-    changeSettings();
+  case 0:
+    Wizard();
+    saveSettings();
     break;
-  case 1: //display settings
+  case 1: //change settings
+    changeSettings();
+    saveSettings();
+    break;
+  case 2: //display settings
     seeAllSettings();
     break;
-  case 2: //default settings
+  case 3: //default settings
     restoreSettings();
     break;
-  case 3: //erase settings
+  case 4: //erase settings
     eraseSettings();
     break;
-  case 4: //save and exit
+  case 5: //save and exit
     saveSettings();
-    gb.changeGame();
     break;
   default:
     break;
@@ -124,23 +136,16 @@ void saveSettings(){
   *(unsigned*)(&buffer[OFFSET_BATTERY_MED]) = batteryMed;
   *(unsigned*)(&buffer[OFFSET_BATTERY_FULL]) = batteryFull;
 
-  write_flash_page (SETTINGS_PAGE, buffer);  
-  
-  gb.display.clear();
-  gb.display.update();
-  gb.display.persistence = true;
-  gb.display.println(F("Settings saved"));
-  pressAtoContinue();
+  write_flash_page (SETTINGS_PAGE, buffer);
+
+  gb.popup(F("Settings saved"), 40);
 }
 
 void eraseSettings(){
   memset(buffer, 0, 128);
   write_flash_page (SETTINGS_PAGE, buffer);
 
-  gb.display.clear();
-  gb.display.update();
-  gb.display.persistence = true;
-  gb.display.println(F("Settings page erased."));
-  pressAtoContinue();
+  gb.popup(F("Page erased"), 40);
 }
+
 
