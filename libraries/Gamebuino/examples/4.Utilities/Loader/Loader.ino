@@ -144,6 +144,45 @@ void saveName(){
   write_flash_page (SETTINGS_PAGE, (unsigned char *)buffer);
 }
 
+void loadHexFile(){ // requires nextGameName to be populated
+  gb.display.clear();
+  saveName();
+  loadeeprom();
+  /*gb.display.println(F("\25:continue"));
+   gb.display.update();
+   while(1){
+   gb.buttons.update();
+   if(gb.buttons.pressed(BTN_A)) break;
+   delay(50);
+   }*/
+  gb.display.print(F("\n\35 Flashing game...\n\nDON'T TURN OFF!"));
+  gb.display.update();
+  load_game(nextGameName);
+}
+void notHexFile(){
+  file.closeFile();
+  gb.sound.playCancel();
+  //draw frame
+  gb.display.setColor(WHITE);
+  gb.display.fillRoundRect(5,10,LCDWIDTH-10,gb.display.fontHeight*3, 3);
+  gb.display.setColor(BLACK);
+  gb.display.drawRoundRect(5,10,LCDWIDTH-10,gb.display.fontHeight*3, 3);
+  //draw error message
+  gb.display.cursorX = 0;
+  gb.display.cursorY = 10+3;
+  gb.display.println("   Not a HEX file  ");
+  gb.display.println("   \25: OK ");
+  //wait for A to be pressed
+  while(1){
+    if(gb.update()){
+      if(gb.buttons.pressed(BTN_A)){
+        gb.display.setColor(BLACK);
+        updateList();
+        return;
+      }
+    }
+  }
+}
 void loadSelectedFile(){
   byte thisFile = 0;
   res = file.findFirstFile(&file.DE);
@@ -153,43 +192,26 @@ void loadSelectedFile(){
       if(strstr(file.DE.fileext,"HEX")){
         strcpy(nextGameName, file.DE.filename);
         file.closeFile();
-        gb.display.clear();
-        saveName();
-        loadeeprom();
-        /*gb.display.println(F("\25:continue"));
-         gb.display.update();
-         while(1){
-         gb.buttons.update();
-         if(gb.buttons.pressed(BTN_A)) break;
-         delay(50);
-         }*/
-        gb.display.print(F("\n\35 Flashing game...\n\nDON'T TURN OFF!"));
-        gb.display.update();
-        load_game(nextGameName);
+        loadHexFile();
+      }
+      else if(strstr(file.DE.fileext,"SAV")){
+        strcpy(nextGameName, file.DE.filename);
+        file.closeFile();
+        res = file.findFirstFile(&file.DE);
+        while(res == NO_ERROR){
+          if(strstr(file.DE.filename,nextGameName) && strstr(file.DE.fileext,"HEX")){
+            //strcpy(nextGameName, file.DE.filename); // we already have the file name!
+            file.closeFile();
+            loadHexFile();
+          }
+          res = file.findNextFile(&file.DE);
+        }
+        notHexFile();
+        return;
       }
       else{ //not an HEX file
-        file.closeFile();
-        gb.sound.playCancel();
-        //draw frame
-        gb.display.setColor(WHITE);
-        gb.display.fillRoundRect(5,10,LCDWIDTH-10,gb.display.fontHeight*3, 3);
-        gb.display.setColor(BLACK);
-        gb.display.drawRoundRect(5,10,LCDWIDTH-10,gb.display.fontHeight*3, 3);
-        //draw error message
-        gb.display.cursorX = 0;
-        gb.display.cursorY = 10+3;
-        gb.display.println("   Not an HEX file ");
-        gb.display.println("   \25: OK ");
-        //wait for A to be pressed
-        while(1){
-          if(gb.update()){
-            if(gb.buttons.pressed(BTN_A)){
-              gb.display.setColor(BLACK);
-              updateList();
-              return;
-            }
-          }
-        }
+        notHexFile();
+        return;
       }
     }
     thisFile++;
