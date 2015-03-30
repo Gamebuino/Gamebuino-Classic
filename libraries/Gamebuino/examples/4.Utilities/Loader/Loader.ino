@@ -9,7 +9,6 @@ extern const byte logo[] PROGMEM;
 
 char nextGameName[9] = "\0\0\0\0\0\0\0\0";
 char prevGameName[9] = "zzzzzzzz";
-char fileNameTmp[9] = "zzzzzzzz";
 byte initres;
 byte res;
 int numberOfFiles = 1;
@@ -21,7 +20,6 @@ int thisFile;
 #define PAGELENGTH (LCDHEIGHT/gb.display.fontHeight)
 
 char completeName[13] = "xxxxxxxx.xxx";
-char completeNameTmp[13] = "xxxxxxxx.xxx";
 #define BUFFER_SIZE 128
 char buffer[BUFFER_SIZE+4];
 
@@ -197,11 +195,10 @@ void loadSelectedFile(){
         loadHexFile();
       }
       else if(strstr(file.DE.fileext,"SAV")){
-        strcpy(fileNameTmp, file.DE.filename);
-        strcpy(completeNameTmp, fileNameTmp);
-        strcat(completeNameTmp, ".HEX");
-        if(file.exists(completeNameTmp)){
-          strcpy(nextGameName, fileNameTmp);
+        strcpy(nextGameName, file.DE.filename);
+        strcpy(completeName, nextGameName);
+        strcat(completeName, ".HEX");
+        if(file.exists(completeName)){
           file.closeFile();
           loadHexFile();
         }
