@@ -84,13 +84,13 @@ boolean changeValue(int &val, int minVal, int maxVal, const __FlashStringHelper*
   }
   if (val > maxVal) val=minVal;
   if (val < minVal) val=maxVal;
-  
+
   gb.display.cursorX = 0;
   gb.display.cursorY = LCDHEIGHT-gb.display.fontHeight;
   gb.display.print(F("\21"));
   gb.display.print(val);
   gb.display.println(F("\20 \25:Accept"));
-  
+
   gb.display.cursorX = 0;
   gb.display.cursorY = 0;
   gb.display.println(text);
@@ -130,25 +130,7 @@ void displaySettings(){
   while(1){
     switch(gb.menu(displayMenu, DISPLAYMENU_LENGTH)){
     case 0: //contrast
-      gb.setFrameRate(42);
-      while(1){
-        if(gb.update()){
-          if(changeValue(contrast, 30, 80, F("Adjust constrasts")))
-            break;
-          gb.display.cursorX = 0;
-          gb.display.cursorY = 20;
-          gb.display.fillRect((gb.frameCount*2)%LCDWIDTH,8,3,3);
-          gb.display.fillRect((gb.frameCount)%LCDWIDTH,8+4,3,3);
-          gb.display.fillRect((gb.frameCount/4)%LCDWIDTH,8+2*4,3,3);
-          gb.display.fillRect(0,24,16,16);
-          gb.display.setColor(GRAY);
-          gb.display.fillRect(17,24,16,16);
-          gb.display.setColor(BLACK);
-          gb.display.drawRect(34,24,16,16);
-          gb.display.setContrast(contrast);
-        }
-      }
-      gb.setFrameRate(20);
+      adjustContrast();
       break;
     case 1: //backlight min
       while(1){
@@ -207,6 +189,29 @@ void displaySettings(){
       break;
     }
   }
+}
+
+void adjustContrast(){
+
+  gb.setFrameRate(42);
+  while(1){
+    if(gb.update()){
+      if(changeValue(contrast, 30, 80, F("Adjust contrast")))
+        break;
+      gb.display.cursorX = 0;
+      gb.display.cursorY = 20;
+      gb.display.fillRect((gb.frameCount*2)%LCDWIDTH,8,3,3);
+      gb.display.fillRect((gb.frameCount)%LCDWIDTH,8+4,3,3);
+      gb.display.fillRect((gb.frameCount/4)%LCDWIDTH,8+2*4,3,3);
+      gb.display.fillRect(0,22,16,16);
+      gb.display.setColor(GRAY);
+      gb.display.fillRect(17,22,16,16);
+      gb.display.setColor(BLACK);
+      gb.display.drawRect(34,22,16,16);
+      gb.display.setContrast(contrast);
+    }
+  }
+  gb.setFrameRate(20);
 }
 
 
@@ -333,6 +338,7 @@ void batterySettings(){
     }
   }
 }
+
 
 
 

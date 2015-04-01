@@ -17,7 +17,7 @@ void loop(){
     gb.display.setColor(BLACK);
     gb.display.fillRect(34,0, 16, 48);
     
-    //rhe colors available are :
+    //colors available are :
     //  WHITE
     //  BLACK
     //  INVERT : negative effect
@@ -54,14 +54,14 @@ void loop(){
       gb.display.println(F("INVERT"));
     }
     
-    //set the color define above
+    //set the color defined above
     gb.display.setColor(color, background);
     
     //then draw a few things :
     //a rectangle
     gb.display.fillRect(20,16,16,16);
     //a bitmap
-    gb.display.drawBitmap(40, 16, pointerBitmap);
+    gb.display.drawBitmap(20, 16, pointerBitmap);
     //some text
     gb.display.cursorX = 40;
     gb.display.cursorY = 0;
