@@ -30,14 +30,13 @@ void Battery::begin() {
 
 void Battery::update() {
 #if (ENABLE_BATTERY > 0)
-	if(thresholds[0] == 0) return;
     if (!(nextUpdate % 32)) { //every 32 frames
         voltage = analogRead(BAT_PIN)*6.4453; //3.3V * 2 *1000 / 1024
 		if(voltage){
         //set the battery 'level' according to thresholds
         level = NUM_LVL;
             for (uint8_t i = 0; i < NUM_LVL; i++) {
-                if (voltage < thresholds[i]) {
+                if (voltage < thresolds[i]) {
                     level = i;
                     return;
                 }

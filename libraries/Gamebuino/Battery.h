@@ -38,7 +38,7 @@ public:
 	boolean show;
     uint8_t  level;
     uint16_t voltage;
-    uint16_t thresholds[NUM_LVL];
+    uint16_t thresolds[NUM_LVL];
     uint8_t  nextUpdate;
 };
 

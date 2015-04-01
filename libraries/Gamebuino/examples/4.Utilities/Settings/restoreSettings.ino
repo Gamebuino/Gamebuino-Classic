@@ -13,5 +13,10 @@ void restoreSettings(){
   batteryLow = BAT_LVL_LOW;
   batteryMed = BAT_LVL_MED;
   batteryFull = BAT_LVL_FULL;
-  gb.popup(F("Defaults restored."), 40);
+
+  gb.display.clear();
+  gb.display.update();
+  gb.display.persistence = true;
+  gb.display.println(F("Default settings\nrestored."));
+  pressAtoContinue();
 }
