@@ -28,10 +28,9 @@
 //SETTINGS YOU CAN EDIT
 
 #define NUM_CHANNELS 1 //number of sound channels, between 0 and 4
-#define DISPLAY_ROT NOROT //set to NOROT, ROTCCW, ROT180 or ROTCW. Can be used to play in portrait mode.
+#define DISPLAY_ROT NOROT //set to NOROT, ROTCCW, ROT180 or ROTCW
 #define ENABLE_GUI 1 //enable menu, keyboard, pop-up, volume adjust functions
 #define ENABLE_BITMAPS 1 //will replace bitmaps with rectangles if disabled
-#define ENABLE_GRAYSCALE 1 //allows the use of the GRAY color
 #define EXTENDED_NOTE_RANGE 1 //allows the use of notes above A 5... please avoid that they sound really bad
 
 //not really useful

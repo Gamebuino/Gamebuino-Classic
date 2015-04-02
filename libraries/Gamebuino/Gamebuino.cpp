@@ -20,9 +20,6 @@
 #include "Gamebuino.h"
 const uint16_t startupSound[] PROGMEM = {0x0005,0x3089,0x208,0x238,0x7849,0x1468,0x0000};
 
-// a 3x5 font table
-extern const uint8_t font3x5[] PROGMEM;
-
 const uint8_t gamebuinoLogo[] PROGMEM =
 {
 	84,10, //width and height
@@ -450,40 +447,23 @@ void Gamebuino::updatePopup(){
 
 void Gamebuino::displayBattery(){
 #if (ENABLE_BATTERY > 0)
-	if(battery.thresholds[0] == 0) return;
 	display.setColor(BLACK, WHITE);
 	display.cursorX = LCDWIDTH-display.fontWidth+1;
 	display.cursorY = 0;
-	byte count = 168;
 	switch(battery.level){
 	case 0://battery critic, power down
 		sound.stopPattern();
+		backlight.set(0);
+		display.clear();
 		display.fontSize = 1;
-		display.setFont(font3x5);
-		battery.thresholds[0] = 0; //disable the battery monitoring to avoid infinite recursive loop
-		display.persistence = false;
-		while(1){
-			if(update()){
-				display.print(F("LOW BATTERY! "));
-				display.print(battery.voltage);
-				display.print(F("mV\n\nPLEASE TURN OFF "));
-				display.print(count/16);
-				display.print(F("\n\n\25:Ignore"));
-				if(buttons.pressed(BTN_A)){
-					//ignore the message and disable the battery monitoring
-					break;
-				}
-				count--;
-				if(count == 0){
-					//put the Gamebuino to sleep if no action is taken
-					backlight.set(0);
-					set_sleep_mode(SLEEP_MODE_PWR_DOWN);
-					sleep_enable();
-					sleep_mode();
-					sleep_disable();	
-				}
-			}
-		}
+		display.print(F("LOW BATTERY\n"));
+		display.print(battery.voltage);
+		display.print(F("mV\n\nPLEASE\nTURN OFF"));
+		display.update();
+		set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+		sleep_enable();
+		sleep_mode();
+		sleep_disable();
 		break;
 	case 1: //empty battery
 		if((frameCount % 16) < 8) display.print('\7'); //blinking battery
@@ -543,10 +523,10 @@ void Gamebuino::readSettings(){
 
 		startMenuTimer = pgm_read_byte(SETTINGS_PAGE+OFFSET_START_MENU_TIMER);
 		
-		battery.thresholds[0] = pgm_read_word(SETTINGS_PAGE+OFFSET_BATTERY_CRITIC);
-		battery.thresholds[1] = pgm_read_word(SETTINGS_PAGE+OFFSET_BATTERY_LOW);
-		battery.thresholds[2] = pgm_read_word(SETTINGS_PAGE+OFFSET_BATTERY_MED);
-		battery.thresholds[3] = pgm_read_word(SETTINGS_PAGE+OFFSET_BATTERY_FULL);
+		battery.thresolds[0] = pgm_read_word(SETTINGS_PAGE+OFFSET_BATTERY_CRITIC);
+		battery.thresolds[1] = pgm_read_word(SETTINGS_PAGE+OFFSET_BATTERY_LOW);
+		battery.thresolds[2] = pgm_read_word(SETTINGS_PAGE+OFFSET_BATTERY_MED);
+		battery.thresolds[3] = pgm_read_word(SETTINGS_PAGE+OFFSET_BATTERY_FULL);
 	}
 	else{
 		display.contrast = SCR_CONTRAST;
@@ -560,10 +540,10 @@ void Gamebuino::readSettings(){
 		
 		startMenuTimer = START_MENU_TIMER;
 		
-		battery.thresholds[0] = BAT_LVL_CRITIC;
-		battery.thresholds[1] = BAT_LVL_LOW;
-		battery.thresholds[2] = BAT_LVL_MED;
-		battery.thresholds[3] = BAT_LVL_FULL;
+		battery.thresolds[0] = BAT_LVL_CRITIC;
+		battery.thresolds[1] = BAT_LVL_LOW;
+		battery.thresolds[2] = BAT_LVL_MED;
+		battery.thresolds[3] = BAT_LVL_FULL;
 	}
 }
 

@@ -55,6 +55,5 @@ void seeAllSettings(){
   gb.display.println(batteryFull);
 
   pressAtoContinue();
-  gb.display.persistence = false;
 
 }
