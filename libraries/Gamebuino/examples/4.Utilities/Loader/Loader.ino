@@ -14,10 +14,14 @@ byte res;
 int numberOfFiles = 1;
 int numberOfPages;
 int selectedFile;
-int selectedPage;
-int prevSelectedPage;
-int thisFile;
-#define PAGELENGTH (LCDHEIGHT/gb.display.fontHeight)
+int selectedPage = 0;
+int prevSelectedPage = 0;
+#define PAGELENGTH 8
+char thisPageFiles[PAGELENGTH][9];
+
+byte cursorPos = 0;
+byte oldCursorPos = PAGELENGTH;
+byte filesOnPage;
 
 char completeName[13] = "xxxxxxxx.xxx";
 #define BUFFER_SIZE 128
@@ -82,7 +86,9 @@ void setup(){
   while(res == NO_ERROR){
     res = file.findNextFile(&file.DE);
     if(res != NO_ERROR) break;
-    numberOfFiles++;
+    if(doDispFile()){
+      numberOfFiles++;
+    }
   }
   numberOfPages = ((numberOfFiles-1)/PAGELENGTH) + 1;
   gb.display.textWrap = false;
@@ -90,38 +96,64 @@ void setup(){
 }
 
 void loop(){
-  selectedFile = 0; //number of the selected file 0 for the 1st file, 1 for the 2nd, etc.
-  thisFile = 0; //number of the file currently itering through
   while(1)
     if(gb.update()){
 
       if(gb.buttons.pressed(BTN_A)){
         loadSelectedFile();
       }
-
+      if(gb.buttons.repeat(BTN_RIGHT,3)){
+        cursorPos++;
+        if(cursorPos >= filesOnPage){
+          cursorPos = 0;
+          selectedPage++;
+          if(selectedPage >= numberOfPages){
+            selectedPage = 0;
+          }
+        }else{
+          updateCursor();
+        }
+      }
       if(gb.buttons.repeat(BTN_DOWN,3)){
-        selectedFile++;
-        if(gb.buttons.repeat(BTN_B,1)){
-          selectedFile += PAGELENGTH-1;
+        cursorPos += 4;
+        if(cursorPos >= filesOnPage || gb.buttons.repeat(BTN_B,1)){
+          if(cursorPos >= 8){
+            cursorPos -= PAGELENGTH;
+          }else{
+            cursorPos -= 4;
+          }
+          selectedPage++;
+          if(selectedPage >= numberOfPages){
+            selectedPage = 0;
+          }
+        }else{
+          updateCursor();
         }
-        if(selectedFile >= numberOfFiles){
-          selectedFile = 0;
-        }
-        selectedPage = selectedFile/PAGELENGTH;
-        updateCursor();
       }
 
+      if(gb.buttons.repeat(BTN_LEFT,3)){
+        if(cursorPos == 0 ){ // so that we don't have to compare with negative numbers
+          cursorPos = PAGELENGTH-1; // updating the list will adjust this if on last page
+          if(selectedPage == 0){
+            selectedPage = numberOfPages; // we will get decreased one after this if-condition anyways
+          }
+          selectedPage--;
+        }else{
+          cursorPos--;
+          updateCursor();
+        }
+      }
       if(gb.buttons.repeat(BTN_UP,3)){
-        selectedFile--;
-        if(gb.buttons.repeat(BTN_B,1)){
-          selectedFile -= PAGELENGTH-1;
+        if(cursorPos < 4 || gb.buttons.repeat(BTN_B,1)){ // so that we don't have to compare with negative numbers
+          cursorPos += 4; // updating the list will adjust this if on last page
+          if(selectedPage == 0){
+            selectedPage = numberOfPages; // we will get decreased one after this if-condition anyways
+          }
+          selectedPage--;
+        }else{
+          cursorPos-=4;
+          updateCursor();
         }
-        if(selectedFile < 0){
-          selectedFile = numberOfFiles-1;
-          thisFile = 0;
-        }
-        selectedPage = selectedFile/PAGELENGTH;
-        updateCursor();
       }
 
       if(selectedPage != prevSelectedPage){
@@ -143,75 +175,15 @@ void saveName(){
   write_flash_page (SETTINGS_PAGE, (unsigned char *)buffer);
 }
 
-void loadHexFile(){ // requires nextGameName to be populated
+void loadSelectedFile(){
+  strcpy(nextGameName,thisPageFiles[cursorPos]);
   gb.display.clear();
   saveName();
   loadeeprom();
-  /*gb.display.println(F("\25:continue"));
-   gb.display.update();
-   while(1){
-   gb.buttons.update();
-   if(gb.buttons.pressed(BTN_A)) break;
-   delay(50);
-   }*/
+  
   gb.display.print(F("\n\35 Flashing game...\n\nDON'T TURN OFF!"));
   gb.display.update();
   load_game(nextGameName);
-}
-void notHexFile(){
-  file.closeFile();
-  gb.sound.playCancel();
-  //draw frame
-  gb.display.setColor(WHITE);
-  gb.display.fillRoundRect(5,10,LCDWIDTH-10,gb.display.fontHeight*3, 3);
-  gb.display.setColor(BLACK);
-  gb.display.drawRoundRect(5,10,LCDWIDTH-10,gb.display.fontHeight*3, 3);
-  //draw error message
-  gb.display.cursorX = 0;
-  gb.display.cursorY = 10+3;
-  gb.display.println("   Not a HEX file  ");
-  gb.display.println("   \25: OK ");
-  //wait for A to be pressed
-  while(1){
-    if(gb.update()){
-      if(gb.buttons.pressed(BTN_A)){
-        gb.display.setColor(BLACK);
-        updateList();
-        return;
-      }
-    }
-  }
-}
-void loadSelectedFile(){
-  byte thisFile = 0;
-  res = file.findFirstFile(&file.DE);
-  while(res == NO_ERROR){
-    if(selectedFile == thisFile){
-      //check that this is an HEX file
-      if(strstr(file.DE.fileext,"HEX")){
-        strcpy(nextGameName, file.DE.filename);
-        file.closeFile();
-        loadHexFile();
-      }
-      else if(strstr(file.DE.fileext,"SAV")){
-        strcpy(nextGameName, file.DE.filename);
-        strcpy(completeName, nextGameName);
-        strcat(completeName, ".HEX");
-        if(file.exists(completeName)){
-          file.closeFile();
-          loadHexFile();
-        }
-        notHexFile();
-        return;
-      }
-      else{ //not an HEX file
-        notHexFile();
-        return;
-      }
-    }
-    thisFile++;
-    res = file.findNextFile(&file.DE);
-  }
 }
 
 
