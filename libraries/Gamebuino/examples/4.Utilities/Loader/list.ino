@@ -89,38 +89,41 @@ void updateList(){
     
   } while (filesOnPage < PAGELENGTH);
   
-  file.closeFile();
-  gb.display.cursorY = 0;
-  gb.display.cursorX = 0;
   gb.display.setColor(BLACK);
-  for(byte i = 0;i < filesOnPage;i++){
-    strcpy(completeName,thisPageFiles[i]);
-    byte x = 20*(i%4) + 2;
-    byte y = i < 4 ? 0 : 24;
-    for(byte i=0; i<8; i++){
-      if(completeName[i] == ' ')
-        completeName[i] = '\0';
-    }
-    strcat(completeName, ".ICO");
-    if(file.openFile(completeName, FILEMODE_TEXT_READ)==NO_ERROR){
-      res = file.readLn(buffer, 2*12 + 2);
-      buffer[2*12 + 3] = '\0';
-      if(res!=FILE_IS_EMPTY){
-        byte w = buffer[0];
-        byte h = buffer[1];
-        byte i, j, byteWidth = (w + 7) / 8;
-        for (j = 0; j < h; j++) {
-            for (i = 0; i < w; i++) {
-                if (buffer[2 + (j * byteWidth + i / 8)] & (B10000000 >> (i % 8))) {
-                    gb.display.drawPixel(x + i, y + j);
-                }
-            }
+    
+  bool filesDisplayed[PAGELENGTH] = {false,false,false,false,false,false,false,false};
+  res = file.findFirstFile(&file.DE);
+  while(res == NO_ERROR){
+    if(strstr(file.DE.fileext,"ICO")){
+      for(byte k = 0;k < filesOnPage;k++){
+        if(strstr(file.DE.filename,thisPageFiles[k])){
+          filesDisplayed[k] = true;
+          file.currFile.currentCluster = file.DE.startCluster;
+          file.currFile.fileSize = file.DE.fileSize;
+          file.currFile.currentPos = 0;
+          file.currFile.fileMode = FILEMODE_TEXT_READ;
+          file.readLn(buffer, 2*12 + 2);
+          byte x = 20*(k%4) + 2;
+          byte y = k < 4 ? 0 : 24;
+          byte w = buffer[0];
+          byte h = buffer[1];
+          byte i, j, byteWidth = (w + 7) / 8;
+          for (j = 0; j < h; j++) {
+              for (i = 0; i < w; i++) {
+                  if (buffer[2 + (j * byteWidth + i / 8)] & (B10000000 >> (i % 8))) {
+                      gb.display.drawPixel(x + i, y + j);
+                  }
+              }
+          }
         }
       }
-      file.closeFile();
-      
-    }else{
-      gb.display.drawBitmap(x,y,defaultPic);
+    }
+    res = file.findNextFile(&file.DE);
+  }
+  
+  for(byte i = 0;i < filesOnPage;i++){
+    if(!filesDisplayed[i]){
+      gb.display.drawBitmap(20*(i%4) + 2,i < 4 ? 0 : 24,defaultPic);
     }
   }
   
