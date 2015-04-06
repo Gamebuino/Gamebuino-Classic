@@ -18,7 +18,7 @@ void saveeeprom(){
   gb.display.print(F("Saving EEPROM to\n"));
   gb.display.print(completeName);
   
-  
+  /*
   gb.display.println(F("\n\25:yes \26:no"));
   gb.display.update();
   while(1){
@@ -26,13 +26,13 @@ void saveeeprom(){
     if(gb.buttons.pressed(BTN_A)) break;
     if(gb.buttons.pressed(BTN_B)) return;
     delay(50);
-  }
+  }*/
 
 
 
   
   //to ask confirmation before overwriting existing saves
-  if(file.exists(completeName)){
+  /*if(file.exists(completeName)){
     gb.display.println(F("Overwrite existing?"));
     gb.display.println(F("\25:yes \26:no"));
     gb.display.update();
@@ -45,7 +45,7 @@ void saveeeprom(){
       if(gb.buttons.pressed(BTN_B)) return;
       delay(50);
     }
-  }
+  }*/
   if(file.exists(completeName)){
     file.delFile(completeName);
   }
@@ -73,7 +73,7 @@ void saveeeprom(){
     gb.display.println(F("Error"));
     gb.display.update();
   }
-  gb.display.println(F("\25:continue"));
+  /*gb.display.println(F("\25:continue"));
   gb.display.update();
   while(1){
     gb.buttons.update();
@@ -81,7 +81,7 @@ void saveeeprom(){
       break;
     }
     delay(50);
-  }
+  }*/
 }
 
 
