@@ -17,6 +17,7 @@ void saveeeprom(){
   gb.display.clear();
   gb.display.print(F("Saving EEPROM to\n"));
   gb.display.print(completeName);
+  gb.display.print("\n");
   
   /*
   gb.display.println(F("\n\25:yes \26:no"));
