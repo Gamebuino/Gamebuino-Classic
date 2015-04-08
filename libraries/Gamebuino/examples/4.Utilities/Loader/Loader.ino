@@ -8,24 +8,26 @@ Gamebuino gb;
 extern const byte logo[] PROGMEM;
 
 char nextGameName[9] = "\0\0\0\0\0\0\0\0";
-char prevGameName[9] = "zzzzzzzz";
 byte initres;
 byte res;
-int numberOfFiles = 1;
+int numberOfFiles;
 int numberOfPages;
 int selectedFile;
 int selectedPage = 0;
 int prevSelectedPage = 0;
-#define PAGELENGTH 8
+#define PAGEWIDTH 5
+#define PAGEHEIGHT 3
+#define PAGELENGTH (PAGEWIDTH*PAGEHEIGHT)
 char thisPageFiles[PAGELENGTH][9];
-
+uint16_t thisPageClusters[PAGELENGTH];
 byte cursorPos = 0;
-byte oldCursorPos = PAGELENGTH;
+byte oldCursorPos;
 byte filesOnPage;
 
 char completeName[13] = "xxxxxxxx.xxx";
 #define BUFFER_SIZE 128
 char buffer[BUFFER_SIZE+4];
+byte flashCounter = 0;
 
 void setup(){
   //Serial.begin(115200);
@@ -51,21 +53,21 @@ void setup(){
   }
 
   const char* address = SETTINGS_PAGE + OFFSET_CURRENTGAME;
-  prevGameName[0] = pgm_read_byte(address);
-  prevGameName[1] = pgm_read_byte(address+1);
-  prevGameName[2] = pgm_read_byte(address+2);
-  prevGameName[3] = pgm_read_byte(address+3);
-  prevGameName[4] = pgm_read_byte(address+4);
-  prevGameName[5] = pgm_read_byte(address+5);
-  prevGameName[6] = pgm_read_byte(address+6);
-  prevGameName[7] = pgm_read_byte(address+7);
+  nextGameName[0] = pgm_read_byte(address);
+  nextGameName[1] = pgm_read_byte(address+1);
+  nextGameName[2] = pgm_read_byte(address+2);
+  nextGameName[3] = pgm_read_byte(address+3);
+  nextGameName[4] = pgm_read_byte(address+4);
+  nextGameName[5] = pgm_read_byte(address+5);
+  nextGameName[6] = pgm_read_byte(address+6);
+  nextGameName[7] = pgm_read_byte(address+7);
 
   for(byte i=0; i<8; i++){
-    if(prevGameName[i] == ' ')
-      prevGameName[i] = '\0';
+    if(nextGameName[i] == ' ')
+      nextGameName[i] = '\0';
   }
 
-  if(prevGameName[0]){
+  if(nextGameName[0]){
     saveeeprom();
     saveName();
   }
@@ -115,13 +117,10 @@ void loop(){
         }
       }
       if(gb.buttons.repeat(BTN_DOWN,3)){
-        cursorPos += 4;
+        cursorPos += PAGEWIDTH;
         if(cursorPos >= filesOnPage || gb.buttons.repeat(BTN_B,1)){
-          if(cursorPos >= 8){
-            cursorPos -= PAGELENGTH;
-          }else{
-            cursorPos -= 4;
-          }
+          cursorPos %= PAGEWIDTH;
+          
           selectedPage++;
           if(selectedPage >= numberOfPages){
             selectedPage = 0;
@@ -144,14 +143,14 @@ void loop(){
         }
       }
       if(gb.buttons.repeat(BTN_UP,3)){
-        if(cursorPos < 4 || gb.buttons.repeat(BTN_B,1)){ // so that we don't have to compare with negative numbers
-          cursorPos += 4; // updating the list will adjust this if on last page
+        if(cursorPos < PAGEWIDTH || gb.buttons.repeat(BTN_B,1)){ // so that we don't have to compare with negative numbers
+          cursorPos += (PAGEWIDTH * (PAGEHEIGHT - 1)); // updating the list will adjust this if on last page
           if(selectedPage == 0){
             selectedPage = numberOfPages; // we will get decreased one after this if-condition anyways
           }
           selectedPage--;
         }else{
-          cursorPos-=4;
+          cursorPos -= PAGEWIDTH;
           updateCursor();
         }
       }
@@ -159,6 +158,11 @@ void loop(){
       if(selectedPage != prevSelectedPage){
         prevSelectedPage = selectedPage;
         updateList();
+      }
+      if(flashCounter++ == 10){
+        flashCounter = 0;
+        gb.display.setColor(INVERT);
+        drawCursorBox(cursorPos);
       }
     }
 }

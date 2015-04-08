@@ -11,7 +11,7 @@ void saveeeprom(){
     gb.display.println(F("Nothing to be saved!"));
     return;
   }
-  strcpy(completeName, prevGameName);
+  strcpy(completeName, nextGameName);
   strcat(completeName, ".SAV");
   
   gb.display.clear();
