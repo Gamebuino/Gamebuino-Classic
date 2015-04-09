@@ -51,7 +51,8 @@ void setup(){
     gb.display.update();
     while(1);
   }
-
+  
+  // using nextGameName to save 9 bytes of RAM
   const char* address = SETTINGS_PAGE + OFFSET_CURRENTGAME;
   nextGameName[0] = pgm_read_byte(address);
   nextGameName[1] = pgm_read_byte(address+1);
@@ -100,7 +101,7 @@ void setup(){
 void loop(){
   while(1)
     if(gb.update()){
-
+      // maybe check for left/right boundries?
       if(gb.buttons.pressed(BTN_A)){
         loadSelectedFile();
       }
@@ -159,9 +160,9 @@ void loop(){
         prevSelectedPage = selectedPage;
         updateList();
       }
-      if(flashCounter++ == 10){
+      if(flashCounter++ == 10){ // do the flashing
         flashCounter = 0;
-        gb.display.setColor(INVERT);
+        gb.display.setColor(INVERT); // just invert of whatever was there before
         drawCursorBox(cursorPos);
       }
     }
@@ -180,6 +181,7 @@ void saveName(){
 }
 
 void loadSelectedFile(){
+  // no need to check if the HEX file exists, as we created the thisPageFiles array with searching for hex files
   strcpy(nextGameName,thisPageFiles[cursorPos]);
   gb.display.clear();
   saveName();
