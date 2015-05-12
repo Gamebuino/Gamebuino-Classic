@@ -33,7 +33,8 @@ void saveeeprom(){
 
   
   //to ask confirmation before overwriting existing saves
-  /*if(file.exists(completeName)){
+  /*if(file.open(completeName,O_READ)){
+    file.close();
     gb.display.println(F("Overwrite existing?"));
     gb.display.println(F("\25:yes \26:no"));
     gb.display.update();
@@ -47,25 +48,16 @@ void saveeeprom(){
       delay(50);
     }
   }*/
-  if(file.exists(completeName)){
-    file.delFile(completeName);
-  }
-  file.create(completeName);
-  res=file.openFile(completeName, FILEMODE_TEXT_WRITE);
-  if (res==NO_ERROR)
+  
+  if (file.open(completeName,O_RDWR | O_CREAT))
   {
     for(byte i=0; i< 1024/BUFFER_SIZE; i++){
-      buffer[BUFFER_SIZE+1] = '\0';
-      for(byte j = 0; j<BUFFER_SIZE; j+=2){
-        byte b = EEPROM.read((i*BUFFER_SIZE+j)/2);
-        buffer[j] = 0x0F | b;
-        buffer[j+1] = 0xF0 | b;
-        //buffer[j] = 0xFF;
-        //buffer[j+1] = 0xFF;
+      for(byte j = 0; j<BUFFER_SIZE; j++){
+        buffer[j] = EEPROM.read(i*BUFFER_SIZE+j);
       }
-      file.writeLn(buffer);
+      file.write(buffer,BUFFER_SIZE);
     }
-    file.closeFile();
+    file.close();
     gb.display.print(completeName);
     gb.display.println(F(" saved"));
     gb.display.update();

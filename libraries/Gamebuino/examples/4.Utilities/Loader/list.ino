@@ -1,5 +1,24 @@
+void getFileExt(){
+  byte where = 0;
+  byte j = 0;
+  for(byte i = 0;i < 13;i++){
+    if((where == 0 && completeName[i] == '.') || (where == 1 && completeName[i] != '.')){
+      where++;
+    }
+    if(where == 2){
+      fileExt[j++] = completeName[i];
+      if(j == 3){
+        break;
+      }
+    }
+  }
+  fileExt[3] = '\0';
+}
+
 bool doDispFile(){
-  return strstr(file.DE.fileext,"HEX") && !strstr(file.DE.filename,"LOADER"); // we want to display a file if it is a HEX file and /not/ the loader
+  file.getSFN(completeName);
+  getFileExt();
+  return strstr(fileExt,"HEX") && !strstr(completeName,"LOADER.HEX"); // we want to display a file if it is a HEX file and /not/ the loader
 }
 const byte defaultPic[] PROGMEM = {15,13, // default icon....this one sucks.
   0B00000000,0B00000000,
@@ -22,7 +41,7 @@ void drawCursorBox(byte pos){ // draw the cursor box in whatever color is curren
   gb.display.drawFastHLine(16*(pos%PAGEWIDTH),14*(pos/PAGEWIDTH),17);
   gb.display.drawFastHLine(16*(pos%PAGEWIDTH),14*(pos/PAGEWIDTH) + 14,17);
 }
-bool filesDisplayed[PAGELENGTH]; // array of which files on the screens have an INF file
+//bool filesDisplayed[PAGELENGTH]; // array of which files on the screens have an INF file
 
 void updateCursor(){
   flashCounter = 0;
@@ -37,17 +56,29 @@ void updateCursor(){
   oldCursorPos = cursorPos;
   gb.display.cursorX = 1;
   gb.display.cursorY = 43;
-  if(filesDisplayed[cursorPos]){
-    file.currFile.currentCluster = thisPageClusters[cursorPos]; // we stored the cluster later on, this is a LOT faster than searching for the file again
-    file.currFile.fileSize = 1 + (2*13) + 22; // header, icon, text
-    file.currFile.currentPos = 1 + (2*13); // so that we are at the text
-    file.currFile.fileMode = FILEMODE_TEXT_READ;
-    file.readLn(buffer,22);
-    buffer[21] = '\0'; // make sure the string actually ends where desired
-    gb.display.print(buffer);
-  }else{
-    gb.display.print(thisPageFiles[cursorPos]);
+  strcpy(completeName,thisPageFiles[cursorPos]);
+  strcat(completeName, ".INF");
+  bool displayed = false;
+  if(file.open(completeName,O_READ)){
+    if(file.read(buffer, 1 + (2*13) + 22) >= 1 + (2*13) + 22 && buffer[0] == 0x01){
+      buffer[1 + (2*13) + 21] = '\0';
+      displayed = true; // this file has an INF file!
+      gb.display.print(buffer + 1 + (2*13));
+    }
   }
+  if(!displayed){
+    strcpy(completeName,thisPageFiles[cursorPos]);
+    strcat(completeName, ".HEX");
+    buffer[21] = '\0';
+    file.open(completeName,O_READ);
+    if(file.isLFN()){
+      file.getName(buffer,21);
+      gb.display.print(buffer);
+    }else{
+      gb.display.print(thisPageFiles[cursorPos]);
+    }
+  }
+  file.close();
   gb.sound.playTick();
 }
 
@@ -63,92 +94,71 @@ void updateList(){
   }
   
   // loop throguh until we reached so many HEX files so that our page is next, paying attention that not every file on the sd card will be displayed
-  int thisFile = 0;
   int numFiles = 0;
-  res = file.findFirstFile(&file.DE);
-  while(res == NO_ERROR){
-    if(numFiles/PAGELENGTH == selectedPage){
-      break;
+  sd.chdir('/');
+  
+  filesOnPage = 0;
+  while(file.openNext(sd.vwd(),O_READ)){
+    if(doDispFile()){
+      if(filesOnPage > 0 || (numFiles/PAGELENGTH == selectedPage)){
+        byte k = 0; // here we grab the files of the page we are on
+        for(;k < 8;k++){ // time to grab the filename, as we did a doDispFile() it is loaded in completeName
+          if(completeName[k] == '.'){
+            thisPageFiles[filesOnPage][k] = '\0';
+            break;
+          }
+          thisPageFiles[filesOnPage][k] = completeName[k];
+        }
+        thisPageFiles[filesOnPage][++k] = '\0';
+        //filesDisplayed[filesOnPage] = false; // easy way to set that whole array to false
+        filesOnPage++;
+        if(filesOnPage >= PAGELENGTH){
+          file.close();
+          break;
+        }
+      }else{
+        numFiles++; // we need it to calc on which page we are
+      }
     }
-    if(strstr(file.DE.fileext,"HEX")){
-      numFiles++;
-    }
-    thisFile++;
-    res = file.findNextFile(&file.DE);
+    file.close();
   }
 
+  
+  gb.display.setColor(BLACK);
+  
   if(numberOfPages > 1){ //if there are several pages we draw the scrollbar
     //gb.display.drawFastVLine(LCDWIDTH-2,0,LCDHEIGHT);
     gb.display.fillRect(LCDWIDTH-3, selectedPage*(LCDHEIGHT-6)/numberOfPages, 3, 1+(LCDHEIGHT-6)/numberOfPages);
   }
   
-  filesOnPage = 0;
+  if(cursorPos > filesOnPage-1){
+    cursorPos = filesOnPage-1;
+  }
   
-  // this is to create the array of the filenames of the files currently been displayed
-  do {
-    if(doDispFile()){ // we only add it if we should display it!
-      strcpy(thisPageFiles[filesOnPage],file.DE.filename);
-      filesDisplayed[filesOnPage] = false; // easy way to set that whole array to false
-      filesOnPage++;
-    }
-
-    thisFile++;
-    //open next file
-    res = file.findNextFile(&file.DE);
-    if(res != NO_ERROR){
-      if(cursorPos > filesOnPage-1){
-        cursorPos = filesOnPage-1;
-      }
-      break;
-    }
-    
-  } while (filesOnPage < PAGELENGTH);
-  
-  gb.display.setColor(BLACK);
-  
-  // now it's time to loop through all the files again and check for INF files, so if they have a custom icon etc.
-  res = file.findFirstFile(&file.DE);
-  while(res == NO_ERROR){
-    if(strstr(file.DE.fileext,"INF")){
-      // we have an INF file
-      for(byte k = 0;k < filesOnPage;k++){ // se we check if it is required for this page
-        if(strstr(file.DE.filename,thisPageFiles[k])){
-          // the INF file is actually on this page
-          file.currFile.currentCluster = file.DE.startCluster; // we "opeen" the file, note that for file reading the currFile object actually does not need the file name at all
-          file.currFile.fileSize = file.DE.fileSize;
-          file.currFile.currentPos = 0;
-          file.currFile.fileMode = FILEMODE_TEXT_READ;
-          file.readLn(buffer, 2*13 + 1);
-          
-          if(buffer[0] == 0x01){ // check for version number, would make it easier to modify the INF files later on and still support old ones
-            filesDisplayed[k] = true; // this file has an INF file!
-            
-            // and now we display the sprite, needs a custom routine as the data is actually in RAM and not in PROGMEM
-            byte x = 16*(k%PAGEWIDTH) + 1;
-            byte y = 14*(k/PAGEWIDTH) + 1;
-            byte w = 15;
-            byte h = 13;
-            byte i, j, byteWidth = (w + 7) / 8;
-            for (j = 0; j < h; j++) {
-              for (i = 0; i < w; i++) {
-                if (buffer[1 + (j * byteWidth + i / 8)] & (B10000000 >> (i % 8))) {
-                  gb.display.drawPixel(x + i, y + j);
-                }
-              }
+  for(byte k = 0;k < filesOnPage;k++){
+    strcpy(completeName,thisPageFiles[k]);
+    strcat(completeName, ".INF");
+    bool displayed = false;
+    if(file.open(completeName,O_READ)){
+      if(file.read(buffer, 1 + (2*13) + 22) >= 1 + (2*13) + 22 && buffer[0] == 0x01){
+        displayed = true; // this file has an INF file!
+        byte x = 16*(k%PAGEWIDTH) + 1;
+        byte y = 14*(k/PAGEWIDTH) + 1;
+        byte w = 15;
+        byte h = 13;
+        byte i, j, byteWidth = (w + 7) / 8;
+        for (j = 0; j < h; j++) {
+          for (i = 0; i < w; i++) {
+            if (buffer[1 + (j * byteWidth + i / 8)] & (B10000000 >> (i % 8))) {
+              gb.display.drawPixel(x + i, y + j);
             }
-            
-            thisPageClusters[k] = file.DE.startCluster; // after that we save the cluster where it was so that we can quickly fetch the name if the cursor is on this icon
           }
         }
       }
+      file.close();
     }
-    res = file.findNextFile(&file.DE);
-  }
-  
-  // now draw the default icon for those without an INF file
-  for(byte i = 0;i < filesOnPage;i++){
-    if(!filesDisplayed[i]){
-      gb.display.drawBitmap(16*(i%PAGEWIDTH) + 1,14*(i/PAGEWIDTH) + 1,defaultPic);
+    if(!displayed){
+      gb.display.drawBitmap(16*(k%PAGEWIDTH) + 1,14*(k/PAGEWIDTH) + 1,defaultPic);
     }
   }
   

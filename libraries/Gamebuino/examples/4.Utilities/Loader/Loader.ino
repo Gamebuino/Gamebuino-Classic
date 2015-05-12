@@ -1,9 +1,13 @@
-#include <tinyFAT.h> //requires the tinyFAT library. You can download it here : http://www.henningkarlsen.com/electronics/library.php?id=37
+const int chipSelect = 10;
+#include <SdFat.h> // requires sdfat, get it at https://github.com/greiman/SdFat
+
 #include <EEPROM.h>
 #include <avr/pgmspace.h>
 #include <SPI.h>
 #include <Gamebuino.h>
 Gamebuino gb;
+SdFat sd;
+SdFile file;
 
 extern const byte logo[] PROGMEM;
 
@@ -18,13 +22,16 @@ int prevSelectedPage = 0;
 #define PAGEWIDTH 5
 #define PAGEHEIGHT 3
 #define PAGELENGTH (PAGEWIDTH*PAGEHEIGHT)
+
 char thisPageFiles[PAGELENGTH][9];
 uint16_t thisPageClusters[PAGELENGTH];
+
 byte cursorPos = 0;
 byte oldCursorPos;
 byte filesOnPage;
 
 char completeName[13] = "xxxxxxxx.xxx";
+char fileExt[4] = "\0\0\0";
 #define BUFFER_SIZE 128
 char buffer[BUFFER_SIZE+4];
 byte flashCounter = 0;
@@ -41,11 +48,9 @@ void setup(){
   gb.display.print(F("\35 Reading SD card...\n\n"));
   gb.display.update();
 
-  SPI.setClockDivider(SPI_CLOCK_DIV128); //lower the SPI speed for better compatibility
-  initres=file.initFAT();
-
-  if (initres!=NO_ERROR)
-  {
+  //SPI.setClockDivider(SPI_CLOCK_DIV128); //lower the SPI speed for better compatibility
+  
+  if(!sd.begin(chipSelect, SPI_HALF_SPEED)){
     gb.display.clear();
     gb.display.print(F("Insert SD card\nand restart."));
     gb.display.update();
@@ -85,14 +90,14 @@ void setup(){
    }*/
 
   //count the number of files
-  file.findFirstFile(&file.DE);
-  while(res == NO_ERROR){
-    res = file.findNextFile(&file.DE);
-    if(res != NO_ERROR) break;
+  sd.chdir('/');
+  while(file.openNext(sd.vwd(),O_READ)){
     if(doDispFile()){
       numberOfFiles++;
     }
+    file.close();
   }
+  
   numberOfPages = ((numberOfFiles-1)/PAGELENGTH) + 1;
   gb.display.textWrap = false;
   updateList();
@@ -157,8 +162,8 @@ void loop(){
       }
 
       if(selectedPage != prevSelectedPage){
-        prevSelectedPage = selectedPage;
         updateList();
+        prevSelectedPage = selectedPage;
       }
       if(flashCounter++ == 10){ // do the flashing
         flashCounter = 0;
