@@ -1,3 +1,23 @@
+#2015-01-028
+* faster drawBitmap function by Myndale, see http://gamebuino.com/forum/viewtopic.php?f=12&t=2949&start=40#p8102
+* bitmap offset when using horizontal flip fixed
+* bitmap and color examples added
+
+#2015-01-24
+* minor graphic optimizations
+* GRAY color added, using alternating checker pattern suggested by Drakker, see http://gamebuino.com/forum/viewtopic.php?f=12&t=2058
+* SETTINGS.HEX updated for better contrast adjustment
+* gb.display.frameCount added for GRAY displaying (independant from gb.frameCount)
+
+#2015-01-11
+* drawBitmap optimization by Jamish
+* Minor fixes
+
+#2015-01-09
+* Circle collision example added
+* Adafruit license added to the display part of the library
+* Display buffer size increased to 512B so it can be used as a buffer for the SD card (or whatever)
+
 #2014-09-07
 * INVERT color added
 * collideBitmapBitmap fixes
