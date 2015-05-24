@@ -41,7 +41,7 @@ void updateCursor(){
   strcat(completeName, ".INF");
   bool displayed = false;
   if(file.open(completeName,O_READ)){
-    if(file.read(buffer, 1 + (ICON_BYTEW*ICON_H) + (NAMELENGTH+1)) && buffer[0] == 0x01){
+    if(file.read(buffer, HEADERSIZE) == HEADERSIZE && buffer[0] == 0x01){
       buffer[1 + (ICON_BYTEW*ICON_H) + NAMELENGTH] = '\0';
       displayed = true; // this file has an INF file!
       gb.display.print(buffer + 1 + (ICON_BYTEW*ICON_H));
@@ -122,7 +122,7 @@ void updateList(){
     strcat(completeName, ".INF");
     bool displayed = false;
     if(file.open(completeName,O_READ)){
-      if(file.read(buffer, 1 + (ICON_BYTEW*ICON_H) + (NAMELENGTH+1)) && buffer[0] == 0x01){
+      if(file.read(buffer, HEADERSIZE) == HEADERSIZE && buffer[0] == 0x01){
         displayed = true; // this file has an INF file!
         byte x = (ICON_W+1)*(k%PAGE_W) + 1;
         byte y = (ICON_H+1)*(k/PAGE_W) + 1;
