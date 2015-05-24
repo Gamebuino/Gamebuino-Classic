@@ -67,11 +67,9 @@ static unsigned char send_cmd(void)
 	MMC_PORT &= ~(1<<MMC_CS); //MMC Chip Select -> Low (activate mmc)
 
 	/* send the 6 cmd bytes */
-	i=6;
 	buf = cmd;
-	while(i) {
+	for(i=0; i<6; i++) {
 		spi_send_byte(*buf++);
-		i--;
 	}
 
 	unsigned char result;
@@ -124,10 +122,8 @@ static inline unsigned char mmc_init(void)
 	
 	unsigned char i;
 	
-	i=10;
-	while(i) { //Pulse 80+ clocks to reset MMC
+	for(i=0; i<10; i++) { //Pulse 80+ clocks to reset MMC
 		spi_send_byte(0xFF);	
- 		i--;
 	}
 
 	unsigned char res;
@@ -167,11 +163,10 @@ static inline unsigned char wait_start_byte(void)
 {
 	unsigned char i;
 	
-	i=255;
-	do {
+	for(i=0; i<255; i++){
 		spi_send_byte(0xFF);
 		if(SPDR == 0xFE) return MMC_OK;
-	} while(--i);
+	}
 	
 	return MMC_NOSTARTBYTE;
 }
@@ -319,7 +314,7 @@ static inline uint8_t fat16_readRootDirEntry(uint16_t entry_num) {
 	/* match ending, seach for HEX => return 1, or EEP => return 2*/
 	if (dir->name[9] != 'E') return 0;
 	if (dir->name[8] == 'H' && dir->name[10] == 'X') return 1;
-	if (dir->name[8] == 'E' && dir->name[10] == 'P') return 2;
+	//if (dir->name[8] == 'E' && dir->name[10] == 'P') return 2;
 	return 0;
 }
 
@@ -399,11 +394,43 @@ static uint8_t file_read_hex(void) {
 	return (gethexnib(file_read_byte()) << 4) + gethexnib(file_read_byte());
 }
 
-static inline void read_hex_file(void) {
+uint16_t getFileNameParam(uint8_t i){
+	return FILENAME_LOCATION[i]*0x0100 + FILENAME_LOCATION[i+1];
+}
+void load_file() {
+	uint16_t entrycounter = 0;
+	uint8_t i = 0;
+	/* first, init mmc / fat */
+	if (fat16_init() != 0)
+		return;
+	if(FILENAME_LOCATION[0] != 0x0){
+
+		
+
+		/* for each file in ROOT... */
+		for (entrycounter=0; entrycounter<512; entrycounter++)
+		{
+			/* skip all unimportant files */
+			i = fat16_readRootDirEntry(entrycounter);
+			if (i == 1)
+			{					
+				goto READHEXFILE;
+			}
+		}
+	}else{
+		file.startcluster = getFileNameParam(1);
+		file.size = getFileNameParam(3);
+		file.sector_counter = 0;
+		file.next = buff + 512;
+		goto READHEXFILE;
+	}
+	return;
+	
 	// read file and convert it from intel hex and flash it
+	
+	READHEXFILE:address = 0;
     uint8_t num_flash_words = 0;
 	uint8_t* out = pagebuffer;
-    address = 0;
 	while (file.size)
 	{
 		if (num_flash_words)
@@ -431,31 +458,6 @@ static inline void read_hex_file(void) {
 		}
 	}
 	if (out != pagebuffer) write_pagebuffer(address);
-}
-
-int load_file() {
-
-	uint16_t entrycounter = 0;
-	uint8_t i = 0;
-
-	
-	/* first, init mmc / fat */
-	if (fat16_init() != 0)
-		return 2;
-
-	/* for each file in ROOT... */
-	for (entrycounter=0; entrycounter<512; entrycounter++)
-	{
-		/* skip all unimportant files */
-		i = fat16_readRootDirEntry(entrycounter);
-		if (i == 1)
-		{					
-			read_hex_file();
-			return 0; // no error
-		}
-	}	
-	
-	return 1; // file not found
 }
 
 #endif
