@@ -19,9 +19,15 @@ int numberOfPages;
 int selectedFile;
 int selectedPage = 0;
 int prevSelectedPage = 0;
-#define PAGEWIDTH 5
-#define PAGEHEIGHT 3
-#define PAGELENGTH (PAGEWIDTH*PAGEHEIGHT)
+#define PAGE_W 4
+#define PAGE_H 2
+#define PAGELENGTH (PAGE_W*PAGE_H)
+
+#define ICON_W 19
+#define ICON_BYTEW (ICON_W + 7) / 8
+#define ICON_H 18
+
+#define NAMELENGTH 21
 
 char thisPageFiles[PAGELENGTH][9];
 uint16_t thisPageClusters[PAGELENGTH];
@@ -31,10 +37,10 @@ byte oldCursorPos;
 byte filesOnPage;
 
 char completeName[13] = "xxxxxxxx.xxx";
+char halfName[5] = "XXXX";
 char fileExt[4] = "\0\0\0";
 #define BUFFER_SIZE 128
 char buffer[BUFFER_SIZE+4];
-byte flashCounter = 0;
 
 void setup(){
   //Serial.begin(115200);
@@ -124,9 +130,9 @@ void loop(){
         }
       }
       if(gb.buttons.repeat(BTN_DOWN,3)){
-        cursorPos += PAGEWIDTH;
+        cursorPos += PAGE_W;
         if(cursorPos >= filesOnPage || gb.buttons.repeat(BTN_B,1)){
-          cursorPos %= PAGEWIDTH;
+          cursorPos %= PAGE_W;
           
           selectedPage++;
           if(selectedPage >= numberOfPages){
@@ -150,14 +156,14 @@ void loop(){
         }
       }
       if(gb.buttons.repeat(BTN_UP,3)){
-        if(cursorPos < PAGEWIDTH || gb.buttons.repeat(BTN_B,1)){ // so that we don't have to compare with negative numbers
-          cursorPos += (PAGEWIDTH * (PAGEHEIGHT - 1)); // updating the list will adjust this if on last page
+        if(cursorPos < PAGE_W || gb.buttons.repeat(BTN_B,1)){ // so that we don't have to compare with negative numbers
+          cursorPos += (PAGE_W * (PAGE_H - 1)); // updating the list will adjust this if on last page
           if(selectedPage == 0){
             selectedPage = numberOfPages; // we will get decreased one after this if-condition anyways
           }
           selectedPage--;
         }else{
-          cursorPos -= PAGEWIDTH;
+          cursorPos -= PAGE_W;
           updateCursor();
         }
       }
@@ -166,11 +172,12 @@ void loop(){
         updateList();
         prevSelectedPage = selectedPage;
       }
-      if(flashCounter++ == 10){ // do the flashing
-        flashCounter = 0;
-        gb.display.setColor(INVERT); // just invert of whatever was there before
-        drawCursorBox(cursorPos);
+      // draw the blinking selection box
+      gb.display.setColor(BLACK);
+      if((gb.frameCount%4) >= 2){
+        gb.display.setColor(WHITE);
       }
+      drawCursorBox(cursorPos);
     }
 }
 
@@ -193,6 +200,7 @@ void loadSelectedFile(){
   saveName();
   loadeeprom();
   
+  gb.display.clear();
   gb.display.print(F("\n\35 Flashing game...\n\nDON'T TURN OFF!"));
   gb.display.update();
   load_game(nextGameName);
