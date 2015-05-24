@@ -39,6 +39,7 @@ byte flashCounter = 0;
 void setup(){
   //Serial.begin(115200);
   gb.begin();
+  gb.battery.thresholds[0] = 0; //disable battery monitoring
   gb.startMenuTimer = 12;
   gb.titleScreen(logo);
   gb.display.clear();

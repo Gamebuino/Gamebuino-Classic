@@ -1,4 +1,11 @@
-#2015-01-028
+#2015-03-29
+* Critical battery level alert can be skipped
+* Critical battery alert can be disabled in settings
+* Checkup wizard added to settings
+* Bootloader updated to use the new settings.hex
+* Few minor changes
+
+#2015-01-28
 * faster drawBitmap function by Myndale, see http://gamebuino.com/forum/viewtopic.php?f=12&t=2949&start=40#p8102
 * bitmap offset when using horizontal flip fixed
 * bitmap and color examples added
