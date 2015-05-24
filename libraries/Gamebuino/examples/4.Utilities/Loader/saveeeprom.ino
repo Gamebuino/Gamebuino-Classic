@@ -11,11 +11,16 @@ void saveeeprom(){
     gb.display.println(F("Nothing to be saved!"));
     return;
   }
+  strcpy(completeName, nextGameName);
+  strcat(completeName, ".SAV");
+  
   gb.display.clear();
   gb.display.print(F("Saving EEPROM to\n"));
-  gb.display.print(prevGameName);
-  gb.display.println(F(".SAV\n"));
-  /*gb.display.println(F("\25:yes \26:no"));
+  gb.display.print(completeName);
+  gb.display.print("\n");
+  
+  /*
+  gb.display.println(F("\n\25:yes \26:no"));
   gb.display.update();
   while(1){
     gb.buttons.update();
@@ -26,39 +31,33 @@ void saveeeprom(){
 
 
 
-  strcpy(completeName, prevGameName);
-  strcat(completeName, ".SAV");
+  
   //to ask confirmation before overwriting existing saves
-  /*if(file.exists(completeName)){
+  /*if(file.open(completeName,O_READ)){
+    file.close();
     gb.display.println(F("Overwrite existing?"));
     gb.display.println(F("\25:yes \26:no"));
     gb.display.update();
     while(1){
       gb.buttons.update();
       if(gb.buttons.pressed(BTN_A)){
-        file.delFile(completeName);
+        //file.delFile(completeName);
         break;
       }
       if(gb.buttons.pressed(BTN_B)) return;
       delay(50);
     }
   }*/
-  if(file.exists(completeName)){
-    file.delFile(completeName);
-  }
-  file.create(completeName);
-  res=file.openFile(completeName, FILEMODE_TEXT_WRITE);
-  if (res==NO_ERROR)
+  
+  if (file.open(completeName,O_RDWR | O_CREAT))
   {
     for(byte i=0; i< 1024/BUFFER_SIZE; i++){
-      buffer[BUFFER_SIZE+1] = '\0';
-      for(byte j = 0; j<BUFFER_SIZE; j+=2){
-        buffer[j] = 0x0F | EEPROM.read((i*BUFFER_SIZE+j)/2);
-        buffer[j+1] = 0xF0 |  EEPROM.read((i*BUFFER_SIZE+j)/2);
+      for(byte j = 0; j<BUFFER_SIZE; j++){
+        buffer[j] = EEPROM.read(i*BUFFER_SIZE+j);
       }
-      file.writeLn(buffer);
+      file.write(buffer,BUFFER_SIZE);
     }
-    file.closeFile();
+    file.close();
     gb.display.print(completeName);
     gb.display.println(F(" saved"));
     gb.display.update();
@@ -67,7 +66,17 @@ void saveeeprom(){
     gb.display.println(F("Error"));
     gb.display.update();
   }
+  /*gb.display.println(F("\25:continue"));
+  gb.display.update();
+  while(1){
+    gb.buttons.update();
+    if(gb.buttons.pressed(BTN_A)){
+      break;
+    }
+    delay(50);
+  }*/
 }
+
 
 
 

@@ -624,13 +624,13 @@ boolean Display::getBitmapPixel(const uint8_t* bitmap, uint8_t x, uint8_t y){
 
 void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap,
         uint8_t rotation, uint8_t flip) {
-	if((rotation == NOROT) && (flip == NOFLIP)){
-		drawBitmap(x,y,bitmap); //use the faster algorithm
-		return;
-	}
-	uint8_t w = pgm_read_byte(bitmap);
-	uint8_t h = pgm_read_byte(bitmap + 1);
-	bitmap = bitmap + 2; //add an offset to the pointer to start after the width and height
+    if((rotation == NOROT) && (flip == NOFLIP)){
+        drawBitmap(x,y,bitmap); //use the faster algorithm
+        return;
+    }
+    uint8_t w = pgm_read_byte(bitmap);
+    uint8_t h = pgm_read_byte(bitmap + 1);
+    bitmap = bitmap + 2; //add an offset to the pointer to start after the width and height
 #if (ENABLE_BITMAPS > 0)
     int8_t i, j, //coordinates in the raw bitmap
             k, l, //coordinates in the rotated/flipped bitmap
@@ -677,7 +677,7 @@ void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap,
         }
     }
 #else
-	drawRect(x, y, w, h);
+    drawRect(x, y, w, h);
 #endif
 }
 
