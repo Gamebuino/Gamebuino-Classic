@@ -24,10 +24,12 @@ int prevSelectedPage = 0;
 #define PAGELENGTH (PAGE_W*PAGE_H)
 
 #define ICON_W 19
-#define ICON_BYTEW (ICON_W + 7) / 8
+#define ICON_BYTEW ((ICON_W + 7) / 8)
 #define ICON_H 18
 
 #define NAMELENGTH 21
+
+#define HEADERSIZE (1 + (ICON_BYTEW*ICON_H) + (NAMELENGTH+1))
 
 char thisPageFiles[PAGELENGTH][9];
 uint16_t thisPageClusters[PAGELENGTH];
@@ -174,7 +176,7 @@ void loop(){
       }
       // draw the blinking selection box
       gb.display.setColor(BLACK);
-      if((gb.frameCount%4) >= 2){
+      if((gb.frameCount%8) >= 4){
         gb.display.setColor(WHITE);
       }
       drawCursorBox(cursorPos);

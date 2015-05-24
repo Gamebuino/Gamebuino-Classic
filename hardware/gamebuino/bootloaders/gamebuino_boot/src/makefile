@@ -1,6 +1,7 @@
 # location of the arduino install folder
 # ARDUINO_DIR = C:/arduino-1.0.5
-ARDUINO_DIR = /home/jonne/Downloads/arduino-1.0.5/
+ARDUINO_DIR = /home/sorunome/Downloads/arduino-1.6.4
+#ARDUINO_DIR = /home/sorunome/Downloads/arduino-1.0.5
 
 # name of this project (used for the output files)
 TARGET = gamebuino_boot
@@ -8,8 +9,16 @@ TARGET = gamebuino_boot
 # target folder location
 OUTPUT_DIR = obj
 
+SMALL_FLAGS = -Os -Wall -fno-inline-small-functions \
+	-fno-split-wide-types \
+	-mrelax \
+	-ffunction-sections \
+	-fno-move-loop-invariants \
+	-fno-tree-scev-cprop \
+	-mrelax
+
 # compiler flags for c files
-CFLAGS = -c -g -Os -Wall -fno-inline-small-functions -fno-split-wide-types -mshort-calls -mmcu=atmega328p -DF_CPU=16000000L  '-DLED_START_FLASHES=3' '-DBAUD_RATE=115200' \
+CFLAGS = -c -g $(SMALL_FLAGS) -mmcu=atmega328p -DF_CPU=16000000L  '-DLED_START_FLASHES=3' '-DBAUD_RATE=115200' \
 			'-DMMC_CS=PORTB2' '-DMMC_PORT=PORTB' '-DMMC_DDR=DDRB'
 #			'-DMMC_CS=PORTD4' '-DMMC_PORT=PORTD' '-DMMC_DDR=DDRD'
 
@@ -17,7 +26,7 @@ CFLAGS = -c -g -Os -Wall -fno-inline-small-functions -fno-split-wide-types -msho
 
 
 # linker flags
-LINK_FLAGS =	-g -Wall -Os -fno-inline-small-functions -fno-split-wide-types -mshort-calls -mmcu=atmega328p -Wl,--relax -Wl,--gc-sections -nostartfiles -nostdlib \
+LINK_FLAGS =	-g $(SMALL_FLAGS) -mmcu=atmega328p -Wl,--relax -Wl,--gc-sections -nostartfiles -nostdlib \
 				-Wl,--section-start=.text=0x7800			\
 				-Wl,--section-start=.jumps=0x7ffa			\
 				-Wl,--section-start=.version=0x7ffe			\
@@ -28,12 +37,12 @@ LINK_FLAGS =	-g -Wall -Os -fno-inline-small-functions -fno-split-wide-types -msh
 # location of various tools
 BIN = $(ARDUINO_DIR)/hardware/tools/avr/bin
 VAR_DIR = $(ARDUINO_DIR)/hardware/arduino/variants/standard
-#GCC = $(BIN)/avr-gcc
-#COPY = $(BIN)/avr-objcopy
-#DUMP = $(BIN)/avr-objdump
-GCC = avr-gcc
-COPY = avr-objcopy
-DUMP = avr-objdump
+GCC = $(BIN)/avr-gcc
+COPY = $(BIN)/avr-objcopy
+DUMP = $(BIN)/avr-objdump
+#GCC = avr-gcc
+#COPY = avr-objcopy
+#DUMP = avr-objdump
 
 # set up all the include folders
 INCLUDES =	-I$(VAR_DIR)									\
