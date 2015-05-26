@@ -40,6 +40,7 @@ void updateCursor(){
   strcpy(completeName,thisPageFiles[cursorPos]);
   strcat(completeName, ".INF");
   bool displayed = false;
+  //loads the .inf file
   if(file.open(completeName,O_READ)){
     if(file.read(buffer, HEADERSIZE) == HEADERSIZE && buffer[0] == 0x01){
       buffer[1 + (ICON_BYTEW*ICON_H) + NAMELENGTH] = '\0';
@@ -60,6 +61,15 @@ void updateCursor(){
     }
   }
   file.close();
+  //check if there is a saved game
+  strcpy(completeName,thisPageFiles[cursorPos]);
+  strcat(completeName, ".SAV");
+  if(file.open(completeName,O_READ)){
+    gb.display.setColor(WHITE);
+    gb.display.fillRect(75,39,9,9);
+    gb.display.setColor(BLACK);
+    gb.display.drawBitmap(76,40,floppy8x8);
+  }
   gb.sound.playTick();
 }
 

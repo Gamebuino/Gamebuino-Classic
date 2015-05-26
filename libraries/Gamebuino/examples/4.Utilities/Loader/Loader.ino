@@ -11,6 +11,8 @@ SdFile file;
 
 extern const byte logo[] PROGMEM;
 
+const byte floppy8x8[] PROGMEM = {8,8,0xCA,0xCB,0xC3,0xFF,0x81,0x81,0x81,0xFF,};
+
 char nextGameName[9] = "\0\0\0\0\0\0\0\0";
 byte initres;
 byte res;
