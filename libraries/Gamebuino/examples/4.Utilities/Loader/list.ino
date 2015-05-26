@@ -65,6 +65,7 @@ void updateCursor(){
   strcpy(completeName,thisPageFiles[cursorPos]);
   strcat(completeName, ".SAV");
   if(file.open(completeName,O_READ)){
+    file.close();
     gb.display.setColor(WHITE);
     gb.display.fillRect(75,39,9,9);
     gb.display.setColor(BLACK);
