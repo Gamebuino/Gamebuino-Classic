@@ -2,15 +2,21 @@
 
 ##############################################################
 gamebuino.name=Gamebuino
+## upload.tool needed by Arduino IDE 1.6.4
+gamebuino.upload.tool=avrdude
 gamebuino.upload.protocol=arduino
 gamebuino.upload.maximum_size=30592
 gamebuino.upload.maximum_ram_size=2048
 gamebuino.upload.speed=115200
+## bootloader.tool needed by Arduino IDE 1.6.4
+gamebuino.bootloader.tool=avrdude
 gamebuino.bootloader.low_fuses=0xff
 gamebuino.bootloader.high_fuses=0xda
 gamebuino.bootloader.extended_fuses=0x05
-gamebuino.bootloader.path=gamebuino_boot
-gamebuino.bootloader.file=gamebuino_boot.hex
+## gamebuino.bootloader.path=gamebuino_boot
+## gamebuino.bootloader.file=gamebuino_boot.hex
+## bootloader.path doesn't work in Arduino IDE 1.6.4
+gamebuino.bootloader.file=gamebuino_boot/gamebuino_boot.hex
 gamebuino.bootloader.unlock_bits=0x3F
 gamebuino.bootloader.lock_bits=0x0F
 gamebuino.build.mcu=atmega328p
