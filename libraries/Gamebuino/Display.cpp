@@ -15,37 +15,38 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
- 
- Parts of the graphical library come from the great library provided by Adafruit for their Nokia 5110 module which can be found [here](https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library).
-Here is their license :
-
-
-This is the core graphics library for all our displays, providing a common
-set of graphics primitives (points, lines, circles, etc.). It needs to be
-paired with a hardware-specific library for each display device we carry
-(to handle the lower-level functions).
-Adafruit invests time and resources providing this open source code, please
-support Adafruit & open-source hardware by purchasing products from Adafruit!
-Copyright (c) 2013 Adafruit Industries. All rights reserved.
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-- Redistributions of source code must retain the above copyright notice,
-this list of conditions and the following disclaimer.
-- Redistributions in binary form must reproduce the above copyright notice,
-this list of conditions and the following disclaimer in the documentation
-and/or other materials provided with the distribution.
-
-This is a library for our Monochrome Nokia 5110 LCD Displays
-Pick one up today in the adafruit shop!
-------> http://www.adafruit.com/products/338
-These displays use SPI to communicate, 4 or 5 pins are required to
-interface
-Adafruit invests time and resources providing this open source code,
-please support Adafruit and open-source hardware by purchasing
-products from Adafruit!
-Written by Limor Fried/Ladyada for Adafruit Industries.
-BSD license, check license.txt for more information
-All text above, and the splash screen below must be included in any redistribution
+ *  
+ * Parts of the graphical library come from the great library provided by Adafruit
+ * for their Nokia 5110 module which can be found here :
+ * https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library
+ * Here is their license :
+ * 
+ * This is the core graphics library for all our displays, providing a common
+ * set of graphics primitives (points, lines, circles, etc.). It needs to be
+ * paired with a hardware-specific library for each display device we carry
+ * (to handle the lower-level functions).
+ * Adafruit invests time and resources providing this open source code, please
+ * support Adafruit & open-source hardware by purchasing products from Adafruit!
+ * Copyright (c) 2013 Adafruit Industries. All rights reserved.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * - Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * 
+ * This is a library for our Monochrome Nokia 5110 LCD Displays
+ * Pick one up today in the Adafruit shop!
+ * ------> http://www.adafruit.com/products/338
+ * These displays use SPI to communicate, 4 or 5 pins are required to
+ * interface
+ * Adafruit invests time and resources providing this open source code,
+ * please support Adafruit and open-source hardware by purchasing
+ * products from Adafruit!
+ * Written by Limor Fried/Ladyada for Adafruit Industries.
+ * BSD license, check license.txt for more information
+ * All text above, and the splash screen below must be included in any redistribution
  */
 
 #include "Display.h"
@@ -54,7 +55,10 @@ All text above, and the splash screen below must be included in any redistributi
 extern const uint8_t font3x5[] PROGMEM;
 
 // the memory buffer for the LCD
-uint8_t _displayBuffer[LCDWIDTH * LCDHEIGHT / 8];
+uint8_t _displayBuffer[512];
+
+//the original display buffer containing the splash screen by Adafruit
+//uint8_t pcd8544_buffer[LCDWIDTH * LCDHEIGHT / 8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC, 0xFC, 0xFE, 0xFF, 0xFC, 0xE0,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0xF8, 0xF8, 0xF8, 0xF8, 0xF8, 0xF8, 0xF8, 0xF8, 0xF8, 0xF8, 0xF8,0xF8, 0xF0, 0xF0, 0xE0, 0xE0, 0xC0, 0x80, 0xC0, 0xFC, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0x3F, 0x7F,0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xE7, 0xC7, 0xC7, 0x87, 0x8F, 0x9F, 0x9F, 0xFF, 0xFF, 0xFF,0xC1, 0xC0, 0xE0, 0xFC, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFC, 0xFC, 0xFC, 0xFC, 0xFE, 0xFE, 0xFE,0xFC, 0xFC, 0xF8, 0xF8, 0xF0, 0xE0, 0xC0, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x80, 0xC0, 0xE0, 0xF1, 0xFB, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0x1F, 0x0F, 0x0F, 0x87,0xE7, 0xFF, 0xFF, 0xFF, 0x1F, 0x1F, 0x3F, 0xF9, 0xF8, 0xF8, 0xF8, 0xF8, 0xF8, 0xF8, 0xFD, 0xFF,0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0x3F, 0x0F, 0x07, 0x01, 0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,x00, 0x00, 0x00, 0xF0, 0xFE, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE,0x7E, 0x3F, 0x3F, 0x0F, 0x1F, 0xFF, 0xFF, 0xFF, 0xFC, 0xF0, 0xE0, 0xF1, 0xFF, 0xFF, 0xFF, 0xFF,0xFF, 0xFC, 0xF0, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x01,0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x0F, 0x1F, 0x3F, 0x7F, 0x7F,0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0x7F, 0x1F, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, };
 
 void Display::begin(int8_t SCLK, int8_t DIN, int8_t DC, int8_t CS, int8_t RST) {
     din = DIN;
@@ -170,6 +174,7 @@ void Display::fillScreen(uint8_t color) {
 }
 
 void Display::update(void) {
+	frameCount ++;
     uint8_t col, maxcol, p;
 
     for (p = 0; p < 6; p++) {
@@ -208,47 +213,18 @@ void Display::setColor(int8_t c, int8_t bg){
 }
 
 void Display::drawFastVLine(int8_t x, int8_t y, int8_t h) {
-    // stupidest/slowest version :
-    drawLine(x, y, x, y + h - 1);
-    /*if ((x < 0) || (x >= LCDWIDTH) || ((y + h) < 0) || (y >= LCDHEIGHT))
-        return;
-    if(y < 0){
-        h += y;
-        y = 0;
-    }
-    h = (y + h > LCDHEIGHT) ? LCDHEIGHT - y : h;
-    
-    for (uint8_t y2 = y; y2 < y + h; y2++) {
-        if (color)
-            _displayBuffer[x + (y2 / 8) * LCDWIDTH] |= _BV(y2 % 8);
-        else
-            _displayBuffer[x + (y2 / 8) * LCDWIDTH] &= ~_BV(y2 % 8);
-    }*/
+	for(int8_t i=0; i<h; i++){
+		drawPixel(x,y+i);
+	}
 }
 
 void Display::drawFastHLine(int8_t x, int8_t y, int8_t w) {
-    // stupidest/slowest version :
-    drawLine(x, y, x + w - 1, y);
-    /*if (((x+w) < 0) || (x >= LCDWIDTH) || (y < 0) || (y >= LCDHEIGHT))
-        return;
-    if(x < 0){
-        w += x;
-        x = 0;
-    }
-    w = (x + w > LCDWIDTH) ? LCDWIDTH - x : w;
-
-    for (uint8_t x2 = x; x2 < x + w; x2++) {
-        if (color)
-            _displayBuffer[x2 + (y / 8) * LCDWIDTH] |= _BV(y % 8);
-        else
-            _displayBuffer[x2 + (y / 8) * LCDWIDTH] &= ~_BV(y % 8);
-    }*/
-    //should be faster but behaves weirdly
-    //memset(&_displayBuffer[x + (y / 8) * LCDWIDTH], color, w);
+    for(int8_t i=0; i<w; i++){
+		drawPixel(x+i,y);
+	}
 }
 
 void Display::drawRect(int8_t x, int8_t y, int8_t w, int8_t h) {
-
     drawFastHLine(x, y, w);
     drawFastHLine(x, y + h - 1, w);
     drawFastVLine(x, y, h);
@@ -257,8 +233,8 @@ void Display::drawRect(int8_t x, int8_t y, int8_t w, int8_t h) {
 
 void Display::fillRect(int8_t x, int8_t y, int8_t w, int8_t h) {
     // stupidest version - update in subclasses if desired!
-    for (int8_t i = x; i < x + w; i++) {
-        drawFastVLine(i, y, h);
+    for (int8_t i = y; i < y + h; i++) {
+        drawFastHLine(x, i, w);
     }
 }
 
@@ -517,22 +493,128 @@ void Display::fillTriangle(int8_t x0, int8_t y0,
 }
 
 void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap) {
-	uint8_t w = pgm_read_byte(bitmap);
-	uint8_t h = pgm_read_byte(bitmap + 1);
-	bitmap = bitmap + 2; //add an offset to the pointer to start after the width and height
+   int8_t w = pgm_read_byte(bitmap);
+   int8_t h = pgm_read_byte(bitmap + 1);
+   bitmap = bitmap + 2; //add an offset to the pointer to start after the width and height
 #if (ENABLE_BITMAPS > 0)
-    int8_t i, j, byteNum, bitNum, byteWidth = (w + 7) >> 3;
-    for (i = 0; i < w; i++) {
-        byteNum = i / 8;
-        bitNum = i % 8;
-        for (j = 0; j < h; j++) {
-            if (pgm_read_byte(bitmap + j * byteWidth + byteNum) & (B10000000 >> bitNum)) {
+/*   original code
+    int8_t i, j, byteWidth = (w + 7) / 8;
+    for (j = 0; j < h; j++) {
+        for (i = 0; i < w; i++) {
+            if (pgm_read_byte(bitmap + j * byteWidth + i / 8) & (B10000000 >> (i % 8))) {
                 drawPixel(x + i, y + j);
             }
         }
     }
+  */
+  uint8_t * buffer = getBuffer();
+  const uint8_t col = color;
+  const uint8_t bw = (w+7) / 8;
+  
+  // clip
+  if (x >= LCDWIDTH)
+    return;
+  if (x + w <= 0)
+    return;
+  if (y >= LCDHEIGHT)
+    return;
+  if (y + h <= 0)
+    return;
+  if (y < 0)
+    h += y, bitmap -= bw * y, y = 0;
+  if (y + h > LCDHEIGHT)
+    h = LCDHEIGHT - y;  
+  uint8_t x1 = max(0, x);
+  uint8_t x2 = min(LCDWIDTH, x + w);
+  
+#ifdef ENABLE_GRAYSCALE
+   uint8_t g = y ^ frameCount;
+#endif  
+
+  // draw
+  uint8_t first_bitmap_mask = 0x80 >> ((x1 - x) & 7);
+  const uint8_t * bitmap_line = bitmap + (x1 - x) / 8;
+  uint8_t screen_mask = 0x01 << (y % 8);
+  uint8_t * screen_row = buffer + (y / 8) * LCDWIDTH + x1;  
+  for (uint8_t dy=0; dy<h; dy++, bitmap_line+=bw)
+  {
+    const uint8_t * bitmap_ptr = bitmap_line;    
+    uint8_t bitmap_mask = first_bitmap_mask;    
+    uint8_t pixels = pgm_read_byte(bitmap_ptr);
+    uint8_t * dst = screen_row;
+    
+    if (col == BLACK)
+      for (uint8_t sx=x1; sx<x2; sx++, dst++)
+      {
+        if (pixels & bitmap_mask)
+          *dst |= screen_mask;
+        bitmap_mask >>= 1;
+        if (!bitmap_mask)
+        {
+          bitmap_mask = 0x80;
+          pixels = pgm_read_byte(++bitmap_ptr);
+        }
+      }
+    else if (col == WHITE)
+    {
+      uint8_t inv_screen_mask = ~screen_mask;
+      for (uint8_t sx=x1; sx<x2; sx++, dst++)
+      {
+        if (pixels & bitmap_mask)
+          *dst &= inv_screen_mask;
+        bitmap_mask >>= 1;
+        if (!bitmap_mask)
+        {
+          bitmap_mask = 0x80;
+          pixels = pgm_read_byte(++bitmap_ptr);
+        }
+      }
+    }
+#ifdef ENABLE_GRAYSCALE
+    else if (col == GRAY)
+    {
+      uint8_t inv_screen_mask = ~screen_mask;
+      for (uint8_t sx=x1; sx<x2; sx++, dst++)
+      {
+        if (pixels & bitmap_mask)
+        {
+         if ((sx^g) & 1)
+            *dst |= screen_mask;
+          else
+           *dst &= inv_screen_mask;
+        }
+        bitmap_mask >>= 1;
+        if (!bitmap_mask)
+        {
+          bitmap_mask = 0x80;
+          pixels = pgm_read_byte(++bitmap_ptr);
+        }
+      }
+       g ^= 1;
+    }
+#endif
+   else // invert
+      for (uint8_t sx=x1; sx<x2; sx++, dst++)
+      {
+        if (pixels & bitmap_mask)
+          *dst ^= screen_mask;
+        bitmap_mask >>= 1;
+        if (!bitmap_mask)
+        {
+          bitmap_mask = 0x80;
+          pixels = pgm_read_byte(++bitmap_ptr);
+        }
+      }
+    
+    screen_mask <<= 1;
+    if (!screen_mask)
+    {
+      screen_mask = 1;
+      screen_row += LCDWIDTH;
+    }
+  }
 #else
-	drawRect(x, y, w, h);
+   drawRect(x, y, w, h);
 #endif
 }
 
@@ -542,13 +624,13 @@ boolean Display::getBitmapPixel(const uint8_t* bitmap, uint8_t x, uint8_t y){
 
 void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap,
         uint8_t rotation, uint8_t flip) {
-	if((rotation == NOROT) && (flip == NOFLIP)){
-		drawBitmap(x,y,bitmap); //use the faster algorithm
-		return;
-	}
-	uint8_t w = pgm_read_byte(bitmap);
-	uint8_t h = pgm_read_byte(bitmap + 1);
-	bitmap = bitmap + 2; //add an offset to the pointer to start after the width and height
+    if((rotation == NOROT) && (flip == NOFLIP)){
+        drawBitmap(x,y,bitmap); //use the faster algorithm
+        return;
+    }
+    uint8_t w = pgm_read_byte(bitmap);
+    uint8_t h = pgm_read_byte(bitmap + 1);
+    bitmap = bitmap + 2; //add an offset to the pointer to start after the width and height
 #if (ENABLE_BITMAPS > 0)
     int8_t i, j, //coordinates in the raw bitmap
             k, l, //coordinates in the rotated/flipped bitmap
@@ -582,7 +664,7 @@ void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap,
                 if (flip) {
                     flip %= 4;
                     if (flip & B00000001) { //horizontal flip
-                        k = w - k;
+                        k = w - k - 1;
                     }
                     if (flip & B00000010) { //vertical flip
                         l = h - l;
@@ -595,7 +677,7 @@ void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap,
         }
     }
 #else
-	drawRect(x, y, w, h);
+    drawRect(x, y, w, h);
 #endif
 }
 

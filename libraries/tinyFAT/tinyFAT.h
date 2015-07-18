@@ -112,6 +112,7 @@ public:
 	_master_boot_record	MBR;
 	_boot_sector		BS;
 	_directory_entry	DE;
+	_current_file		currFile;
 	unsigned long		firstDirSector;
 	byte				buffer[512]; // the buffer cannot be any smaller, SD cards are read/written in blocks of 512 bytes
 	
@@ -132,7 +133,6 @@ public:
 	void		setSSpin(byte pin);
 
 private:
-	_current_file	currFile;
 	int				DEcnt;
 	boolean			_inited;
 
