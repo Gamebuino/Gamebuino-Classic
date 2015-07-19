@@ -681,6 +681,28 @@ void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap,
 #endif
 }
 
+void Display::drawTilemap(int x, int y, const uint8_t *tilemap, const uint8_t **spritesheet){
+    drawTilemap(x,y,tilemap,spritesheet,0,0,LCDWIDTH,LCDHEIGHT);
+}
+void Display::drawTilemap(int x, int y, const uint8_t *tilemap, const uint8_t **spritesheet,int8_t dx,int8_t dy,int8_t dw,int8_t dh){
+    uint8_t tilemap_width = pgm_read_byte(tilemap);
+    uint8_t tilemap_height = pgm_read_byte(tilemap + 1);
+    tilemap += 2; // now the first tiyleis at tilemap
+    uint8_t tile_width = pgm_read_byte(spritesheet[0]);
+    uint8_t tile_height = pgm_read_byte(spritesheet[0] + 1);
+    for(uint8_t ddy = 0;ddy < tilemap_height;ddy++){
+        for(uint8_t ddx = 0;ddx < tilemap_width;ddx++){
+            int drawX = ddx*tile_width + x;
+            int drawY = ddy*tile_height + y;
+            if(drawX > dw || drawY > dh || drawX < (dx-tile_width) || drawY < (dy - tile_height)){
+                continue;
+            }
+            uint8_t tile = pgm_read_byte(tilemap + ddy*tilemap_width + ddx);
+            drawBitmap(drawX,drawY,spritesheet[tile]);
+        }
+    }
+}
+
 #if ARDUINO >= 100
 size_t Display::write(uint8_t c) {
 #else

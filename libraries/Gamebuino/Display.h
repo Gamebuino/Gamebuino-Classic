@@ -147,6 +147,9 @@ public:
 	void drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap, uint8_t rotation, uint8_t flip);
 	boolean getBitmapPixel(const uint8_t* bitmap, uint8_t x, uint8_t y);
 	
+	void drawTilemap(int x, int y, const uint8_t *tilemap, const uint8_t **spritesheet);
+	void drawTilemap(int x, int y, const uint8_t *tilemap, const uint8_t **spritesheet,int8_t dx,int8_t dy,int8_t dw,int8_t dh);
+	
 	void setFont(const uint8_t* f);
 	uint8_t fontWidth, fontHeight;
 	void drawChar(int8_t x, int8_t y, unsigned char c, uint8_t size);
