@@ -41,7 +41,7 @@ void loadeeprom() {
     file.close();
   }
   else{
-    gb.display.println(F("No saved game"));
+    printBottomHeader(F("No saved game"));
   }
   cleaneeprom(i); // if the file is empty or non-existing this'll also get run, i will be 0 --> win
 }

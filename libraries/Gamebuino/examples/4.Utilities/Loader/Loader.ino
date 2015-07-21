@@ -210,7 +210,11 @@ void loadSelectedFile() {
   loadeeprom();
 
   //show the first slide from the game's inf file while loading
-  drawSlide(0);
+  if(!drawSlide(0)){
+    //if there is no slide to draw
+    gb.display.cursorY = 20;
+    printCentered(nextGameName);
+  }
 
   printTopHeader(F("  \35 Loading game...  "));
   printBottomHeader(F(" ! DON'T TURN OFF ! "));
