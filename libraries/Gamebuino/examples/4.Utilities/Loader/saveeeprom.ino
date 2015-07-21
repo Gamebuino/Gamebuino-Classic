@@ -8,16 +8,13 @@ void saveeeprom(){
     }
   }
   if(isEmpty){
-    gb.display.println(F("Nothing to be saved!"));
+    printBottomHeader(F("Nothing to be saved!"));
     return;
   }
   strcpy(completeName, nextGameName);
   strcat(completeName, ".SAV");
   
-  gb.display.clear();
-  gb.display.print(F("Saving EEPROM to\n"));
-  gb.display.print(completeName);
-  gb.display.print("\n");
+  printBottomHeader(F("Saving game"));
   
   /*
   gb.display.println(F("\n\25:yes \26:no"));
@@ -58,13 +55,11 @@ void saveeeprom(){
       file.write(buffer,BUFFER_SIZE);
     }
     file.close();
-    gb.display.print(completeName);
-    gb.display.println(F(" saved"));
+    printBottomHeader(F("Game loaded"));
     gb.display.update();
   }
   else{
-    gb.display.println(F("Error"));
-    gb.display.update();
+    printBottomHeader(F("Error"));
   }
   /*gb.display.println(F("\25:continue"));
   gb.display.update();

@@ -1,28 +1,27 @@
-void cleaneeprom(int i){
-  gb.display.println(F("Cleaning EEPROM"));
+void cleaneeprom(int i) {
+  printBottomHeader(F("Cleaning EEPROM"));
   gb.display.update();
-  for (; i < 1024; i++){
-    if(EEPROM.read(i))
+  for (; i < 1024; i++) {
+    if (EEPROM.read(i))
       EEPROM.write(i, 0);
   }
 }
-void loadeeprom(){
+void loadeeprom() {
   strcpy(completeName, nextGameName);
-  for(byte i=0; i<8; i++){
-    if(completeName[i] == ' ')
+  for (byte i = 0; i < 8; i++) {
+    if (completeName[i] == ' ')
       completeName[i] = '\0';
   }
   strcat(completeName, ".SAV");
   int i = 0;
   if (file.open(completeName, O_READ))
   {
-    gb.display.print("Loading saved game\n");
-    gb.display.println(completeName);
+    printBottomHeader(F("Loading saved game"));
     gb.display.update();
     word result=0;
     int k = 0;
     do {
-      k = file.read(buffer,BUFFER_SIZE);
+      k = file.read(buffer, BUFFER_SIZE);
       if (k > 0)
       {
         for(byte j = 0; j<k; j++){
@@ -30,13 +29,13 @@ void loadeeprom(){
             EEPROM.write(i,buffer[j]);
           }
           i++;
-          if(i >= 1024){
+          if (i >= 1024) {
             break;
           }
         }
       }
-      else if(i == 0){
-        gb.display.println(F("File empty"));
+      else if (i == 0) {
+        printBottomHeader(F("File empty"));
       }
     } while (k > 0);
     file.close();
