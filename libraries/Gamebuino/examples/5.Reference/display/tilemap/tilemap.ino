@@ -7,6 +7,7 @@ Gamebuino gb;
     const byte
 
 tilemap[] PROGMEM = {24,24,
+      5,5,
       0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
       0,6,1,1,3,0,4,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
       0,0,0,0,2,0,6,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -33,8 +34,7 @@ tilemap[] PROGMEM = {24,24,
       0,0,0,2,0,0,0,0,2,0,2,0,2,0,0,0,0,0,0,8,0,0,0,0
     },
 
-
-    sprite0[] PROGMEM = {5,5, 
+    sprite0[] PROGMEM = {
       B00000000,
       B00000000,
       B00000000,
@@ -43,7 +43,7 @@ tilemap[] PROGMEM = {24,24,
     },
 
     // -
-    sprite1[] PROGMEM = {5,5, 
+    sprite1[] PROGMEM = {
       B00000000,
       B11111000,
       B10001000,
@@ -52,7 +52,7 @@ tilemap[] PROGMEM = {24,24,
     },
 
     // |
-    sprite2[] PROGMEM = {5,5, 
+    sprite2[] PROGMEM = {
       B01110000,
       B01010000,
       B01010000,
@@ -61,7 +61,7 @@ tilemap[] PROGMEM = {24,24,
     },
 
     //  -.
-    sprite3[] PROGMEM = {5,5, 
+    sprite3[] PROGMEM = {
       B00000000,
       B11100000,
       B10110000,
@@ -70,7 +70,7 @@ tilemap[] PROGMEM = {24,24,
     },
 
     //  .-
-    sprite4[] PROGMEM = {5,5, 
+    sprite4[] PROGMEM = {
       B00000000,
       B00111000,
       B01101000,
@@ -79,7 +79,7 @@ tilemap[] PROGMEM = {24,24,
     },
 
     //  -'
-    sprite5[] PROGMEM = {5,5, 
+    sprite5[] PROGMEM = {
       B01110000,
       B11010000,
       B10110000,
@@ -88,7 +88,7 @@ tilemap[] PROGMEM = {24,24,
     },
 
     //   '-
-    sprite6[] PROGMEM = {5,5, 
+    sprite6[] PROGMEM = {
       B01110000,
       B01011000,
       B01101000,
@@ -98,7 +98,7 @@ tilemap[] PROGMEM = {24,24,
 
 
     //   '-
-    sprite7[] PROGMEM = {5,5, 
+    sprite7[] PROGMEM = {
       B11111000,
       B10001000,
       B10001000,
@@ -107,14 +107,13 @@ tilemap[] PROGMEM = {24,24,
     },
 
     //   '-
-    sprite8[] PROGMEM = {5,5, 
+    sprite8[] PROGMEM = {
       B01110000,
       B11011000,
       B10000000,
       B11011000,
       B01110000,
     };
-
 
 // define the spritesheet
 const byte *spritesheet[] = {sprite0,sprite1,sprite2,sprite3,sprite4,sprite5,sprite6,sprite7,sprite8};
