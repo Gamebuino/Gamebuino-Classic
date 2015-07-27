@@ -452,11 +452,12 @@ void Sound::setChannelHalfPeriod(uint8_t channel, uint8_t halfPeriod) {
 #endif
 }
 
-ISR(TIMER1_COMPA_vect){ // timer compare interrupt service routine
 #if(NUM_CHANNELS > 0)
+ISR(TIMER1_COMPA_vect){ // timer compare interrupt service routine
 	Sound::generateOutput();
-#endif
 }
+#endif
+
 
 void Sound::generateOutput() {
 #if(NUM_CHANNELS > 0)
