@@ -18,7 +18,7 @@ void getFileExt() {
 bool doDispFile() {
   file.getSFN(completeName);
   getFileExt();
-  return strstr(fileExt, "HEX") && !strstr(completeName, "LOADER.HEX"); // we want to display a file if it is a HEX file and /not/ the loader
+  return strstr(fileExt, "HEX") && !strstr(completeName, "LOADER.HEX") && !file.isDir(); // we want to display a file if it is a HEX file and /not/ the loader
 }
 void drawCursorBox(byte pos) { // draw the cursor box in whatever color is currently set
   gb.display.drawRect((pos % PAGE_W) * (ICON_W + 1), (pos / PAGE_W) * (ICON_H + 1), (ICON_W + 2), (ICON_H + 2));
