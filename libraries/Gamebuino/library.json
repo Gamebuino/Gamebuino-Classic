@@ -12,6 +12,9 @@
     "url": "https://github.com/Rodot/Gamebuino.git"
   },
   "version": "0.3",
+  "examples": [
+    "examples/*/*/*.ino"
+  ],
   "framework": "arduino",
   "platforms": "atmelavr"
 }
