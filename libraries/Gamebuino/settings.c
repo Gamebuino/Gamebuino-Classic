@@ -27,16 +27,32 @@
 
 //SETTINGS YOU CAN EDIT
 
+#ifndef NUM_CHANNELS
 #define NUM_CHANNELS 1 //number of sound channels, between 0 and 4
+#endif
+#ifndef DISPLAY_ROT
 #define DISPLAY_ROT NOROT //set to NOROT, ROTCCW, ROT180 or ROTCW. Can be used to play in portrait mode.
+#endif
+#ifndef ENABLE_GUI
 #define ENABLE_GUI 1 //enable menu, keyboard, pop-up, volume adjust functions
+#endif
+#ifndef ENABLE_BITMAPS
 #define ENABLE_BITMAPS 1 //will replace bitmaps with rectangles if disabled
+#endif
+#ifndef ENABLE_GRAYSCALE
 #define ENABLE_GRAYSCALE 1 //allows the use of the GRAY color
+#endif
+#ifndef EXTENDED_NOTE_RANGE
 #define EXTENDED_NOTE_RANGE 1 //allows the use of notes above A 5... please avoid that they sound really bad
+#endif
 
-//not really useful
+//not really useful+
+#ifndef ENABLE_BATTERY
 #define ENABLE_BATTERY 1 //disable battery monitoring
+#endif
+#ifndef ENABLE_BACKLIGHT
 #define ENABLE_BACKLIGHT 1 //disable automatic back-light
+#endif
 
 //IT'S STRONGLY ADVISED TO LEAVE THE FOLLOWING SETTINGS ALONE
 
