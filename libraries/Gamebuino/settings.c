@@ -46,7 +46,7 @@
 #define EXTENDED_NOTE_RANGE 1 //allows the use of notes above A 5... please avoid that they sound really bad
 #endif
 
-//not really useful+
+//not really useful
 #ifndef ENABLE_BATTERY
 #define ENABLE_BATTERY 1 //disable battery monitoring
 #endif
