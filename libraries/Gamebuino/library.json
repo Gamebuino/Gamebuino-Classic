@@ -13,7 +13,7 @@
   },
   "version": "0.3",
   "examples": [
-    "examples/*/*/*.ino"
+    "libraries/Gamebuino/examples/*/*/*.ino"
   ],
   "framework": "arduino",
   "platforms": "atmelavr"
