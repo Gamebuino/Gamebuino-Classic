@@ -496,6 +496,10 @@ void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap) {
    int8_t w = pgm_read_byte(bitmap);
    int8_t h = pgm_read_byte(bitmap + 1);
    bitmap = bitmap + 2; //add an offset to the pointer to start after the width and height
+   drawBitmap(x,y,w,h,bitmap);
+}
+
+void Display::drawBitmap(int8_t x, int8_t y, int8_t w, int8_t h , const uint8_t *bitmap) {
 #if (ENABLE_BITMAPS > 0)
 /*   original code
     int8_t i, j, byteWidth = (w + 7) / 8;
@@ -618,6 +622,26 @@ void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap) {
 #endif
 }
 
+void Display::drawBitmap(int8_t x, int8_t y, int8_t w,int8_t h, const uint8_t *bitmap, uint8_t dx, uint8_t dy, uint8_t dw, uint8_t dh) {
+    int8_t i, j, byteWidth = (w + 7) / 8;
+    dw += dx;
+    dh += dy;
+    int8_t largest = 0;
+    int8_t largesty = 0;
+    for (j = 0; j < h; j++) {
+        for (i = 0; i < w; i++) {
+            if (pgm_read_byte(bitmap + j * byteWidth + i / 8) & (B10000000 >> (i % 8))) {
+                int8_t drawX = x + i;
+                int8_t drawY = y + j;
+                
+                if(drawX >= dx && drawX < dw && drawY >= dy && drawY < dh){
+                    drawPixel(drawX, drawY);
+                }
+            }
+        }
+    }
+}
+
 boolean Display::getBitmapPixel(const uint8_t* bitmap, uint8_t x, uint8_t y){
   return pgm_read_byte(bitmap+2 + y * ((pgm_read_byte(bitmap)+7)/8) + (x >> 3)) & (B10000000 >> (x % 8));
 }
@@ -679,6 +703,47 @@ void Display::drawBitmap(int8_t x, int8_t y, const uint8_t *bitmap,
 #else
     drawRect(x, y, w, h);
 #endif
+}
+
+void Display::drawTilemap(int x, int y, const uint8_t *tilemap, const uint8_t **spritesheet){
+    drawTilemap(x,y,tilemap,spritesheet,0,0,LCDWIDTH,LCDHEIGHT);
+}
+void Display::drawTilemap(int x, int y, const uint8_t *tilemap, const uint8_t **spritesheet,uint8_t dx,uint8_t dy,uint8_t dw,uint8_t dh){
+    uint8_t tilemap_width = pgm_read_byte(tilemap);
+    uint8_t tilemap_height = pgm_read_byte(tilemap + 1);
+    uint8_t tile_width = pgm_read_byte(tilemap + 2);
+    uint8_t tile_height = pgm_read_byte(tilemap + 3);
+    tilemap += 4; // now the first tiyleis at tilemap
+    uint8_t ddw = dw + dx;
+    uint8_t ddh = dh + dy;
+    uint8_t maxDdx = (dw - x + tile_width - 1) / tile_width;
+    uint8_t maxDdy = (dh - y + tile_height - 1) / tile_height;
+    if(tilemap_width < maxDdx){
+        maxDdx = tilemap_width;
+    }
+    if(tilemap_height < maxDdy){
+        maxDdy = tilemap_height;
+    }
+    int8_t startDdx = (-x) / tile_width;
+    int8_t startDdy = (-y) / tile_height;
+    if(startDdx < 0){
+        startDdx = 0;
+    }
+    if(startDdy < 0){
+        startDdy = 0;
+    }
+    for(uint8_t ddy = startDdy;ddy < maxDdy;ddy++){
+        for(uint8_t ddx = startDdx;ddx < maxDdx;ddx++){
+            int8_t drawX = ddx*tile_width + x + dx;
+            int8_t drawY = ddy*tile_height + y + dy;
+            uint8_t tile = pgm_read_byte(tilemap + ddy*tilemap_width + ddx);
+            if(drawX >= dx && drawY >= dy && drawX <= (ddw-tile_width) && drawY <= (ddh-tile_height)){
+                drawBitmap(drawX,drawY,tile_width,tile_height,spritesheet[tile]);
+            }else{ // we need to draw a partial bitmap
+                drawBitmap(drawX,drawY,tile_width,tile_height,spritesheet[tile],dx,dy,dw,dh);
+            }
+        }
+    }
 }
 
 #if ARDUINO >= 100
