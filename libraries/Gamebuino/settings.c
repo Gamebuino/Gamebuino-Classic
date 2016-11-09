@@ -32,7 +32,7 @@
 #define ENABLE_GUI 1 //enable menu, keyboard, pop-up, volume adjust functions
 #define ENABLE_BITMAPS 1 //will replace bitmaps with rectangles if disabled
 #define ENABLE_GRAYSCALE 1 //allows the use of the GRAY color
-#define EXTENDED_NOTE_RANGE 1 //allows the use of notes above A 5... please avoid that they sound really bad
+#define EXTENDED_NOTE_RANGE 0 //allows the use of notes above A 5... please avoid that they sound really bad
 
 //not really useful
 #define ENABLE_BATTERY 1 //disable battery monitoring
@@ -75,8 +75,8 @@
 #define SCR_RST A0
 
 //sound
-#define VOLUME_GLOBAL_MAX 1
-#define VOLUME_CHANNEL_MAX 255/NUM_CHANNELS/VOLUME_GLOBAL_MAX/7/9 //7=instrument volume 9=note volume
+#define VOLUME_GLOBAL_MAX 8
+#define VOLUME_CHANNEL_MAX 255/NUM_CHANNELS/7/9 //7=instrument volume 9=note volume
 
 //battery voltage monitor
 #define BAT_PIN A6

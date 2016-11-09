@@ -434,7 +434,7 @@ void Sound::updateNote(uint8_t i) {
 		}
 		noInterrupts();
 		_chanHalfPeriod[i] = pgm_read_byte(_halfPeriods + outputPitch[i]);
-		_chanOutput[i] = _chanOutputVolume[i] = outputVolume[i] * globalVolume * chanVolumes[i] * stepVolume[i];
+		_chanOutput[i] = _chanOutputVolume[i] = (int(outputVolume[i] * chanVolumes[i] * stepVolume[i]) << (globalVolume)) / 128;
 		//Serial.println(outputVolume[i]);
 		interrupts();
 	}
@@ -593,7 +593,7 @@ void Sound::playTick(){
 
 void Sound::setVolume(int8_t volume) {
 #if NUM_CHANNELS > 0
-	globalVolume = volume % (volumeMax+1);
+	globalVolume = (volume < 0) ? volumeMax : volume % (volumeMax+1); //wrap volume value
 #endif
 }
 

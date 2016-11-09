@@ -137,7 +137,7 @@ void Gamebuino::titleScreen(const __FlashStringHelper*  name, const uint8_t *log
 				
 				//toggle volume when B is pressed
 				if(buttons.pressed(BTN_B)){
-					sound.setVolume(sound.globalVolume+1);
+					sound.setVolume(sound.getVolume() + 1);
 					sound.playTick();
 				}
 				//leave the menu
@@ -172,6 +172,19 @@ boolean Gamebuino::update() {
 
 	} else {
 		if (!frameEndMicros) { //runs once at the end of the frame
+		
+				//increase volume shortcut : hold C + press UP
+			if(buttons.repeat(BTN_C, 1) && buttons.repeat(BTN_UP, 10)){
+				sound.setVolume(sound.getVolume() + 1);
+				sound.playTick();
+			}
+			
+			//reduce volume shortcut : hold C + press DOWN
+			if(buttons.repeat(BTN_C, 1) && buttons.repeat(BTN_DOWN, 10)){
+				sound.setVolume(sound.getVolume() - 1);
+				sound.playTick();
+			}
+		
 			sound.updateTrack();
 			sound.updatePattern();
 			sound.updateNote();
@@ -538,7 +551,9 @@ void Gamebuino::readSettings(){
 		backlight.ambientLightMin = pgm_read_word(SETTINGS_PAGE+OFFSET_LIGHT_MIN);
 		backlight.ambientLightMax = pgm_read_word(SETTINGS_PAGE+OFFSET_LIGHT_MAX);
 		
-		sound.volumeMax = pgm_read_byte(SETTINGS_PAGE+OFFSET_VOLUME_MAX);
+		//sound.volumeMax = pgm_read_byte(SETTINGS_PAGE+OFFSET_VOLUME_MAX);
+		sound.volumeMax = VOLUME_GLOBAL_MAX; //max volume is no longer read from settings
+		
 		sound.globalVolume = pgm_read_byte(SETTINGS_PAGE+OFFSET_VOLUME_DEFAULT);
 
 		startMenuTimer = pgm_read_byte(SETTINGS_PAGE+OFFSET_START_MENU_TIMER);
