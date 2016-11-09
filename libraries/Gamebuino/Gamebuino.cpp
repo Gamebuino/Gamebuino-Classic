@@ -173,16 +173,13 @@ boolean Gamebuino::update() {
 	} else {
 		if (!frameEndMicros) { //runs once at the end of the frame
 		
-				//increase volume shortcut : hold C + press UP
-			if(buttons.repeat(BTN_C, 1) && buttons.repeat(BTN_UP, 10)){
+			//increase volume shortcut : hold C + press B
+			if(buttons.repeat(BTN_C, 1) && buttons.pressed(BTN_B)){
 				sound.setVolume(sound.getVolume() + 1);
+				popup(F("\027+\026 \23\24"), 60);
 				sound.playTick();
 			}
 			
-			//reduce volume shortcut : hold C + press DOWN
-			if(buttons.repeat(BTN_C, 1) && buttons.repeat(BTN_DOWN, 10)){
-				sound.setVolume(sound.getVolume() - 1);
-				sound.playTick();
 			}
 		
 			sound.updateTrack();
