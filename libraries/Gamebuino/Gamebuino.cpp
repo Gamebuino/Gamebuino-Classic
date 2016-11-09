@@ -180,6 +180,12 @@ boolean Gamebuino::update() {
 				sound.playTick();
 			}
 			
+			//flash loader shortcut : hold C + A
+			if(buttons.repeat(BTN_C, 1) && buttons.pressed(BTN_A)){
+				popup(F("\027+\025 \020 LOADER"), 60);
+			}
+			if(buttons.repeat(BTN_C, 1) && buttons.held(BTN_A,40)){
+				changeGame();
 			}
 		
 			sound.updateTrack();
