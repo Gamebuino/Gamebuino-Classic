@@ -55,8 +55,9 @@ void Gamebuino::begin() {
 	display.begin(SCR_CLK, SCR_DIN, SCR_DC, SCR_CS, SCR_RST);
 	sound.begin();
 	
-	//mute when B is held during start up
-	if(buttons.pressed(BTN_B)){
+	//mute when B is held during start up or if battery is low
+	battery.update();
+	if(buttons.pressed(BTN_B) || (battery.level == 0)){
 		sound.setVolume(0);
 	}
 	else{ //play the startup sound on each channel for it to be louder
