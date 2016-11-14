@@ -1,3 +1,9 @@
+#2016-11-14
+* Volume control added
+* Mute on startup if batty is low
+* Arduino Libraries Manager compliance
+* External libraries and /hardware moved to other repos
+
 #2015-03-29
 * Critical battery level alert can be skipped
 * Critical battery alert can be disabled in settings
