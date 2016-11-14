@@ -23,12 +23,12 @@
 #include <Arduino.h>
 #include <avr/pgmspace.h>
 #include <avr/sleep.h>
-#include "settings.c"
-#include "Backlight.h"
-#include "Display.h"
-#include "Buttons.h"
-#include "Battery.h"
-#include "Sound.h"
+#include "utility/settings.c"
+#include "utility/Backlight.h"
+#include "utility/Display.h"
+#include "utility/Buttons.h"
+#include "utility/Battery.h"
+#include "utility/Sound.h"
 
 #define load_game (*((void(*)(const char* filename))(0x7ffc/2)))
 #define write_flash_page (*((void(*)(const char * page, unsigned char * buffer))(0x7ffa/2)))
