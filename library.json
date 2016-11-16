@@ -2,7 +2,6 @@
   "name": "Gamebuino",
   "description": "An Arduino based game console",
   "keywords": "game, console",
-  "include": "libraries/Gamebuino",
   "authors": {
     "name": "Aurelien Rodot",
     "url": "https://github.com/Rodot/"
@@ -11,10 +10,7 @@
     "type": "git",
     "url": "https://github.com/Rodot/Gamebuino.git"
   },
-  "version": "0.3",
-  "examples": [
-    "libraries/Gamebuino/examples/*/*/*.ino"
-  ],
+  "version": "0.4",
   "framework": "arduino",
   "platforms": "atmelavr"
 }
