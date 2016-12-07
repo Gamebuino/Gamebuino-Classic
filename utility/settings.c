@@ -75,7 +75,7 @@
 #define SCR_RST A0
 
 //sound
-#define VOLUME_GLOBAL_MAX 8
+#define VOLUME_GLOBAL_MAX 7
 #define VOLUME_CHANNEL_MAX 255/NUM_CHANNELS/7/9 //7=instrument volume 9=note volume
 
 //battery voltage monitor
