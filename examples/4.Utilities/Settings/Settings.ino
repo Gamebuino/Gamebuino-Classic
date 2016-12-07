@@ -39,6 +39,8 @@ const char* const mainMenu[MAINMENU_LENGTH] PROGMEM = {
   strSaveSettings
 };
 
+void readSettings(); //function prototype
+
 void setup(){
   gb.begin();
   gb.titleScreen(logo);
