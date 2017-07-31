@@ -5,10 +5,10 @@ Gamebuino gb;
 #include <Wire.h>
 
 boolean isMaster;
+boolean isLocal;
 boolean paused = true;
 boolean disconnected = false;
 boolean slave_updated = false;
-
 
 //I2C variables identifiers :
 #define SLAVE_PAUSED 1
@@ -42,12 +42,14 @@ char ball_y = (LCDHEIGHT-ball_size)/2;
 char ball_vx = 3;
 char ball_vy = 3;
 
-#define MENULENGTH 2
+#define MENULENGTH 3
 const char strMaster[] PROGMEM = "Host (master)";
 const char strSlave[] PROGMEM = "Join (slave)";
+const char strLocal[] PROGMEM = "Local multiplayer";
 const char* const menu[MENULENGTH] PROGMEM = {
   strMaster,
-  strSlave
+  strSlave,
+  strLocal
 };
 
 ///////////////////////////////////// SETUP
@@ -73,11 +75,19 @@ void loop() {
     paused = false;
     disconnected = false;
     isMaster = true;
+    isLocal = false;
     break;
   case 1: //Join
     paused = false;
     disconnected = false;
     isMaster = false;
+    isLocal = false;
+    break;
+  case 2: //Local
+    paused = false;
+    disconnected = true;
+    isMaster = false;
+    isLocal = true;
     break;
   default:
     gb.titleScreen(F("Pong Multiplayer")); //shows the main menu
@@ -99,13 +109,17 @@ void loop() {
       }
 
       gb.display.fontSize = 1;
-      if(isMaster){
-        gb.display.print(F(" master "));
-        updateMaster();
-      }
-      else {
-        gb.display.print(F(" slave "));
-        updateSlave();
+      if(!isLocal) {
+        if(isMaster){
+          gb.display.print(F(" master "));
+          updateMaster();
+        }
+        else {
+          gb.display.print(F(" slave "));
+          updateSlave();
+        }
+      } else {
+        updateLocal();
       }
 
       updateDisplay();
