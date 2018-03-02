@@ -1,5 +1,5 @@
 {
-  "name": "Gamebuino",
+  "name": "Gamebuino Classic",
   "description": "An Arduino based game console",
   "keywords": "game, console",
   "authors": {
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/Rodot/Gamebuino.git"
   },
-  "version": "0.4",
+  "version": "0.5.2",
   "framework": "arduino",
   "platforms": "atmelavr"
 }
