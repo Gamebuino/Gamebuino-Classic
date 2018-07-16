@@ -60,32 +60,32 @@ BTN_DOWN 	LITERAL1
 BTN_LEFT 	LITERAL1
 
 ////////////////////////sound
-playTrack	 KEYWORD1
-updateTrack	 KEYWORD1
-stopTrack	 KEYWORD1
-changePatternSet	 KEYWORD1
-boolean trackIsPlaying	 KEYWORD1
+playTrack	KEYWORD1
+updateTrack	KEYWORD1
+stopTrack	KEYWORD1
+changePatternSet	KEYWORD1
+boolean trackIsPlaying	KEYWORD1
 
-playPattern	 KEYWORD1
-changeInstrumentSet	 KEYWORD1
-updatePattern	 KEYWORD1
-setPatternLooping	 KEYWORD1
-stopPattern	 KEYWORD1
-patternIsPlaying	 KEYWORD1
+playPattern	KEYWORD1
+changeInstrumentSet	KEYWORD1
+updatePattern	KEYWORD1
+setPatternLooping	KEYWORD1
+stopPattern	KEYWORD1
+patternIsPlaying	KEYWORD1
 
-command	 KEYWORD1
-playNote	 KEYWORD1
-updateNote	 KEYWORD1
-stopNote	 KEYWORD1
+command	KEYWORD1
+playNote	KEYWORD1
+updateNote	KEYWORD1
+stopNote	KEYWORD1
 
-setVolume	 KEYWORD1
-getVolume	 KEYWORD1
+setVolume	KEYWORD1
+getVolume	KEYWORD1
 
-playOK	 KEYWORD1
-playCancel	 KEYWORD1
-playTick	 KEYWORD1
+playOK	KEYWORD1
+playCancel	KEYWORD1
+playTick	KEYWORD1
 
-prescaler	 KEYWORD1
+prescaler	KEYWORD1
 
 ////////////////////////battery
 voltage	KEYWORD1
